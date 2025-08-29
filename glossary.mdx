@@ -1,0 +1,210 @@
+---
+title: 'Glossary'
+description: 'Key terms and concepts in BevorAI and blockchain security'
+---
+
+# Glossary
+
+Comprehensive definitions of key terms and concepts used throughout BevorAI documentation and the broader blockchain security ecosystem.
+
+## BevorAI-Specific Terms
+
+### BevorAI
+The AI-powered security auditing platform that provides comprehensive security analysis, real-time monitoring, and automated threat detection for blockchain applications and smart contracts.
+
+### Security Agent
+Specialized AI agents within the BevorAI ecosystem that focus on specific security domains (e.g., reentrancy detection, economic analysis, governance security). Agents can work independently or in coordination with other agents.
+
+### Multi-Agent Triaging (A2A)
+Agent-to-Agent coordination system where multiple specialized security agents collaborate to analyze complex security scenarios, prioritize findings, and provide comprehensive risk assessments.
+
+### MCP Integration
+Model Context Protocol integration that enables BevorAI to work directly within development environments like Cursor and Windsurf, providing real-time security analysis as developers write code.
+
+### Security Data Labeling
+The process of expert security auditors reviewing and tagging BevorAI's findings to improve the accuracy and effectiveness of the AI models. Contributors earn BEVOR tokens for high-quality labeling.
+
+### BEVOR Token
+The native utility token of the BevorAI ecosystem, used for governance, accessing premium features, rewarding contributors, and incentivizing security improvements across the network.
+
+## Blockchain Security Terms
+
+### Security Audit
+A comprehensive review of smart contract code, protocol design, and system architecture to identify vulnerabilities, assess risks, and provide remediation recommendations.
+
+### Auditor
+A security professional who specializes in reviewing blockchain code and protocols to identify vulnerabilities and security risks. Auditors may work independently or as part of auditing firms.
+
+### Smart Contract
+Self-executing contracts with terms directly written into code. Smart contracts run on blockchain networks and automatically enforce agreements without intermediaries.
+
+### Penetration Testing
+Simulated cyber attacks against smart contracts or protocols to identify exploitable vulnerabilities and assess the security posture of the system.
+
+## Vulnerability Types
+
+### Reentrancy Attack
+A vulnerability where an external contract calls back into the calling contract before the first function call is finished, potentially allowing attackers to drain funds or manipulate state.
+
+```solidity
+// Vulnerable to reentrancy
+function withdraw() external {
+    uint amount = balances[msg.sender];
+    msg.sender.call{value: amount}(""); // External call
+    balances[msg.sender] = 0; // State change after external call
+}
+```
+
+### Access Control Vulnerability
+Security issues related to improper permission management, where unauthorized users can access restricted functions or escalate privileges.
+
+### Oracle Manipulation
+Attacks that exploit price oracles or data feeds to manipulate protocol behavior, often through flash loans or coordinated market manipulation.
+
+### Flash Loan Attack
+Exploits that use uncollateralized loans (flash loans) to manipulate protocol state, extract value, or exploit economic vulnerabilities within a single transaction.
+
+### Front-Running
+The practice of observing pending transactions and submitting competing transactions with higher gas fees to execute first, potentially extracting MEV (Maximal Extractable Value).
+
+### Governance Attack
+Exploits targeting governance mechanisms, including vote buying, flash governance (using borrowed tokens to vote), and proposal manipulation.
+
+## Technical Concepts
+
+### Gas Optimization
+The process of reducing the computational cost (gas) required to execute smart contract functions, improving efficiency and reducing user costs.
+
+### Formal Verification
+Mathematical techniques used to prove that smart contracts behave correctly according to their specifications, providing higher assurance than testing alone.
+
+### Economic Security
+Security measures that rely on economic incentives and disincentives to prevent attacks, such as staking mechanisms and slashing conditions.
+
+### Slippage
+The difference between expected and actual transaction prices, often exploited in DeFi protocols through sandwich attacks and price manipulation.
+
+### MEV (Maximal Extractable Value)
+The maximum value that can be extracted from block production beyond standard block rewards, often through transaction reordering, inclusion, or exclusion.
+
+### TVL (Total Value Locked)
+The total amount of cryptocurrency locked in a DeFi protocol, often used as a measure of protocol adoption and security importance.
+
+## DeFi-Specific Terms
+
+### Automated Market Maker (AMM)
+A type of decentralized exchange that uses algorithmic trading to provide liquidity and determine asset prices based on mathematical formulas.
+
+### Liquidity Pool
+Collections of tokens locked in smart contracts that provide liquidity for decentralized trading and earn fees for liquidity providers.
+
+### Yield Farming
+The practice of lending or staking cryptocurrency to earn rewards, often involving complex strategies across multiple DeFi protocols.
+
+### Impermanent Loss
+The temporary loss of funds experienced by liquidity providers due to volatility in trading pairs compared to simply holding the assets.
+
+### Liquidation
+The process of forcefully selling collateral when a borrower's position falls below required collateral ratios, ensuring protocol solvency.
+
+## Governance Terms
+
+### DAO (Decentralized Autonomous Organization)
+An organization governed by smart contracts and token holders rather than traditional management structures, using blockchain-based voting mechanisms.
+
+### Governance Token
+Cryptocurrency tokens that give holders voting rights in protocol governance decisions, such as parameter changes, upgrades, and treasury management.
+
+### Proposal
+A formal suggestion for changes to a protocol, submitted to the governance system for community voting and potential implementation.
+
+### Quorum
+The minimum number of votes required for a governance proposal to be valid and executable.
+
+### Timelock
+A security mechanism that delays the execution of approved governance proposals, providing time for the community to respond to malicious proposals.
+
+## Network and Infrastructure
+
+### Layer 2 (L2)
+Blockchain scaling solutions built on top of main blockchain networks (Layer 1) to increase transaction throughput and reduce costs.
+
+### Rollup
+A type of Layer 2 scaling solution that processes transactions off-chain and submits compressed data to the main chain for security and finality.
+
+### Bridge
+Smart contracts that enable the transfer of assets and data between different blockchain networks, often targets for security attacks due to their complexity.
+
+### Validator
+Entities responsible for validating transactions and maintaining blockchain network security, often through proof-of-stake mechanisms.
+
+### Consensus Mechanism
+The protocol used by blockchain networks to agree on the validity of transactions and the state of the blockchain.
+
+## Analysis and Monitoring
+
+### Real-Time Analysis
+Continuous security analysis that processes code changes, transactions, or system events as they occur, providing immediate feedback and alerts.
+
+### Static Analysis
+Code analysis performed without executing the program, examining code structure, patterns, and potential vulnerabilities through automated tools.
+
+### Dynamic Analysis
+Security analysis performed during program execution, observing actual behavior, state changes, and runtime characteristics.
+
+### Threat Intelligence
+Information about current and emerging security threats, attack patterns, and vulnerabilities relevant to blockchain and DeFi ecosystems.
+
+### Incident Response
+Systematic approach to handling security incidents, including detection, containment, analysis, recovery, and lessons learned.
+
+## Risk Assessment
+
+### Risk Score
+Numerical assessment of security risk, typically ranging from 0-100, based on vulnerability severity, exploitability, and potential impact.
+
+### False Positive
+A security alert or finding that incorrectly identifies benign code as vulnerable, requiring human review to filter out incorrect results.
+
+### False Negative
+A failure to detect an actual vulnerability, representing a gap in security analysis that could leave systems exposed to attacks.
+
+### Attack Vector
+A specific method or pathway that an attacker could use to exploit a vulnerability and compromise a system.
+
+### Threat Model
+A structured approach to identifying and analyzing potential threats, including threat actors, attack methods, and system vulnerabilities.
+
+## Integration Terms
+
+### API (Application Programming Interface)
+A set of protocols and tools for building software applications, allowing different systems to communicate and share data.
+
+### Webhook
+HTTP callbacks that allow applications to receive real-time notifications when specific events occur, enabling automated responses and integrations.
+
+### SDK (Software Development Kit)
+A collection of software development tools, libraries, documentation, and examples that enable developers to build applications for a specific platform.
+
+### CI/CD (Continuous Integration/Continuous Deployment)
+Development practices that involve automatically building, testing, and deploying code changes to ensure rapid, reliable software delivery.
+
+### Rate Limiting
+Controls that limit the number of API requests a user can make within a specific time period to prevent abuse and ensure fair resource allocation.
+
+## Need More Definitions?
+
+Don't see a term you're looking for? We're constantly expanding our glossary based on community needs.
+
+<CardGroup cols={2}>
+  <Card title="Suggest a Term" icon="plus" href="https://discord.gg/bevor">
+    Request new glossary entries in Discord
+  </Card>
+  <Card title="Community Wiki" icon="book" href="https://wiki.bevor.io">
+    Explore our community-maintained wiki
+  </Card>
+</CardGroup>
+
+---
+
+*This glossary is maintained by the BevorAI community. Definitions are regularly updated to reflect current best practices and emerging concepts in blockchain security.*

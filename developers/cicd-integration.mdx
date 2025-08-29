@@ -1,0 +1,479 @@
+---
+title: 'CI/CD Integration'
+description: 'GitHub Actions and other pipelines for continuous security monitoring'
+---
+
+# CI/CD Integration
+
+Integrate BevorAI into your continuous integration and deployment pipelines to ensure every code change is automatically analyzed for security vulnerabilities. Catch issues early, maintain security standards, and protect your protocol throughout the development lifecycle.
+
+## GitHub Actions Integration
+
+### Basic Setup
+
+**1. Add BevorAI Action to Your Workflow**
+
+Create `.github/workflows/bevor-security.yml`:
+
+```yaml
+name: BevorAI Security Analysis
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  security-analysis:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: BevorAI Security Scan
+      uses: bevor-protocol/bevor-action@v1
+      with:
+        api-key: ${{ secrets.BEVOR_API_KEY }}
+        scan-path: './contracts'
+        fail-on-severity: 'high'
+        output-format: 'sarif'
+        
+    - name: Upload results to GitHub Security
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: bevor-results.sarif
+```
+
+**2. Configure Secrets**
+1. Go to your repository Settings → Secrets and Variables → Actions
+2. Add `BEVOR_API_KEY` with your API key from [app.bevor.io](https://app.bevor.io)
+
+### Advanced Configuration
+
+**Comprehensive Security Pipeline**
+```yaml
+name: Comprehensive Security Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  bevor-analysis:
+    runs-on: ubuntu-latest
+    outputs:
+      security-score: ${{ steps.bevor.outputs.security-score }}
+      critical-count: ${{ steps.bevor.outputs.critical-count }}
+      
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Full history for diff analysis
+        
+    - name: BevorAI Comprehensive Scan
+      id: bevor
+      uses: bevor-protocol/bevor-action@v1
+      with:
+        api-key: ${{ secrets.BEVOR_API_KEY }}
+        config-file: '.bevor/config.yml'
+        scan-mode: 'comprehensive'
+        include-gas-analysis: true
+        include-economic-analysis: true
+        diff-analysis: true  # Only analyze changed files
+        
+    - name: Generate Security Report
+      run: |
+        bevor report generate \
+          --format markdown \
+          --output security-report.md \
+          --include-charts
+          
+    - name: Comment PR with Results
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const report = fs.readFileSync('security-report.md', 'utf8');
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: `## 🛡️ BevorAI Security Analysis\n\n${report}`
+          });
+
+  security-gate:
+    needs: bevor-analysis
+    runs-on: ubuntu-latest
+    if: needs.bevor-analysis.outputs.critical-count > 0
+    
+    steps:
+    - name: Security Gate Failure
+      run: |
+        echo "❌ Security gate failed: ${{ needs.bevor-analysis.outputs.critical-count }} critical vulnerabilities found"
+        echo "Please review and fix critical security issues before merging"
+        exit 1
+```
+
+### Security Gate Configuration
+
+**Custom Security Policies**
+```yaml
+# .bevor/config.yml
+security_policy:
+  fail_on:
+    critical: true
+    high: true
+    medium: false
+    
+  allow_exceptions:
+    - vulnerability_id: "BEVOR-001"
+      reason: "Accepted risk - documented in security review"
+      expiry: "2024-12-31"
+      
+  required_checks:
+    - reentrancy_analysis
+    - access_control_review
+    - gas_optimization
+    - economic_security
+    
+  custom_rules:
+    - name: "require_multisig_admin"
+      severity: "high"
+      pattern: "onlyOwner modifier without multisig"
+```
+
+## GitLab CI Integration
+
+### Basic Pipeline
+
+**.gitlab-ci.yml Configuration**
+```yaml
+stages:
+  - security
+  - test
+  - deploy
+
+bevor-security:
+  stage: security
+  image: bevor/ci-scanner:latest
+  
+  variables:
+    BEVOR_API_KEY: $BEVOR_API_KEY
+    SCAN_PATH: "./contracts"
+    
+  script:
+    - bevor scan $SCAN_PATH --output gitlab-security-report.json
+    
+  artifacts:
+    reports:
+      security: gitlab-security-report.json
+    expire_in: 1 week
+    
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
+```
+
+### Advanced GitLab Features
+
+**Merge Request Integration**
+```yaml
+bevor-mr-analysis:
+  stage: security
+  image: bevor/ci-scanner:latest
+  
+  script:
+    - |
+      bevor scan ./contracts \
+        --baseline $CI_MERGE_REQUEST_TARGET_BRANCH_SHA \
+        --current $CI_COMMIT_SHA \
+        --output-format gitlab-mr \
+        --post-to-mr
+        
+  only:
+    - merge_requests
+    
+  variables:
+    GITLAB_TOKEN: $GITLAB_TOKEN
+    BEVOR_API_KEY: $BEVOR_API_KEY
+```
+
+## Jenkins Integration
+
+### Pipeline Configuration
+
+**Jenkinsfile Example**
+```groovy
+pipeline {
+    agent any
+    
+    environment {
+        BEVOR_API_KEY = credentials('bevor-api-key')
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        
+        stage('Security Analysis') {
+            steps {
+                script {
+                    def scanResult = sh(
+                        script: '''
+                            bevor scan ./contracts \
+                                --api-key $BEVOR_API_KEY \
+                                --output json \
+                                --fail-on critical,high
+                        ''',
+                        returnStatus: true
+                    )
+                    
+                    if (scanResult != 0) {
+                        currentBuild.result = 'FAILURE'
+                        error('Security vulnerabilities found')
+                    }
+                }
+            }
+            
+            post {
+                always {
+                    archiveArtifacts artifacts: 'bevor-report.*', fingerprint: true
+                    publishHTML([
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: '.',
+                        reportFiles: 'bevor-report.html',
+                        reportName: 'BevorAI Security Report'
+                    ])
+                }
+            }
+        }
+    }
+}
+```
+
+## CircleCI Integration
+
+### Configuration
+
+**.circleci/config.yml**
+```yaml
+version: 2.1
+
+orbs:
+  bevor: bevor/security-analysis@1.0
+
+workflows:
+  security-pipeline:
+    jobs:
+      - bevor/security-scan:
+          api-key-var: BEVOR_API_KEY
+          scan-path: "./contracts"
+          fail-on-severity: "high"
+          generate-report: true
+          
+      - deploy:
+          requires:
+            - bevor/security-scan
+          filters:
+            branches:
+              only: main
+```
+
+## Custom Webhook Integration
+
+### Webhook Setup
+
+**Generic CI System Integration**
+```bash
+#!/bin/bash
+# custom-security-check.sh
+
+# Run BevorAI analysis
+RESULT=$(bevor scan ./contracts --json --api-key $BEVOR_API_KEY)
+CRITICAL_COUNT=$(echo $RESULT | jq '.summary.critical_count')
+
+# Send results to webhook
+curl -X POST $WEBHOOK_URL \
+  -H "Content-Type: application/json" \
+  -d "{
+    \"repository\": \"$CI_REPO_NAME\",
+    \"commit\": \"$CI_COMMIT_SHA\",
+    \"branch\": \"$CI_BRANCH\",
+    \"security_score\": $(echo $RESULT | jq '.summary.security_score'),
+    \"critical_vulnerabilities\": $CRITICAL_COUNT,
+    \"report_url\": \"$CI_BUILD_URL/artifacts/bevor-report.html\"
+  }"
+
+# Fail build if critical vulnerabilities found
+if [ $CRITICAL_COUNT -gt 0 ]; then
+  echo "❌ Critical security vulnerabilities found: $CRITICAL_COUNT"
+  exit 1
+fi
+```
+
+## Deployment Integration
+
+### Pre-Deployment Validation
+
+**Mainnet Deployment Gate**
+```yaml
+deploy-mainnet:
+  stage: deploy
+  script:
+    - |
+      # Final security validation before mainnet
+      bevor validate-deployment \
+        --contracts ./contracts \
+        --network mainnet \
+        --economic-analysis \
+        --formal-verification \
+        --require-passing-score 95
+        
+    - |
+      # Deploy only if validation passes
+      if [ $? -eq 0 ]; then
+        npm run deploy:mainnet
+      else
+        echo "❌ Deployment blocked by security validation"
+        exit 1
+      fi
+      
+  only:
+    - main
+    
+  when: manual  # Require manual approval for mainnet
+```
+
+### Post-Deployment Monitoring
+
+**Automated Monitoring Setup**
+```bash
+# Configure post-deployment monitoring
+bevor monitor setup \
+  --contract $DEPLOYED_CONTRACT_ADDRESS \
+  --network $DEPLOYMENT_NETWORK \
+  --alerts critical,high \
+  --webhook $MONITORING_WEBHOOK \
+  --start-monitoring
+```
+
+## Reporting and Analytics
+
+### Team Dashboards
+
+**Security Metrics Tracking**
+- Track security score trends over time
+- Monitor vulnerability detection rates
+- Measure time-to-fix for security issues
+- Compare security posture across projects
+
+**Integration with Project Management**
+```javascript
+// Jira integration example
+const jiraIntegration = {
+  webhook: process.env.JIRA_WEBHOOK,
+  createIssue: (vulnerability) => ({
+    project: "SEC",
+    issueType: "Security Vulnerability",
+    summary: `${vulnerability.severity}: ${vulnerability.title}`,
+    description: vulnerability.description,
+    priority: vulnerability.severity,
+    labels: ["security", "bevor-ai", vulnerability.type]
+  })
+};
+```
+
+### Compliance Reporting
+
+**Automated Compliance Reports**
+- Generate SOC 2 security documentation
+- Create audit trail documentation
+- Track security review completion
+- Maintain compliance evidence
+
+## Best Practices
+
+### Pipeline Security
+
+1. **Secure API Key Management**
+   - Use encrypted secrets management
+   - Rotate API keys regularly
+   - Limit key permissions to minimum required
+   - Monitor key usage and access
+
+2. **Fail-Fast Approach**
+   - Fail builds immediately on critical vulnerabilities
+   - Provide clear error messages and remediation guidance
+   - Block deployments until security issues are resolved
+   - Maintain security gates even under time pressure
+
+3. **Comprehensive Coverage**
+   - Scan all smart contract files
+   - Include test files in security analysis
+   - Analyze deployment scripts and configurations
+   - Review upgrade and migration scripts
+
+### Team Coordination
+
+#### Security Champions Program
+- Designate security champions in each team
+- Provide advanced training on BevorAI features
+- Create security review rotation schedules
+- Establish security incident response procedures
+
+#### Continuous Improvement
+- Regularly review and update security policies
+- Analyze trends in vulnerability detection
+- Share learnings across teams and projects
+- Participate in security community discussions
+
+## Troubleshooting
+
+### Common CI/CD Issues
+
+#### Authentication Problems
+```bash
+# Test API key validity
+bevor auth test --api-key $BEVOR_API_KEY
+
+# Check key permissions
+bevor auth permissions --api-key $BEVOR_API_KEY
+```
+
+#### Performance Issues
+```bash
+# Optimize for CI environment
+bevor scan ./contracts \
+  --ci-mode \
+  --timeout 300s \
+  --parallel-analysis \
+  --cache-enabled
+```
+
+#### Integration Failures
+- Verify webhook endpoints are accessible
+- Check network connectivity and firewalls
+- Validate CI environment variables
+- Review BevorAI service status
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Testnet Security Checks" icon="flask" href="/developers/testnet-security">
+    Validate security on testnets before mainnet
+  </Card>
+  <Card title="Mainnet Monitoring" icon="globe" href="/developers/mainnet-monitoring">
+    Set up continuous security monitoring
+  </Card>
+</CardGroup>

@@ -1,0 +1,348 @@
+---
+title: 'FAQ'
+description: 'Common questions about setup, integrations, and capabilities'
+---
+
+# Frequently Asked Questions
+
+Find answers to common questions about BevorAI setup, integrations, capabilities, and usage.
+
+## Getting Started
+
+### What is BevorAI?
+
+BevorAI is an AI-powered security auditing platform that provides comprehensive security analysis for smart contracts, protocols, and blockchain applications. It offers real-time vulnerability detection, economic security analysis, and automated monitoring across major blockchain networks.
+
+### How do I get started with BevorAI?
+
+1. **Create an Account**: Visit [app.bevor.io](https://app.bevor.io) and sign up
+2. **Get Your API Key**: Generate an API key from your dashboard
+3. **Choose Integration**: Select from MCP (IDE), Terminal, CI/CD, or direct API integration
+4. **Run First Analysis**: Upload a contract or connect your repository for analysis
+
+Follow our [Quickstart Guide](/getting-started/quickstart) for detailed steps.
+
+### Is BevorAI free to use?
+
+BevorAI offers a free tier with basic analysis capabilities. Premium features, advanced analysis, and higher usage limits are available through paid plans. Contributors who label security data and participate in governance can earn BEVOR tokens for additional features.
+
+### What programming languages does BevorAI support?
+
+**Primary Support:**
+- **Solidity** - Comprehensive analysis with all features
+- **Vyper** - Full smart contract security analysis  
+- **Rust** - Substrate and other Rust-based chains
+- **Move** - Aptos and Sui blockchain analysis
+
+**Additional Support:**
+- **JavaScript/TypeScript** - For off-chain components
+- **Python** - Security script analysis
+- **Go** - Blockchain infrastructure analysis
+
+## Technical Questions
+
+### How accurate is BevorAI's analysis?
+
+BevorAI achieves high accuracy through:
+- **95%+ accuracy** on known vulnerability patterns
+- **<2% false positive rate** for critical vulnerabilities
+- **Continuous learning** from expert feedback and new data
+- **Multi-agent validation** for complex analysis
+
+Accuracy varies by vulnerability type and contract complexity. See our [accuracy benchmarks](https://docs.bevor.io/benchmarks) for detailed metrics.
+
+### Can BevorAI analyze my private code?
+
+Yes, BevorAI supports private code analysis with strong security guarantees:
+- **End-to-end encryption** for all code transmissions
+- **No permanent storage** of your proprietary code
+- **On-premises deployment** available for enterprise customers
+- **Compliance** with SOC 2, GDPR, and other security standards
+
+### What blockchain networks are supported?
+
+**Mainnet Support:**
+- Ethereum, Polygon, Arbitrum, Optimism, Base
+- Avalanche, BNB Smart Chain, Fantom
+- Cosmos ecosystem chains
+- Substrate-based chains
+
+**Testnet Support:**
+- All major testnets for supported mainnets
+- Custom testnet integration available
+
+### How does BevorAI compare to other security tools?
+
+| Feature | BevorAI | Traditional Tools |
+|---------|---------|-------------------|
+| **AI-Powered Analysis** | ✅ Advanced AI models | ❌ Rule-based only |
+| **Real-Time Integration** | ✅ IDE, Terminal, CI/CD | ⚠️ Limited integration |
+| **Economic Analysis** | ✅ Full economic modeling | ❌ Technical only |
+| **Multi-Agent Coordination** | ✅ Coordinated analysis | ❌ Single-tool analysis |
+| **Continuous Learning** | ✅ Improves over time | ❌ Static rule sets |
+| **Cross-Protocol Analysis** | ✅ Ecosystem-wide insights | ⚠️ Contract-focused only |
+
+## Integration Questions
+
+### How do I integrate BevorAI with my IDE?
+
+**For Cursor:**
+1. Install the BevorAI extension from the marketplace
+2. Configure your API key in extension settings
+3. Enable real-time analysis features
+4. Start coding with security assistance
+
+**For Windsurf:**
+1. Add BevorAI MCP server to configuration
+2. Configure API key in environment variables
+3. Enable BevorAI features in Windsurf settings
+4. Access security analysis through command palette
+
+See our [MCP Integration Guide](/auditors/mcp-integrations) for detailed setup instructions.
+
+### Can I integrate BevorAI into my CI/CD pipeline?
+
+Yes! BevorAI provides native integrations for:
+- **GitHub Actions** - Official action available in marketplace
+- **GitLab CI** - Docker image and pipeline templates
+- **Jenkins** - Plugin and pipeline scripts
+- **CircleCI** - Orb for easy integration
+- **Custom Webhooks** - For other CI/CD systems
+
+See our [CI/CD Integration Guide](/developers/cicd-integration) for setup instructions.
+
+### How do I set up automated monitoring for deployed contracts?
+
+```bash
+# Set up continuous monitoring
+bevor monitor setup \
+  --contract 0x1234...abcd \
+  --network ethereum \
+  --alerts critical,high \
+  --webhook https://your-webhook.com/alerts
+
+# Configure alert preferences
+bevor monitor configure \
+  --contract 0x1234...abcd \
+  --email your@email.com \
+  --slack-webhook https://hooks.slack.com/your-webhook \
+  --phone +1234567890  # For critical alerts
+```
+
+See our [Mainnet Monitoring Guide](/developers/mainnet-monitoring) for comprehensive setup.
+
+## Security and Privacy
+
+### How secure is my code when using BevorAI?
+
+**Security Measures:**
+- **Encryption**: All data encrypted in transit and at rest
+- **No Persistent Storage**: Code analyzed and immediately discarded
+- **Access Controls**: Strict API key and authentication requirements
+- **Audit Trail**: Complete logging of all access and analysis
+- **Compliance**: SOC 2 Type II, GDPR, and other security certifications
+
+### Can I use BevorAI for confidential projects?
+
+Yes, several options for confidential projects:
+- **Private Analysis**: Code never leaves your environment
+- **On-Premises Deployment**: Complete control over data and analysis
+- **Air-Gapped Analysis**: Offline analysis capabilities
+- **Custom Agreements**: Enterprise NDAs and additional security measures
+
+### What data does BevorAI collect?
+
+**Collected Data:**
+- Security analysis results (anonymized)
+- Usage patterns and performance metrics
+- Error logs and debugging information
+- User feedback and improvement suggestions
+
+**Not Collected:**
+- Your source code (unless explicitly shared for labeling)
+- Private keys or sensitive credentials
+- Business logic or proprietary algorithms
+- Personal information beyond account basics
+
+## Usage and Billing
+
+### How is usage calculated and billed?
+
+**Usage Metrics:**
+- **Analysis Requests**: Per contract or file analyzed
+- **Monitoring Time**: Hours of continuous monitoring
+- **API Calls**: Number of API requests made
+- **Premium Features**: Access to advanced capabilities
+
+**Billing Structure:**
+- **Free Tier**: Limited analysis and basic features
+- **Pro Tier**: Higher limits and premium features
+- **Enterprise Tier**: Unlimited usage and custom features
+- **Pay-as-you-go**: Flexible pricing for variable usage
+
+### Can I get a discount for open source projects?
+
+Yes! BevorAI provides:
+- **50% discount** for verified open source projects
+- **Free analysis** for educational and research projects
+- **Community credits** for projects that contribute to security research
+- **Grant programs** for high-impact security tools
+
+Apply for open source benefits at [opensource@bevor.io](mailto:opensource@bevor.io).
+
+### What happens if I exceed my usage limits?
+
+- **Soft Limits**: Receive warnings as you approach limits
+- **Grace Period**: Brief grace period for accidental overages
+- **Automatic Upgrade**: Option to automatically upgrade plans
+- **Usage Optimization**: Recommendations to optimize usage patterns
+
+## Advanced Features
+
+### Can I create custom security rules?
+
+Yes, BevorAI supports custom security rules through:
+- **Custom Agent Development**: Build specialized security agents
+- **Rule Configuration**: Define protocol-specific security requirements
+- **Policy Templates**: Use and modify existing security policies
+- **Community Rules**: Share and use community-developed rules
+
+See our [Custom Agents Guide](/developers/custom-agents) for development instructions.
+
+### How does multi-agent analysis work?
+
+BevorAI coordinates multiple specialized agents:
+1. **Agent Selection**: Choose appropriate agents for your analysis type
+2. **Parallel Analysis**: Multiple agents analyze simultaneously
+3. **Result Correlation**: Combine and validate findings across agents
+4. **Consensus Building**: Resolve conflicts and prioritize findings
+5. **Unified Reporting**: Present coherent, actionable results
+
+### Can I integrate BevorAI with my existing security tools?
+
+Yes, BevorAI provides integrations with:
+- **SIEM Systems**: Splunk, ELK Stack, QRadar
+- **Incident Response**: PagerDuty, Opsgenie, VictorOps
+- **Communication**: Slack, Discord, Microsoft Teams
+- **Project Management**: Jira, Linear, GitHub Issues
+- **Custom Webhooks**: For any system with webhook support
+
+## Troubleshooting
+
+### My analysis is taking too long. How can I speed it up?
+
+**Optimization Strategies:**
+- **Focus Analysis**: Use `--focus` flag for specific vulnerability types
+- **Incremental Analysis**: Analyze only changed files with `--diff` mode
+- **Parallel Processing**: Enable parallel analysis for multiple files
+- **Performance Mode**: Use `--fast` mode for quicker, less comprehensive analysis
+
+```bash
+# Fast analysis example
+bevor scan ./contracts \
+  --fast \
+  --focus reentrancy,access-control \
+  --parallel \
+  --timeout 60s
+```
+
+### I'm getting false positives. How can I improve accuracy?
+
+**Accuracy Improvement:**
+- **Provide Context**: Include more project context and documentation
+- **Use Custom Rules**: Configure protocol-specific security rules
+- **Label Findings**: Mark false positives to improve future analysis
+- **Expert Mode**: Use expert mode for more nuanced analysis
+
+### The API is returning errors. What should I check?
+
+**Common Issues:**
+1. **API Key**: Verify key is valid and has sufficient permissions
+2. **Rate Limits**: Check if you've exceeded rate limits
+3. **Network**: Verify connectivity to api.bevor.io
+4. **Request Format**: Ensure request follows API specification
+
+```bash
+# Test API connectivity
+curl -H "Authorization: Bearer YOUR_API_KEY" \
+     "https://api.bevor.io/v1/health"
+
+# Check API key status
+bevor auth status --api-key YOUR_API_KEY
+```
+
+## Support and Community
+
+### How can I get help?
+
+**Support Channels:**
+- **Documentation**: Comprehensive guides at [docs.bevor.io](https://docs.bevor.io)
+- **Community Discord**: [discord.gg/bevor](https://discord.gg/bevor) for peer support
+- **Email Support**: [support@bevor.io](mailto:support@bevor.io) for technical issues
+- **Enterprise Support**: Priority support for enterprise customers
+
+**Response Times:**
+- **Community**: Usually within hours during business hours
+- **Email Support**: 24-48 hours for technical issues
+- **Enterprise**: <4 hours for critical issues, <24 hours for standard issues
+
+### How can I contribute to BevorAI?
+
+**Contribution Opportunities:**
+- **Security Data Labeling**: Improve AI models with expert knowledge
+- **Open Source Development**: Contribute to BevorAI tools and integrations
+- **Agent Development**: Build specialized security agents
+- **Documentation**: Improve guides and examples
+- **Community Support**: Help other users in Discord
+
+### Where can I stay updated on BevorAI developments?
+
+- **Blog**: [blog.bevor.io](https://blog.bevor.io) for major announcements
+- **Twitter**: [@BevorProtocol](https://twitter.com/BevorProtocol) for quick updates
+- **Discord**: [discord.gg/bevor](https://discord.gg/bevor) for community discussions
+- **GitHub**: [github.com/Bevor-Protocol](https://github.com/Bevor-Protocol) for development updates
+- **Newsletter**: Subscribe at [bevor.io/newsletter](https://bevor.io/newsletter)
+
+## Enterprise Questions
+
+### Do you offer on-premises deployment?
+
+On-premises deployment is coming soon for enterprise customers. This will include:
+- Complete air-gapped deployment
+- Custom security configurations
+- Dedicated support and training
+- Integration with enterprise security infrastructure
+
+Contact [enterprise@bevor.io](mailto:enterprise@bevor.io) for early access and custom deployment options.
+
+### Can BevorAI integrate with our existing security infrastructure?
+
+Yes, BevorAI offers extensive enterprise integrations:
+- **SIEM Integration**: Direct integration with major SIEM platforms
+- **Identity Management**: SSO and enterprise authentication
+- **Compliance**: SOC 2, ISO 27001, and other compliance frameworks
+- **Custom Development**: Professional services for specialized integrations
+
+### What SLAs do you offer?
+
+**Enterprise SLAs:**
+- **99.9% Uptime**: For critical security monitoring
+- **<100ms Response Time**: For real-time analysis APIs
+- **<4 Hour Response**: For critical support issues
+- **Custom SLAs**: Available for specialized requirements
+
+## Still Have Questions?
+
+Can't find what you're looking for? We're here to help!
+
+<CardGroup cols={3}>
+  <Card title="Join Discord" icon="discord" href="https://discord.gg/bevor">
+    Get help from the community
+  </Card>
+  <Card title="Email Support" icon="envelope" href="mailto:support@bevor.io">
+    Contact our support team
+  </Card>
+  <Card title="Schedule Demo" icon="calendar" href="https://calendly.com/bevor-demo">
+    Book a personalized demo
+  </Card>
+</CardGroup>

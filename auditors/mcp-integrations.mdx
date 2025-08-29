@@ -1,0 +1,244 @@
+---
+title: 'Using MCP Integrations'
+description: 'Cursor, Windsurf, and other supported environments for real-time security analysis'
+---
+
+# Using MCP Integrations
+
+Model Context Protocol (MCP) integrations bring BevorAI's security analysis directly into your development environment. Get real-time vulnerability detection, security suggestions, and expert guidance as you write and review code.
+
+## Supported Environments
+
+### Cursor IDE
+
+**Installation**
+1. Open Cursor and go to Extensions
+2. Search for "BevorAI" and install the official extension
+3. Restart Cursor to activate the extension
+
+**Configuration**
+1. Open Command Palette (`Cmd/Ctrl + Shift + P`)
+2. Search for "BevorAI: Configure API Key"
+3. Enter your API key from [app.bevor.io](https://app.bevor.io)
+4. Select your preferred analysis modes
+
+**Features**
+- Real-time vulnerability highlighting
+- Inline security suggestions
+- Code completion with security awareness
+- Quick fixes for common vulnerabilities
+
+### Windsurf IDE
+
+**Installation**
+1. Navigate to the MCP settings in Windsurf
+2. Add BevorAI as a new MCP server
+3. Configure the connection endpoint: `https://mcp.bevor.io`
+
+**Configuration**
+```json
+{
+  "mcpServers": {
+    "bevor": {
+      "command": "npx",
+      "args": ["@bevor/mcp-server"],
+      "env": {
+        "BEVOR_API_KEY": "your-api-key-here"
+      }
+    }
+  }
+}
+```
+
+**Features**
+- Contextual security analysis
+- Interactive vulnerability explanations
+- Automated security documentation
+- Integration with Windsurf's AI features
+
+### VS Code
+
+**Installation**
+1. Install the BevorAI extension from the VS Code marketplace
+2. Reload VS Code to activate the extension
+
+**Configuration**
+1. Open Settings (`Cmd/Ctrl + ,`)
+2. Search for "BevorAI"
+3. Configure your API key and preferences
+4. Enable desired analysis features
+
+**Features**
+- Security linting integration
+- Problem panel vulnerability reporting
+- Hover tooltips for security insights
+- Command palette security actions
+
+## Real-Time Analysis Features
+
+### Vulnerability Detection
+
+**Automatic Scanning**
+- Files are analyzed as you type
+- Vulnerabilities highlighted with severity indicators
+- Instant feedback on security issues
+- Background analysis doesn't interrupt your workflow
+
+**Supported Vulnerability Types**
+- Reentrancy attacks
+- Access control issues
+- Integer overflow/underflow
+- Front-running vulnerabilities
+- Gas optimization opportunities
+- Economic attack vectors
+
+### Interactive Assistance
+
+**Security Explanations**
+- Hover over highlighted code for detailed explanations
+- Click-through to comprehensive vulnerability documentation
+- Links to similar cases and remediation examples
+- References to security best practices
+
+**Code Suggestions**
+- Automatic fix suggestions for common vulnerabilities
+- Security-aware code completion
+- Best practice recommendations
+- Gas optimization hints
+
+## Advanced Configuration
+
+### Analysis Modes
+
+#### Real-Time Mode
+- Continuous analysis as you type
+- Immediate feedback on security issues
+- Lightweight performance impact
+- Best for active development
+
+#### On-Demand Mode
+- Manual trigger for comprehensive analysis
+- Deep scanning with full context
+- Detailed reporting and documentation
+- Best for audit reviews
+
+#### Hybrid Mode
+- Real-time for critical vulnerabilities
+- On-demand for comprehensive analysis
+- Configurable sensitivity levels
+- Balanced performance and coverage
+
+### Customization Options
+
+#### Severity Filtering
+```json
+{
+  "bevor.analysis.severityFilter": {
+    "critical": true,
+    "high": true,
+    "medium": true,
+    "low": false,
+    "info": false
+  }
+}
+```
+
+#### Vulnerability Types
+```json
+{
+  "bevor.analysis.vulnerabilityTypes": {
+    "reentrancy": true,
+    "accessControl": true,
+    "arithmetic": true,
+    "economic": true,
+    "gasOptimization": false
+  }
+}
+```
+
+#### Performance Settings
+```json
+{
+  "bevor.analysis.performance": {
+    "enableRealTime": true,
+    "analysisDelay": 500,
+    "maxFileSize": "1MB",
+    "enableBackgroundAnalysis": true
+  }
+}
+```
+
+## Workflow Integration
+
+### Code Review Process
+
+1. **Pre-Review Setup**
+   - Enable BevorAI analysis on the target branch
+   - Configure team-specific security policies
+   - Set up automated reporting
+
+2. **During Review**
+   - Use inline security comments
+   - Reference BevorAI findings in review comments
+   - Export security reports for documentation
+   - Collaborate on remediation strategies
+
+3. **Post-Review**
+   - Track remediation progress
+   - Update security baselines
+   - Document lessons learned
+   - Share findings with the team
+
+### Audit Workflows
+
+#### Individual Auditing
+- Use real-time analysis for initial code review
+- Switch to comprehensive mode for detailed analysis
+- Export findings for client reporting
+- Track audit progress and coverage
+
+#### Team Auditing
+- Share configuration settings across team members
+- Coordinate on finding validation and labeling
+- Use collaborative features for discussion
+- Maintain consistent analysis standards
+
+## Troubleshooting
+
+### Common Issues
+
+#### API Key Problems
+- Verify key is correctly configured
+- Check key permissions and quotas
+- Ensure network connectivity to BevorAI services
+- Refresh key if authentication fails
+
+#### Performance Issues
+- Adjust analysis sensitivity settings
+- Disable real-time mode for large files
+- Check system resources and network latency
+- Update to latest extension version
+
+#### Analysis Accuracy
+- Verify you're using the latest models
+- Check for language-specific configuration
+- Review custom rule settings
+- Report persistent issues to support
+
+### Getting Help
+
+- **Documentation**: [docs.bevor.io](https://docs.bevor.io)
+- **Community**: [Discord](https://discord.gg/bevor)
+- **Support**: [contact@bevor.io](mailto:contact@bevor.io)
+- **GitHub**: Report issues at [github.com/Bevor-Protocol](https://github.com/Bevor-Protocol)
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Terminal Interface" icon="terminal" href="/auditors/terminal">
+    Explore the web-based security analysis terminal
+  </Card>
+  <Card title="Post-Deployment Checks" icon="shield-check" href="/auditors/post-deployment">
+    Learn about scanning deployed contracts
+  </Card>
+</CardGroup>

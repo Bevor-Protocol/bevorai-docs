@@ -1,11 +1,11 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "BevorAI Documentation",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#3B82F6",
+    "light": "#60A5FA", 
+    "dark": "#1E40AF"
   },
   "favicon": "/favicon.svg",
   "navigation": {
@@ -14,79 +14,134 @@
         "tab": "Guides",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Getting Started",
+            "icon": "rocket",
             "pages": [
-              "index",
-              "quickstart",
-              "development"
+              "getting-started/introduction",
+              "getting-started/quickstart",
+              "getting-started/integrations"
             ]
           },
           {
-            "group": "Customization",
+            "group": "For Security Auditors", 
+            "icon": "shield",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
+              "auditors/overview",
+              {
+                "group": "Improve BevorAI",
+                "icon": "chart-line",
+                "pages": [
+                  "auditors/data-labeling",
+                  "auditors/labeling-best-practices"
+                ]
+              },
+              {
+                "group": "Accelerate Your Audits",
+                "icon": "bolt",
+                "pages": [
+                  "auditors/mcp-integrations",
+                  "auditors/terminal",
+                  "auditors/post-deployment"
+                ]
+              }
             ]
           },
           {
-            "group": "Writing content",
+            "group": "For Developers & Builders",
+            "icon": "code",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
+              "developers/overview",
+              {
+                "group": "During Development & Pre-Deployment",
+                "icon": "wrench",
+                "pages": [
+                  "developers/mcp-secure-coding",
+                  "developers/cicd-integration", 
+                  "developers/testnet-security"
+                ]
+              },
+              {
+                "group": "Post-Deployment",
+                "icon": "globe",
+                "pages": [
+                  "developers/mainnet-monitoring",
+                  "developers/network-monitoring"
+                ]
+              },
+              {
+                "group": "Building on BevorAI",
+                "icon": "hammer",
+                "pages": [
+                  "developers/custom-agents",
+                  "developers/protocol-integration"
+                ]
+              }
             ]
           },
           {
-            "group": "AI tools",
+            "group": "Resources",
+            "icon": "book",
             "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "token",
+              "faq",
+              "glossary"
             ]
           }
         ]
       },
       {
-        "tab": "API reference",
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "api-reference/introduction"
+            ]
+          }
+        ],
         "openapi": "https://api.bevor.io/openapi.json"
       }
     ],
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
+          "anchor": "Terminal",
+          "href": "https://app.bevor.io",
+          "icon": "terminal"
         },
         {
-          "anchor": "Community",
-          "href": "https://mintlify.com/community",
-          "icon": "slack"
+          "anchor": "API Docs",
+          "href": "https://api.bevor.io/docs",
+          "icon": "code"
         },
         {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
+          "anchor": "GitHub",
+          "href": "https://github.com/Bevor-Protocol",
+          "icon": "github"
+        },
+        {
+          "anchor": "Discord",
+          "href": "https://discord.gg/bevor",
+          "icon": "discord"
         }
       ]
     }
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/images/Bevor_Logo.png",
+    "dark": "/images/Bevor_Logo.png"
   },
   "navbar": {
     "links": [
       {
         "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "href": "mailto:contact@bevor.io"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "Terminal",
+      "href": "https://app.bevor.io"
     }
   },
   "contextual": {
@@ -103,9 +158,9 @@
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "x": "https://x.com/BevorProtocol",
+      "github": "https://github.com/Bevor-Protocol",
+      "discord": "https://discord.gg/bevor"
     }
   }
 }

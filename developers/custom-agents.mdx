@@ -1,0 +1,957 @@
+---
+title: 'Creating Agents & Tools'
+description: 'Building custom security agents and workflows'
+---
+
+# Creating Agents & Tools
+
+Build specialized security agents and custom workflows tailored to your specific protocol needs. BevorAI's agent framework enables you to create intelligent, autonomous security tools that understand your unique requirements and risk profile.
+
+## Agent Framework Overview
+
+### Agent Architecture
+
+**Core Components**
+- **Perception Layer**: Data ingestion and preprocessing
+- **Analysis Engine**: AI-powered security analysis
+- **Decision Layer**: Risk assessment and prioritization  
+- **Action Layer**: Automated responses and recommendations
+- **Learning Layer**: Continuous improvement from feedback
+
+**Agent Types**
+- **Detection Agents**: Specialized vulnerability scanners
+- **Monitoring Agents**: Continuous surveillance and alerting
+- **Analysis Agents**: Deep-dive investigation and research
+- **Response Agents**: Automated incident response and remediation
+- **Learning Agents**: Pattern recognition and model improvement
+
+### Agent Development Kit
+
+**SDK Installation**
+```bash
+npm install @bevor/agent-sdk
+# or
+pip install bevor-agent-sdk
+# or  
+cargo add bevor-agent-sdk
+```
+
+**Basic Agent Structure**
+```typescript
+import { BevorAgent, SecurityAnalysis } from '@bevor/agent-sdk';
+
+class CustomSecurityAgent extends BevorAgent {
+  constructor(config: AgentConfig) {
+    super(config);
+    this.name = 'Custom Security Agent';
+    this.version = '1.0.0';
+    this.capabilities = ['vulnerability-detection', 'economic-analysis'];
+  }
+
+  async analyze(context: AnalysisContext): Promise<SecurityAnalysis> {
+    // Custom analysis logic
+    const findings = await this.performAnalysis(context);
+    return this.formatResults(findings);
+  }
+
+  async onVulnerabilityDetected(vulnerability: Vulnerability): Promise<void> {
+    // Custom response logic
+    await this.handleVulnerability(vulnerability);
+  }
+}
+```
+
+## Building Detection Agents
+
+### Vulnerability-Specific Agents
+
+**Reentrancy Detection Agent**
+```typescript
+class ReentrancyAgent extends BevorAgent {
+  async analyzeContract(contract: ContractCode): Promise<ReentrancyFindings> {
+    const callGraph = await this.buildCallGraph(contract);
+    const externalCalls = this.findExternalCalls(callGraph);
+    const stateChanges = this.analyzeStateChanges(contract);
+    
+    return this.detectReentrancyPatterns(externalCalls, stateChanges);
+  }
+
+  private async detectReentrancyPatterns(
+    calls: ExternalCall[], 
+    states: StateChange[]
+  ): Promise<ReentrancyFindings> {
+    // Custom reentrancy detection logic
+    const vulnerabilities = [];
+    
+    for (const call of calls) {
+      const postCallStates = states.filter(s => s.after(call));
+      if (postCallStates.some(s => s.affectsBalance())) {
+        vulnerabilities.push({
+          type: 'reentrancy',
+          severity: 'high',
+          location: call.location,
+          description: 'State change after external call',
+          remediation: 'Move state changes before external calls'
+        });
+      }
+    }
+    
+    return { vulnerabilities, confidence: 0.95 };
+  }
+}
+```
+
+**Economic Security Agent**
+```python
+from bevor_sdk import BevorAgent, EconomicAnalysis
+
+class EconomicSecurityAgent(BevorAgent):
+    def __init__(self):
+        super().__init__()
+        self.name = "Economic Security Agent"
+        self.specialization = "economic_attacks"
+    
+    async def analyze_economic_security(self, protocol_config):
+        # Analyze economic attack vectors
+        flash_loan_risks = await self.analyze_flash_loan_attacks(protocol_config)
+        arbitrage_risks = await self.analyze_arbitrage_exploitation(protocol_config)
+        governance_risks = await self.analyze_governance_economics(protocol_config)
+        
+        return EconomicAnalysis(
+            flash_loan_risks=flash_loan_risks,
+            arbitrage_risks=arbitrage_risks,
+            governance_risks=governance_risks,
+            overall_risk_score=self.calculate_risk_score()
+        )
+    
+    async def simulate_attack_scenarios(self, protocol, attack_budget):
+        scenarios = [
+            self.flash_loan_attack_scenario(protocol, attack_budget),
+            self.governance_attack_scenario(protocol, attack_budget),
+            self.oracle_manipulation_scenario(protocol, attack_budget)
+        ]
+        
+        results = []
+        for scenario in scenarios:
+            result = await self.run_simulation(scenario)
+            results.append(result)
+            
+        return self.analyze_simulation_results(results)
+```
+
+### Protocol-Specific Agents
+
+**DeFi Protocol Agent**
+```solidity
+// Smart contract agent for on-chain analysis
+pragma solidity ^0.8.19;
+
+import "@bevor/agent-contracts/BevorAnalysisAgent.sol";
+
+contract DeFiSecurityAgent is BevorAnalysisAgent {
+    struct DeFiRisks {
+        uint256 liquidationRisk;
+        uint256 oracleRisk; 
+        uint256 liquidityRisk;
+        uint256 governanceRisk;
+    }
+    
+    function analyzeDeFiProtocol(
+        address protocol,
+        bytes calldata config
+    ) external view returns (DeFiRisks memory) {
+        // On-chain analysis logic
+        DeFiRisks memory risks;
+        
+        risks.liquidationRisk = analyzeLiquidationMechanism(protocol);
+        risks.oracleRisk = analyzeOracleDependencies(protocol);
+        risks.liquidityRisk = analyzeLiquidityProvision(protocol);
+        risks.governanceRisk = analyzeGovernanceStructure(protocol);
+        
+        return risks;
+    }
+    
+    function generateRecommendations(
+        DeFiRisks memory risks
+    ) external pure returns (string[] memory) {
+        string[] memory recommendations = new string[](4);
+        
+        if (risks.liquidationRisk > LIQUIDATION_THRESHOLD) {
+            recommendations[0] = "Implement gradual liquidation mechanism";
+        }
+        
+        if (risks.oracleRisk > ORACLE_THRESHOLD) {
+            recommendations[1] = "Add oracle circuit breakers";
+        }
+        
+        // Additional recommendations...
+        
+        return recommendations;
+    }
+}
+```
+
+## Building Monitoring Agents
+
+### Real-Time Monitoring Agents
+
+**Transaction Monitoring Agent**
+```typescript
+class TransactionMonitorAgent extends BevorAgent {
+  private suspiciousPatterns: Map<string, SuspiciousPattern> = new Map();
+  
+  async onNewTransaction(tx: Transaction): Promise<void> {
+    const analysis = await this.analyzeTransaction(tx);
+    
+    if (analysis.isSuspicious) {
+      await this.handleSuspiciousTransaction(tx, analysis);
+    }
+    
+    if (analysis.isAttack) {
+      await this.triggerIncidentResponse(tx, analysis);
+    }
+    
+    // Learn from transaction patterns
+    await this.updatePatternDatabase(tx, analysis);
+  }
+  
+  private async analyzeTransaction(tx: Transaction): Promise<TxAnalysis> {
+    const patterns = [
+      await this.checkFlashLoanPattern(tx),
+      await this.checkReentrancyPattern(tx),
+      await this.checkFrontRunningPattern(tx),
+      await this.checkGovernanceAttackPattern(tx)
+    ];
+    
+    return this.combineAnalysis(patterns);
+  }
+  
+  private async handleSuspiciousTransaction(
+    tx: Transaction, 
+    analysis: TxAnalysis
+  ): Promise<void> {
+    // Create detailed analysis report
+    const report = await this.generateTransactionReport(tx, analysis);
+    
+    // Alert security team
+    await this.sendAlert({
+      severity: analysis.severity,
+      type: 'suspicious_transaction',
+      transaction: tx.hash,
+      analysis: report,
+      recommendations: analysis.recommendations
+    });
+    
+    // Update monitoring parameters if needed
+    if (analysis.confidence > 0.9) {
+      await this.updateMonitoringRules(analysis.pattern);
+    }
+  }
+}
+```
+
+### State Monitoring Agents
+
+**Contract State Agent**
+```python
+class ContractStateAgent(BevorAgent):
+    def __init__(self, contract_address, network):
+        super().__init__()
+        self.contract = contract_address
+        self.network = network
+        self.baseline_state = None
+        
+    async def monitor_state_changes(self):
+        while self.is_active:
+            current_state = await self.get_contract_state()
+            
+            if self.baseline_state:
+                changes = self.compare_states(self.baseline_state, current_state)
+                await self.analyze_state_changes(changes)
+            
+            self.baseline_state = current_state
+            await asyncio.sleep(self.monitoring_interval)
+    
+    async def analyze_state_changes(self, changes):
+        for change in changes:
+            risk_level = await self.assess_change_risk(change)
+            
+            if risk_level >= RiskLevel.HIGH:
+                await self.create_security_alert(change, risk_level)
+                
+            if risk_level >= RiskLevel.CRITICAL:
+                await self.trigger_emergency_response(change)
+    
+    async def assess_change_risk(self, change):
+        # Custom risk assessment logic
+        factors = [
+            self.analyze_change_magnitude(change),
+            self.check_authorization_pattern(change),
+            self.evaluate_economic_impact(change),
+            self.assess_timing_suspicion(change)
+        ]
+        
+        return self.calculate_composite_risk(factors)
+```
+
+## Building Analysis Agents
+
+### Deep Analysis Agents
+
+**Formal Verification Agent**
+```rust
+use bevor_sdk::{Agent, FormalVerification, VerificationResult};
+
+pub struct FormalVerificationAgent {
+    name: String,
+    verification_engine: VerificationEngine,
+}
+
+impl Agent for FormalVerificationAgent {
+    async fn analyze(&self, contract: &Contract) -> VerificationResult {
+        // Extract contract specifications
+        let specs = self.extract_specifications(contract).await?;
+        
+        // Generate formal properties
+        let properties = self.generate_properties(&specs).await?;
+        
+        // Run formal verification
+        let verification = self.verification_engine
+            .verify(contract, &properties)
+            .await?;
+            
+        // Analyze results and generate recommendations
+        let analysis = self.analyze_verification_results(&verification).await?;
+        
+        VerificationResult {
+            verified_properties: verification.verified,
+            failed_properties: verification.failed,
+            analysis: analysis,
+            confidence: self.calculate_confidence(&verification),
+            recommendations: self.generate_recommendations(&analysis)
+        }
+    }
+    
+    async fn generate_properties(&self, specs: &ContractSpecs) -> Vec<Property> {
+        let mut properties = Vec::new();
+        
+        // Generate invariant properties
+        for invariant in &specs.invariants {
+            properties.push(Property::Invariant(invariant.clone()));
+        }
+        
+        // Generate safety properties
+        for safety_condition in &specs.safety_conditions {
+            properties.push(Property::Safety(safety_condition.clone()));
+        }
+        
+        // Generate liveness properties
+        for liveness_condition in &specs.liveness_conditions {
+            properties.push(Property::Liveness(liveness_condition.clone()));
+        }
+        
+        properties
+    }
+}
+```
+
+### Research Agents
+
+**Vulnerability Research Agent**
+```typescript
+class VulnerabilityResearchAgent extends BevorAgent {
+  async researchNewVulnerabilities(): Promise<ResearchFindings> {
+    // Analyze recent security incidents
+    const incidents = await this.gatherRecentIncidents();
+    
+    // Extract patterns from incidents
+    const patterns = await this.extractAttackPatterns(incidents);
+    
+    // Generate new detection rules
+    const rules = await this.generateDetectionRules(patterns);
+    
+    // Validate rules against known datasets
+    const validation = await this.validateRules(rules);
+    
+    return {
+      newPatterns: patterns,
+      detectionRules: rules,
+      validation: validation,
+      confidence: this.calculateResearchConfidence(validation)
+    };
+  }
+  
+  async analyzeZeroDayVulnerabilities(): Promise<ZeroDayAnalysis> {
+    // Analyze contracts for unknown vulnerability patterns
+    const unknownPatterns = await this.findUnknownPatterns();
+    
+    // Cross-reference with security research
+    const researchCorrelation = await this.correlateWithResearch(unknownPatterns);
+    
+    // Generate hypotheses about potential vulnerabilities
+    const hypotheses = await this.generateVulnerabilityHypotheses(
+      unknownPatterns, 
+      researchCorrelation
+    );
+    
+    return {
+      potentialVulnerabilities: hypotheses,
+      researchAreas: this.identifyResearchAreas(hypotheses),
+      experimentalTests: this.generateExperimentalTests(hypotheses)
+    };
+  }
+}
+```
+
+## Agent Orchestration
+
+### Multi-Agent Coordination
+
+**Agent Coordination System**
+```typescript
+class AgentOrchestrator {
+  private agents: Map<string, BevorAgent> = new Map();
+  private coordinationRules: CoordinationRule[] = [];
+  
+  async orchestrateAnalysis(target: AnalysisTarget): Promise<OrchestrationResult> {
+    // Determine which agents are needed
+    const requiredAgents = this.selectAgents(target);
+    
+    // Create coordination plan
+    const plan = this.createCoordinationPlan(requiredAgents, target);
+    
+    // Execute coordinated analysis
+    const results = await this.executeCoordinatedAnalysis(plan);
+    
+    // Combine and prioritize findings
+    const combinedResults = this.combineResults(results);
+    
+    // Generate final recommendations
+    const recommendations = this.generateRecommendations(combinedResults);
+    
+    return {
+      findings: combinedResults,
+      recommendations: recommendations,
+      confidence: this.calculateOverallConfidence(results),
+      agentContributions: this.mapAgentContributions(results)
+    };
+  }
+  
+  private selectAgents(target: AnalysisTarget): BevorAgent[] {
+    const agents = [];
+    
+    // Always include core security agent
+    agents.push(this.agents.get('core-security'));
+    
+    // Add protocol-specific agents
+    if (target.type === 'defi') {
+      agents.push(this.agents.get('defi-specialist'));
+      agents.push(this.agents.get('economic-analysis'));
+    }
+    
+    // Add vulnerability-specific agents based on initial scan
+    const initialScan = this.quickScan(target);
+    if (initialScan.hasReentrancyRisk) {
+      agents.push(this.agents.get('reentrancy-specialist'));
+    }
+    
+    return agents;
+  }
+}
+```
+
+### Agent Communication
+
+**Inter-Agent Communication Protocol**
+```typescript
+interface AgentMessage {
+  from: string;
+  to: string;
+  type: 'finding' | 'question' | 'recommendation' | 'coordination';
+  payload: any;
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  timestamp: Date;
+}
+
+class AgentCommunicationHub {
+  async sendMessage(message: AgentMessage): Promise<void> {
+    // Route message to appropriate agent
+    const recipient = this.agents.get(message.to);
+    if (recipient) {
+      await recipient.receiveMessage(message);
+    }
+    
+    // Log for coordination analysis
+    await this.logCommunication(message);
+  }
+  
+  async broadcastFinding(finding: SecurityFinding): Promise<void> {
+    // Notify all relevant agents about new finding
+    const relevantAgents = this.findRelevantAgents(finding);
+    
+    for (const agent of relevantAgents) {
+      await agent.processFinding(finding);
+    }
+  }
+}
+```
+
+## Custom Workflow Creation
+
+### Workflow Definition
+
+**Security Workflow Configuration**
+```yaml
+# Custom security workflow
+workflow_name: "DeFi Protocol Security Analysis"
+version: "2.1.0"
+
+agents:
+  - name: "defi-specialist"
+    type: "analysis"
+    config: "./agents/defi-config.json"
+    
+  - name: "economic-analyzer" 
+    type: "economic"
+    config: "./agents/economic-config.json"
+    
+  - name: "governance-monitor"
+    type: "governance"
+    config: "./agents/governance-config.json"
+
+workflow:
+  phases:
+    - name: "initial-scan"
+      agents: ["defi-specialist"]
+      parallel: false
+      
+    - name: "deep-analysis"
+      agents: ["economic-analyzer", "governance-monitor"]
+      parallel: true
+      depends_on: ["initial-scan"]
+      
+    - name: "risk-assessment"
+      agents: ["risk-aggregator"]
+      depends_on: ["deep-analysis"]
+      
+  coordination_rules:
+    - if: "critical_vulnerability_found"
+      then: "escalate_immediately"
+      
+    - if: "economic_risk > threshold"
+      then: "trigger_economic_analysis"
+      
+  output:
+    format: "comprehensive_report"
+    include: ["findings", "recommendations", "risk_scores"]
+```
+
+### Workflow Execution Engine
+
+**Custom Workflow Runner**
+```typescript
+class WorkflowEngine {
+  async executeWorkflow(
+    workflowConfig: WorkflowConfig,
+    target: AnalysisTarget
+  ): Promise<WorkflowResult> {
+    const execution = new WorkflowExecution(workflowConfig, target);
+    
+    try {
+      // Initialize agents
+      await execution.initializeAgents();
+      
+      // Execute phases sequentially
+      for (const phase of workflowConfig.phases) {
+        const phaseResult = await this.executePhase(phase, execution);
+        execution.addPhaseResult(phase.name, phaseResult);
+        
+        // Check coordination rules
+        await this.applyCoordinationRules(
+          workflowConfig.coordination_rules,
+          execution
+        );
+      }
+      
+      // Generate final report
+      const report = await this.generateWorkflowReport(execution);
+      
+      return {
+        success: true,
+        report: report,
+        execution_time: execution.getDuration(),
+        agent_contributions: execution.getAgentContributions()
+      };
+      
+    } catch (error) {
+      return this.handleWorkflowError(error, execution);
+    }
+  }
+}
+```
+
+## Agent Training and Learning
+
+### Training Custom Agents
+
+**Agent Training Pipeline**
+```python
+from bevor_sdk import AgentTrainer, TrainingDataset
+
+class CustomAgentTrainer:
+    def __init__(self, agent_type: str):
+        self.trainer = AgentTrainer(agent_type)
+        self.dataset = TrainingDataset()
+    
+    async def train_agent(self, training_config):
+        # Load training data
+        labeled_data = await self.load_labeled_data(training_config.data_path)
+        
+        # Prepare training dataset
+        dataset = self.prepare_dataset(labeled_data)
+        
+        # Configure training parameters
+        training_params = {
+            'learning_rate': 0.001,
+            'batch_size': 32,
+            'epochs': 100,
+            'validation_split': 0.2,
+            'early_stopping': True
+        }
+        
+        # Train the agent
+        trained_agent = await self.trainer.train(
+            dataset=dataset,
+            parameters=training_params,
+            validation_callback=self.validation_callback
+        )
+        
+        # Evaluate performance
+        evaluation = await self.evaluate_agent(trained_agent)
+        
+        return {
+            'agent': trained_agent,
+            'performance': evaluation,
+            'training_metrics': self.trainer.get_metrics()
+        }
+    
+    async def continuous_learning(self, agent, feedback_stream):
+        async for feedback in feedback_stream:
+            # Update agent with new feedback
+            await agent.incorporate_feedback(feedback)
+            
+            # Periodic retraining
+            if feedback.requires_retraining():
+                await self.incremental_training(agent, feedback)
+```
+
+### Agent Performance Optimization
+
+**Performance Monitoring**
+```typescript
+class AgentPerformanceMonitor {
+  async monitorAgent(agent: BevorAgent): Promise<PerformanceMetrics> {
+    const metrics = {
+      accuracy: await this.measureAccuracy(agent),
+      speed: await this.measureAnalysisSpeed(agent),
+      resourceUsage: await this.measureResourceUsage(agent),
+      falsePositiveRate: await this.measureFalsePositives(agent),
+      coverage: await this.measureCoverage(agent)
+    };
+    
+    // Generate optimization recommendations
+    const optimizations = await this.generateOptimizations(metrics);
+    
+    return {
+      metrics: metrics,
+      optimizations: optimizations,
+      overall_score: this.calculateOverallScore(metrics)
+    };
+  }
+  
+  async optimizeAgent(
+    agent: BevorAgent, 
+    optimizations: Optimization[]
+  ): Promise<OptimizedAgent> {
+    for (const optimization of optimizations) {
+      switch (optimization.type) {
+        case 'parameter_tuning':
+          await agent.updateParameters(optimization.parameters);
+          break;
+          
+        case 'model_compression':
+          await agent.compressModel(optimization.compression_config);
+          break;
+          
+        case 'caching_optimization':
+          await agent.optimizeCaching(optimization.cache_config);
+          break;
+      }
+    }
+    
+    // Validate optimizations
+    const validationResult = await this.validateOptimizations(agent);
+    
+    return {
+      agent: agent,
+      improvements: validationResult.improvements,
+      performance_gain: validationResult.performance_gain
+    };
+  }
+}
+```
+
+## Agent Deployment and Management
+
+### Agent Lifecycle Management
+
+**Agent Deployment**
+```bash
+# Deploy custom agent to BevorAI platform
+bevor agent deploy \
+  --agent-package ./my-custom-agent \
+  --config ./agent-config.json \
+  --network ethereum \
+  --monitoring enabled
+
+# Update existing agent
+bevor agent update \
+  --agent-id custom-agent-v1 \
+  --version 2.0.0 \
+  --config ./updated-config.json \
+  --rolling-update
+
+# Monitor agent performance
+bevor agent monitor \
+  --agent-id custom-agent-v1 \
+  --metrics accuracy,speed,resource-usage \
+  --alerts performance-degradation
+```
+
+**Agent Versioning**
+```json
+{
+  "agent_manifest": {
+    "name": "custom-defi-agent",
+    "version": "2.1.0",
+    "description": "Specialized DeFi protocol security agent",
+    "capabilities": [
+      "liquidity_analysis",
+      "oracle_security",
+      "governance_risks",
+      "economic_attacks"
+    ],
+    "dependencies": {
+      "bevor-sdk": "^3.0.0",
+      "web3": "^1.8.0",
+      "ethers": "^6.0.0"
+    },
+    "resources": {
+      "memory": "2GB",
+      "cpu": "2 cores",
+      "storage": "1GB"
+    },
+    "scaling": {
+      "min_instances": 1,
+      "max_instances": 10,
+      "auto_scale": true
+    }
+  }
+}
+```
+
+### Agent Marketplace
+
+**Publishing Agents**
+```bash
+# Publish agent to BevorAI marketplace
+bevor marketplace publish \
+  --agent ./my-agent \
+  --category defi-security \
+  --pricing ./pricing-model.json \
+  --documentation ./agent-docs \
+  --license MIT
+
+# Set up agent monetization
+bevor marketplace monetize \
+  --agent-id my-defi-agent \
+  --pricing-model pay-per-use \
+  --rate 0.01USD/analysis \
+  --revenue-sharing 70-30
+```
+
+**Using Community Agents**
+```bash
+# Browse available agents
+bevor marketplace browse \
+  --category security-analysis \
+  --rating 4.5+ \
+  --compatible-with ethereum
+
+# Install community agent
+bevor agent install \
+  --agent-id community/advanced-reentrancy-detector \
+  --version latest \
+  --config ./local-config.json
+```
+
+## Testing and Validation
+
+### Agent Testing Framework
+
+**Comprehensive Agent Testing**
+```typescript
+describe('Custom Security Agent', () => {
+  let agent: CustomSecurityAgent;
+  let testEnvironment: TestEnvironment;
+  
+  beforeEach(async () => {
+    testEnvironment = await createTestEnvironment();
+    agent = new CustomSecurityAgent(testConfig);
+  });
+  
+  test('detects known vulnerabilities', async () => {
+    const vulnerableContract = await testEnvironment.loadContract(
+      './test-contracts/vulnerable-reentrancy.sol'
+    );
+    
+    const analysis = await agent.analyze(vulnerableContract);
+    
+    expect(analysis.findings).toContainVulnerability('reentrancy');
+    expect(analysis.severity).toBe('high');
+    expect(analysis.confidence).toBeGreaterThan(0.9);
+  });
+  
+  test('handles edge cases correctly', async () => {
+    const edgeCaseContract = await testEnvironment.loadContract(
+      './test-contracts/edge-case-safe-external-call.sol'
+    );
+    
+    const analysis = await agent.analyze(edgeCaseContract);
+    
+    expect(analysis.findings).not.toContainVulnerability('reentrancy');
+    expect(analysis.falsePositives).toBe(0);
+  });
+  
+  test('performance meets requirements', async () => {
+    const largeContract = await testEnvironment.loadContract(
+      './test-contracts/large-defi-protocol.sol'
+    );
+    
+    const startTime = Date.now();
+    const analysis = await agent.analyze(largeContract);
+    const analysisTime = Date.now() - startTime;
+    
+    expect(analysisTime).toBeLessThan(30000); // 30 seconds max
+    expect(analysis.findings.length).toBeGreaterThan(0);
+  });
+});
+```
+
+### Validation and Certification
+
+**Agent Certification Process**
+```bash
+# Submit agent for certification
+bevor certify-agent \
+  --agent ./my-agent \
+  --test-suite comprehensive \
+  --benchmark-dataset standard-v2 \
+  --performance-requirements ./performance-reqs.json
+
+# Monitor certification progress
+bevor certification-status \
+  --agent-id my-agent-cert-123 \
+  --include-feedback \
+  --estimated-completion
+```
+
+## Best Practices
+
+### Agent Development
+
+1. **Specialized Focus**
+   - Design agents for specific vulnerability types or protocols
+   - Avoid overly broad agents that lack depth
+   - Leverage domain expertise in agent design
+   - Maintain clear agent boundaries and responsibilities
+
+2. **Performance Optimization**
+   - Optimize for your specific use case and constraints
+   - Implement efficient caching strategies
+   - Use appropriate sampling and filtering
+   - Monitor and optimize resource usage
+
+3. **Continuous Improvement**
+   - Implement feedback loops for learning
+   - Regular performance evaluation and optimization
+   - Stay updated with latest security research
+   - Participate in agent community discussions
+
+### Security and Reliability
+
+#### Agent Security
+- Secure agent code and configuration
+- Validate all inputs and outputs
+- Implement proper error handling
+- Monitor agent behavior for anomalies
+
+#### Reliability Engineering
+- Design for fault tolerance and recovery
+- Implement comprehensive logging and monitoring
+- Test under various failure scenarios
+- Maintain agent performance under load
+
+## Troubleshooting
+
+### Common Agent Issues
+
+#### Performance Problems
+```bash
+# Profile agent performance
+bevor agent profile \
+  --agent-id my-agent \
+  --duration 1h \
+  --include-memory-usage \
+  --optimization-suggestions
+
+# Optimize agent configuration
+bevor agent optimize \
+  --agent-id my-agent \
+  --target-metrics speed,accuracy \
+  --trade-offs ./optimization-trade-offs.json
+```
+
+#### Integration Issues
+```bash
+# Test agent integration
+bevor agent test-integration \
+  --agent-id my-agent \
+  --environment production \
+  --test-scenarios ./integration-tests
+
+# Debug agent communication
+bevor agent debug-communication \
+  --agent-id my-agent \
+  --log-level debug \
+  --trace-messages
+```
+
+### Getting Support
+
+For agent development support:
+- **Developer Documentation**: Comprehensive SDK documentation
+- **Community Forum**: [Discord #agent-development](https://discord.gg/bevor)
+- **Technical Support**: [developers@bevor.io](mailto:developers@bevor.io)
+- **Office Hours**: Weekly developer office hours for direct support
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Protocol Integration" icon="puzzle-piece" href="/developers/protocol-integration">
+    Learn how to integrate BevorAI into your protocol
+  </Card>
+  <Card title="API Reference" icon="code" href="/api-reference/introduction">
+    Explore the complete API documentation
+  </Card>
+</CardGroup>

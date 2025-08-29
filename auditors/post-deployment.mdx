@@ -1,0 +1,315 @@
+---
+title: 'Post-Deployment Security Checks'
+description: 'Scanning contracts on major chains after deployment'
+---
+
+# Post-Deployment Security Checks
+
+Monitor and analyze deployed smart contracts across major blockchain networks. BevorAI provides continuous security monitoring, real-time threat detection, and comprehensive analysis of live contracts.
+
+## Supported Networks
+
+### Mainnet Networks
+- **Ethereum** - Complete transaction and state analysis
+- **Polygon** - High-frequency monitoring and MEV analysis
+- **Arbitrum** - Layer 2 specific security patterns
+- **Optimism** - Optimistic rollup security considerations
+- **Base** - Coinbase L2 monitoring and analysis
+- **Avalanche** - Subnet security and cross-chain analysis
+- **BNB Smart Chain** - BSC-specific vulnerability patterns
+
+### Testnet Networks
+- **Goerli** - Ethereum testnet analysis
+- **Mumbai** - Polygon testnet monitoring
+- **Arbitrum Goerli** - L2 testnet security testing
+- **Optimism Goerli** - Optimistic testnet analysis
+
+## Analysis Capabilities
+
+### Real-Time Monitoring
+
+**Transaction Analysis**
+- Monitor all transactions to your contracts
+- Detect suspicious transaction patterns
+- Identify potential attack attempts
+- Track unusual gas usage or MEV activity
+
+**State Change Monitoring**
+- Monitor critical state variables
+- Detect unauthorized state modifications
+- Track governance parameter changes
+- Alert on economic threshold breaches
+
+### Historical Analysis
+
+**Contract Evolution Tracking**
+- Compare contract versions over time
+- Identify security regressions
+- Track vulnerability remediation
+- Analyze upgrade patterns and risks
+
+**Attack Pattern Recognition**
+- Identify known attack signatures
+- Detect similar vulnerabilities across contracts
+- Track attacker behavior patterns
+- Correlate attacks across different protocols
+
+## Scanning Methods
+
+### Automatic Discovery
+
+**Contract Detection**
+```bash
+# Scan all contracts deployed by an address
+bevor scan-address 0x1234...abcd
+
+# Scan specific contract
+bevor scan-contract 0xabcd...1234 --network ethereum
+
+# Scan entire protocol ecosystem
+bevor scan-protocol uniswap --include-forks
+```
+
+**Smart Discovery Features**
+- Automatic proxy detection and implementation analysis
+- Factory contract pattern recognition
+- Multi-signature wallet analysis
+- Token contract comprehensive scanning
+
+### Manual Analysis
+
+**Targeted Scanning**
+```bash
+# Focus on specific vulnerability types
+bevor scan-contract 0xabcd...1234 --focus reentrancy,oracle
+
+# Deep analysis with full context
+bevor scan-contract 0xabcd...1234 --deep --include-interactions
+
+# Economic analysis
+bevor scan-contract 0xabcd...1234 --economic-analysis
+```
+
+### Batch Processing
+
+**Multi-Contract Analysis**
+- Analyze entire protocol suites simultaneously
+- Compare security postures across related contracts
+- Identify systemic vulnerabilities
+- Generate comprehensive security reports
+
+## Alert Configuration
+
+### Real-Time Alerts
+
+**Critical Vulnerability Detection**
+```json
+{
+  "alertConfig": {
+    "critical": {
+      "enabled": true,
+      "channels": ["email", "slack", "webhook"],
+      "immediate": true
+    },
+    "high": {
+      "enabled": true,
+      "channels": ["email", "slack"],
+      "delay": "5m"
+    },
+    "medium": {
+      "enabled": false,
+      "channels": ["email"],
+      "delay": "1h"
+    }
+  }
+}
+```
+
+**Custom Alert Rules**
+- Define contract-specific alert thresholds
+- Set up economic parameter monitoring
+- Configure governance change notifications
+- Create custom webhook integrations
+
+### Notification Channels
+
+#### Email Notifications
+- Detailed vulnerability reports
+- Executive summaries for stakeholders
+- Scheduled digest reports
+- Custom formatting options
+
+#### Slack Integration
+```bash
+# Configure Slack webhook
+bevor config set slack-webhook https://hooks.slack.com/your-webhook
+
+# Test notification
+bevor alert test --channel slack
+```
+
+#### Discord Integration
+- Real-time vulnerability notifications
+- Community alert sharing (optional)
+- Bot integration for automated responses
+- Custom embed formatting
+
+## Reporting and Analytics
+
+### Security Dashboards
+
+**Contract Health Overview**
+- Real-time security status indicators
+- Historical vulnerability trends
+- Risk assessment summaries
+- Comparative security metrics
+
+**Network-Wide Analysis**
+- Cross-protocol security insights
+- Industry benchmark comparisons
+- Emerging threat identification
+- Ecosystem security trends
+
+### Detailed Reports
+
+**Vulnerability Reports**
+```bash
+# Generate comprehensive security report
+bevor report generate --contract 0xabcd...1234 --format pdf
+
+# Historical analysis report
+bevor report historical --contract 0xabcd...1234 --timeframe 30d
+
+# Comparative analysis
+bevor report compare --before 0xold...contract --after 0xnew...contract
+```
+
+**Export Options**
+- PDF reports with executive summaries
+- JSON data for programmatic analysis
+- CSV exports for spreadsheet analysis
+- API endpoints for real-time data access
+
+## Integration with Development Workflow
+
+### Pre-Deployment Validation
+
+**Testnet Analysis**
+- Comprehensive security scanning on testnets
+- Performance and gas analysis
+- Integration testing with other protocols
+- Economic simulation and stress testing
+
+**Staging Environment Monitoring**
+- Continuous monitoring of staging deployments
+- Automated regression testing
+- Performance baseline establishment
+- Final security validation before mainnet
+
+### Post-Deployment Monitoring
+
+**Launch Monitoring**
+- Intensive monitoring during first 48 hours
+- Real-time transaction analysis
+- Community interaction monitoring
+- Immediate response to security events
+
+**Ongoing Surveillance**
+- Regular security health checks
+- Automated vulnerability scanning
+- Economic parameter monitoring
+- Governance security oversight
+
+## Enterprise Features
+
+### Advanced Analytics
+
+**Custom Metrics**
+- Define protocol-specific security KPIs
+- Track security posture over time
+- Benchmark against industry standards
+- Generate compliance reports
+
+**Predictive Analysis**
+- Identify potential future vulnerabilities
+- Predict attack likelihood based on patterns
+- Economic risk modeling
+- Threat landscape analysis
+
+### Team Management
+
+**Role-Based Access**
+- Granular permissions for different team roles
+- Audit trail of all security actions
+- Secure sharing with external auditors
+- Compliance-ready access controls
+
+**Workflow Automation**
+- Automated scanning schedules
+- Custom alert routing and escalation
+- Integration with existing security tools
+- Automated report generation and distribution
+
+## Best Practices
+
+### Monitoring Strategy
+
+1. **Immediate Post-Deployment** (0-48 hours)
+   - Intensive real-time monitoring
+   - Manual review of all transactions
+   - Community sentiment tracking
+   - Immediate response team on standby
+
+2. **Early Operation** (48 hours - 2 weeks)
+   - Automated monitoring with human oversight
+   - Pattern establishment and baseline creation
+   - User behavior analysis
+   - Economic parameter validation
+
+3. **Mature Operation** (2+ weeks)
+   - Automated monitoring with exception-based alerts
+   - Periodic comprehensive reviews
+   - Long-term trend analysis
+   - Continuous improvement based on learnings
+
+### Alert Management
+
+- **Tune Alert Sensitivity**: Balance between false positives and missed threats
+- **Establish Response Procedures**: Define clear escalation and response protocols
+- **Regular Review**: Periodically assess and update alert configurations
+- **Team Training**: Ensure all team members understand alert meanings and responses
+
+## Troubleshooting
+
+### Common Monitoring Issues
+
+#### Network Connectivity
+- Verify RPC endpoint availability
+- Check for rate limiting issues
+- Configure backup node providers
+- Monitor network synchronization status
+
+#### Analysis Performance
+- Optimize scanning frequency for high-traffic contracts
+- Use targeted scanning for specific vulnerability types
+- Configure appropriate timeout settings
+- Balance thoroughness with performance requirements
+
+### Getting Support
+
+For technical issues or questions:
+- **Documentation**: Comprehensive guides at [docs.bevor.io](https://docs.bevor.io)
+- **Community**: Join discussions at [Discord](https://discord.gg/bevor)
+- **Direct Support**: Email [contact@bevor.io](mailto:contact@bevor.io)
+- **Emergency**: Critical security issues get priority response
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Data Labeling" icon="tag" href="/auditors/data-labeling">
+    Contribute to improving BevorAI's accuracy
+  </Card>
+  <Card title="API Integration" icon="code" href="/api-reference/introduction">
+    Build custom security tools and workflows
+  </Card>
+</CardGroup>

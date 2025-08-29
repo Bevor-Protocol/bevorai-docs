@@ -1,0 +1,316 @@
+---
+title: 'Using MCP for Secure Coding'
+description: 'Integrating BevorAI into your IDE for secure development'
+---
+
+# Using MCP for Secure Coding
+
+Integrate BevorAI directly into your development environment to write more secure code from the start. Model Context Protocol (MCP) integration provides real-time security guidance, vulnerability prevention, and best practice enforcement as you develop.
+
+## Development-First Security
+
+### Real-Time Code Analysis
+
+**As-You-Type Security**
+- Instant vulnerability detection while coding
+- Security-aware code completion and suggestions
+- Real-time gas optimization recommendations
+- Best practice enforcement and guidance
+
+**Proactive Prevention**
+- Catch vulnerabilities before they're committed
+- Suggest secure coding patterns automatically
+- Warn about dangerous function combinations
+- Guide secure architecture decisions
+
+### IDE-Specific Features
+
+#### Cursor Integration
+
+**Smart Code Completion**
+```solidity
+// BevorAI suggests secure patterns
+function withdraw(uint amount) external {
+    // ✅ BevorAI suggests: Add reentrancy guard
+    require(balances[msg.sender] >= amount, "Insufficient balance");
+    
+    // ✅ BevorAI suggests: Update state before external call
+    balances[msg.sender] -= amount;
+    
+    // ✅ BevorAI suggests: Use low-level call with proper checks
+    (bool success, ) = msg.sender.call{value: amount}("");
+    require(success, "Transfer failed");
+}
+```
+
+**Security Linting**
+- Real-time underlines for security issues
+- Hover tooltips with detailed explanations
+- Quick fix suggestions with one-click application
+- Integration with Cursor's AI features
+
+#### Windsurf Integration
+
+**Contextual Security Analysis**
+- Deep understanding of your entire codebase context
+- Cross-file vulnerability detection
+- Architecture-level security recommendations
+- Integration with Windsurf's collaborative features
+
+**AI-Powered Explanations**
+- Natural language explanations of security issues
+- Interactive Q&A about vulnerabilities
+- Guided remediation with step-by-step instructions
+- Learning resources and best practice references
+
+## Secure Development Workflows
+
+### Pre-Commit Security
+
+**Automated Pre-Commit Hooks**
+```bash
+# Install BevorAI pre-commit hook
+npm install -g @bevor/pre-commit-hook
+
+# Configure in .pre-commit-config.yaml
+repos:
+  - repo: local
+    hooks:
+      - id: bevor-security-check
+        name: BevorAI Security Analysis
+        entry: bevor-pre-commit
+        language: node
+        files: \.(sol|vy)$
+```
+
+**Security Gate Integration**
+- Prevent commits with critical vulnerabilities
+- Require security review for high-risk changes
+- Automatic security documentation updates
+- Integration with existing code review processes
+
+### Branch Protection
+
+**Security-Based Branch Rules**
+```json
+{
+  "branch_protection": {
+    "required_status_checks": {
+      "strict": true,
+      "contexts": ["bevor/security-analysis"]
+    },
+    "required_pull_request_reviews": {
+      "required_approving_review_count": 2,
+      "require_code_owner_reviews": true
+    }
+  }
+}
+```
+
+## Advanced Development Features
+
+### Security-Aware Refactoring
+
+**Safe Refactoring Assistance**
+- Identify security implications of code changes
+- Suggest secure alternatives for risky patterns
+- Maintain security properties during refactoring
+- Validate security assumptions after changes
+
+**Pattern Recognition**
+```solidity
+// BevorAI recognizes and suggests improvements
+contract UnsafePattern {
+    mapping(address => uint) public balances;
+    
+    function withdraw() external {
+        uint amount = balances[msg.sender];
+        // ⚠️ BevorAI: Potential reentrancy vulnerability
+        msg.sender.call{value: amount}("");
+        // 💡 BevorAI suggests: Move this line before external call
+        balances[msg.sender] = 0;
+    }
+}
+
+// BevorAI suggests this secure pattern:
+contract SecurePattern {
+    mapping(address => uint) public balances;
+    bool private locked;
+    
+    modifier nonReentrant() {
+        require(!locked, "Reentrant call");
+        locked = true;
+        _;
+        locked = false;
+    }
+    
+    function withdraw() external nonReentrant {
+        uint amount = balances[msg.sender];
+        require(amount > 0, "No balance");
+        
+        balances[msg.sender] = 0; // State update first
+        
+        (bool success, ) = msg.sender.call{value: amount}("");
+        require(success, "Transfer failed");
+    }
+}
+```
+
+### Architecture Guidance
+
+**Design Pattern Recommendations**
+- Suggest secure architecture patterns
+- Identify potential design vulnerabilities
+- Recommend proven security libraries
+- Guide upgrade mechanism design
+
+**Cross-Contract Analysis**
+- Analyze interactions between contracts
+- Identify integration vulnerabilities
+- Suggest secure communication patterns
+- Validate trust assumptions
+
+## Team Development Features
+
+### Collaborative Security
+
+**Team Security Standards**
+```json
+{
+  "team_config": {
+    "security_level": "enterprise",
+    "required_checks": [
+      "reentrancy_analysis",
+      "access_control_review", 
+      "economic_analysis",
+      "gas_optimization"
+    ],
+    "custom_rules": [
+      "require_multisig_for_admin",
+      "enforce_timelock_delays",
+      "validate_oracle_freshness"
+    ]
+  }
+}
+```
+
+**Knowledge Sharing**
+- Share security insights across team members
+- Collaborative vulnerability database
+- Team-specific security guidelines
+- Learning from past security issues
+
+### Code Review Enhancement
+
+**Security-Focused Reviews**
+- Automatic security checklist generation
+- Guided review workflows for security-critical changes
+- Integration with GitHub/GitLab review processes
+- Security expert recommendations
+
+**Review Templates**
+```markdown
+## Security Review Checklist
+
+### Automated Analysis
+- [ ] BevorAI scan completed without critical findings
+- [ ] Gas optimization recommendations reviewed
+- [ ] Access control patterns verified
+
+### Manual Review
+- [ ] Business logic security validated
+- [ ] Economic incentives analyzed
+- [ ] Integration points secured
+- [ ] Upgrade mechanisms reviewed
+
+### Testing
+- [ ] Security test coverage adequate
+- [ ] Edge cases tested
+- [ ] Attack simulations performed
+- [ ] Formal verification considered
+```
+
+## Configuration and Customization
+
+### Project-Specific Settings
+
+**Security Profiles**
+```json
+{
+  "bevor_config": {
+    "project_type": "defi_protocol",
+    "security_focus": [
+      "economic_attacks",
+      "oracle_manipulation",
+      "governance_risks"
+    ],
+    "analysis_depth": "comprehensive",
+    "performance_mode": "balanced"
+  }
+}
+```
+
+**Custom Rule Sets**
+- Define protocol-specific security rules
+- Configure industry-specific vulnerability checks
+- Set up custom severity weightings
+- Create team-specific coding standards
+
+### Integration Settings
+
+**Performance Tuning**
+```json
+{
+  "performance": {
+    "real_time_analysis": true,
+    "analysis_delay_ms": 500,
+    "max_file_size_mb": 5,
+    "background_analysis": true,
+    "cache_results": true
+  }
+}
+```
+
+**Privacy Settings**
+```json
+{
+  "privacy": {
+    "local_analysis_only": false,
+    "encrypt_transmissions": true,
+    "data_retention_days": 30,
+    "share_anonymized_patterns": true
+  }
+}
+```
+
+## Troubleshooting
+
+### Common Issues
+
+#### Performance Problems
+- **Slow Analysis**: Reduce analysis depth or disable real-time mode
+- **High CPU Usage**: Configure background analysis limits
+- **Memory Issues**: Increase available memory or reduce file sizes
+
+#### Integration Issues
+- **API Key Problems**: Verify key validity and permissions
+- **Network Connectivity**: Check firewall and proxy settings
+- **Extension Conflicts**: Disable conflicting security extensions
+
+### Getting Help
+
+- **In-IDE Help**: Use the built-in help system and documentation
+- **Community Support**: Join our [Discord](https://discord.gg/bevor) for peer assistance
+- **Technical Support**: Email [support@bevor.io](mailto:support@bevor.io) for technical issues
+- **Feature Requests**: Submit suggestions via GitHub or Discord
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="CI/CD Integration" icon="git-branch" href="/developers/cicd-integration">
+    Add automated security checks to your pipeline
+  </Card>
+  <Card title="Testnet Security" icon="flask" href="/developers/testnet-security">
+    Validate security before mainnet deployment
+  </Card>
+</CardGroup>

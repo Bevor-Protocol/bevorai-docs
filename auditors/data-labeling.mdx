@@ -1,0 +1,143 @@
+---
+title: 'Labeling Security Data'
+description: 'How to tag findings to strengthen BevorAI models'
+---
+
+# Labeling Security Data
+
+Help improve BevorAI's accuracy and effectiveness by contributing high-quality labeled security data. Your expert knowledge directly enhances the AI models that power security analysis for the entire ecosystem.
+
+## Why Data Labeling Matters
+
+BevorAI's effectiveness depends on high-quality training data. When security experts like you label findings, you're:
+
+- **Improving Model Accuracy**: Teaching AI to recognize subtle security patterns
+- **Reducing False Positives**: Helping models distinguish between real threats and benign code
+- **Expanding Coverage**: Contributing to detection of new vulnerability types
+- **Building Community Knowledge**: Sharing expertise to benefit all users
+
+## How to Label Findings
+
+### Through the Terminal Interface
+
+1. **Access the Labeling Interface**
+   - Open [app.bevor.io](https://app.bevor.io)
+   - Navigate to the Terminal
+   - Enable "Expert Mode" in settings
+
+2. **Review and Label Findings**
+   - Run security analysis on contracts
+   - Review each finding in the results panel
+   - Use the labeling interface to mark findings as:
+     - ✅ **True Positive**: Confirmed vulnerability
+     - ❌ **False Positive**: Incorrect detection
+     - ⚠️ **Uncertain**: Requires further review
+     - 📝 **Needs Context**: Additional information needed
+
+3. **Add Detailed Annotations**
+   - Provide specific vulnerability classifications
+   - Add severity assessments (Critical, High, Medium, Low)
+   - Include remediation suggestions
+   - Note any special context or edge cases
+
+### Through API Integration
+
+For automated or bulk labeling workflows:
+
+```bash
+POST /api/v1/findings/{findingId}/label
+Authorization: Bearer YOUR_API_KEY
+Content-Type: application/json
+
+{
+  "label": "true_positive",
+  "severity": "high",
+  "vulnerability_type": "reentrancy",
+  "confidence": 0.95,
+  "notes": "Classic reentrancy pattern in withdraw function",
+  "remediation_suggestion": "Add reentrancy guard"
+}
+```
+
+## Types of Security Findings to Label
+
+### Smart Contract Vulnerabilities
+- **Reentrancy attacks**
+- **Integer overflow/underflow**
+- **Access control issues**
+- **Front-running vulnerabilities**
+- **Gas optimization opportunities**
+
+### Protocol-Level Issues
+- **Economic attack vectors**
+- **Governance vulnerabilities**
+- **Oracle manipulation risks**
+- **Liquidity and slippage issues**
+- **Cross-chain bridge security**
+
+### Integration Risks
+- **External dependency vulnerabilities**
+- **Upgrade mechanism issues**
+- **Multi-signature security**
+- **Time-lock bypasses**
+
+## Labeling Quality Guidelines
+
+### Be Specific and Accurate
+- Use precise vulnerability classifications
+- Provide clear, actionable descriptions
+- Include relevant code snippets or line numbers
+- Reference established security standards (e.g., SWC registry)
+
+### Consider Context
+- Account for intended behavior vs. actual vulnerabilities
+- Consider the broader protocol context
+- Note any assumptions or prerequisites
+- Identify edge cases and boundary conditions
+
+### Maintain Consistency
+- Use standardized terminology
+- Follow established severity classifications
+- Apply consistent labeling criteria
+- Document any special cases or exceptions
+
+## Recognition and Rewards
+
+Contributors to BevorAI's security dataset receive:
+
+- **Recognition**: Public acknowledgment in our contributor hall of fame
+- **Token Rewards**: Earn BEVOR tokens for high-quality contributions
+- **Early Access**: Priority access to new features and capabilities
+- **Community Status**: Special roles in our Discord community
+
+## Best Practices
+
+<Tip>
+  Focus on quality over quantity. A few well-labeled, thoroughly analyzed findings are more valuable than many hastily labeled ones.
+</Tip>
+
+### Before Labeling
+- Understand the contract's intended functionality
+- Review the broader protocol context
+- Check for existing similar vulnerabilities
+- Verify your analysis with multiple approaches
+
+### During Labeling
+- Be thorough in your analysis
+- Document your reasoning process
+- Include relevant references and sources
+- Consider multiple attack vectors
+
+### After Labeling
+- Review your labels for consistency
+- Update labels if you discover new information
+- Share insights with the community
+- Track the impact of your contributions
+
+## Getting Started with Data Labeling
+
+Ready to contribute? Check out our [Best Practices Guide](/auditors/labeling-best-practices) for detailed guidelines on creating high-quality security labels.
+
+<Card title="Best Practices for Data Labeling" icon="star" href="/auditors/labeling-best-practices">
+  Learn advanced techniques for consistent, high-quality labeling
+</Card>

@@ -1,0 +1,224 @@
+---
+title: 'Best Practices for Data Labeling'
+description: 'Ensuring quality and consistency in security data labeling'
+---
+
+# Best Practices for Data Labeling
+
+Effective security data labeling requires systematic approaches, consistent methodologies, and deep understanding of both security principles and AI model requirements. This guide provides comprehensive best practices for creating high-quality labeled datasets.
+
+## Labeling Methodology
+
+### Systematic Review Process
+
+1. **Initial Analysis**
+   - Read and understand the complete contract or protocol
+   - Identify the intended functionality and business logic
+   - Map out critical paths and state transitions
+   - Note any external dependencies or integrations
+
+2. **Security Assessment**
+   - Apply established security frameworks (OWASP, SWC)
+   - Consider multiple attack vectors systematically
+   - Evaluate economic incentives and game theory
+   - Test edge cases and boundary conditions
+
+3. **Labeling Decision**
+   - Make clear binary decisions (vulnerable/not vulnerable)
+   - Provide confidence scores (0.0 to 1.0)
+   - Document reasoning and evidence
+   - Include remediation recommendations
+
+### Consistency Framework
+
+#### Severity Classification
+Use consistent severity levels across all findings:
+
+- **Critical**: Immediate threat to funds or protocol integrity
+- **High**: Significant security risk with clear exploitation path
+- **Medium**: Important security concern requiring attention
+- **Low**: Minor issue or best practice violation
+- **Info**: Educational or optimization opportunity
+
+#### Vulnerability Categories
+Standardize vulnerability types using established taxonomies:
+
+```json
+{
+  "access_control": ["unauthorized_access", "privilege_escalation", "missing_auth"],
+  "reentrancy": ["classic_reentrancy", "cross_function", "read_only"],
+  "arithmetic": ["overflow", "underflow", "precision_loss"],
+  "economic": ["front_running", "sandwich_attack", "price_manipulation"],
+  "governance": ["vote_manipulation", "proposal_spam", "quorum_bypass"]
+}
+```
+
+## Quality Assurance
+
+### Double-Check Process
+
+1. **Technical Verification**
+   - Reproduce the vulnerability manually
+   - Test with proof-of-concept exploits when safe
+   - Verify with static analysis tools
+   - Cross-reference with known vulnerability databases
+
+2. **Contextual Review**
+   - Consider the protocol's intended design
+   - Evaluate real-world impact and likelihood
+   - Account for existing mitigations
+   - Assess deployment and network context
+
+3. **Peer Review**
+   - Have findings reviewed by other experts
+   - Discuss edge cases and ambiguous scenarios
+   - Reach consensus on classification
+   - Document dissenting opinions when relevant
+
+### Common Pitfalls to Avoid
+
+#### False Positives
+- **Intended Behavior**: Don't flag legitimate protocol features as vulnerabilities
+- **Mitigated Risks**: Consider existing safeguards and access controls
+- **Test Code**: Distinguish between production and test environments
+- **Version Differences**: Account for compiler versions and language updates
+
+#### False Negatives
+- **Subtle Vulnerabilities**: Look beyond obvious patterns
+- **Interaction Effects**: Consider multi-contract interactions
+- **Economic Attacks**: Don't overlook financial incentive misalignments
+- **Upgrade Risks**: Consider proxy and upgrade mechanism vulnerabilities
+
+## Advanced Labeling Techniques
+
+### Multi-Dimensional Analysis
+
+#### Technical Dimensions
+- **Exploitability**: How easily can this be exploited?
+- **Impact**: What's the potential damage?
+- **Detectability**: How obvious is this vulnerability?
+- **Reproducibility**: Can this be consistently triggered?
+
+#### Contextual Dimensions
+- **Protocol Maturity**: Is this a new or established protocol?
+- **Economic Scale**: What value is at risk?
+- **User Impact**: How many users could be affected?
+- **Ecosystem Importance**: Is this a critical infrastructure component?
+
+### Temporal Considerations
+
+#### Lifecycle-Aware Labeling
+- **Development Phase**: Pre-deployment vulnerabilities
+- **Deployment Phase**: Launch-specific risks
+- **Operational Phase**: Runtime and maintenance issues
+- **Upgrade Phase**: Migration and compatibility risks
+
+#### Market Condition Sensitivity
+- **Bull Market**: Higher stakes, more attention from attackers
+- **Bear Market**: Reduced monitoring, potential for delayed responses
+- **High Volatility**: Increased MEV and arbitrage risks
+- **Low Activity**: Reduced testing of edge cases
+
+## Documentation Standards
+
+### Required Information
+
+Every label should include:
+
+```yaml
+finding_id: "unique-identifier"
+label_type: "true_positive" | "false_positive" | "uncertain"
+severity: "critical" | "high" | "medium" | "low" | "info"
+confidence: 0.0-1.0
+vulnerability_type: "standardized-category"
+affected_functions: ["function1", "function2"]
+attack_vector: "detailed-description"
+impact_assessment: "potential-consequences"
+remediation: "specific-fix-recommendations"
+references: ["cve-links", "similar-cases"]
+reviewer: "expert-identifier"
+review_date: "iso-timestamp"
+```
+
+### Evidence Requirements
+
+#### Code Evidence
+- Exact line numbers and file references
+- Relevant code snippets with context
+- Call flow diagrams for complex interactions
+- State transition analysis
+
+#### External Evidence
+- Similar vulnerabilities in other projects
+- Academic papers or security research
+- Tool outputs from multiple analyzers
+- Community discussions or reports
+
+## Collaborative Labeling
+
+### Team Coordination
+
+#### Review Workflows
+1. **Primary Reviewer**: Initial analysis and labeling
+2. **Secondary Reviewer**: Independent verification
+3. **Consensus Building**: Discussion of disagreements
+4. **Final Decision**: Documented resolution
+
+#### Expertise Distribution
+- **Language Specialists**: Solidity, Vyper, Rust experts
+- **Domain Experts**: DeFi, NFT, Gaming protocol specialists
+- **Attack Specialists**: MEV, governance, economic attack experts
+- **Tool Specialists**: Static analysis and formal verification experts
+
+### Conflict Resolution
+
+When reviewers disagree:
+
+1. **Document Both Perspectives**: Capture all viewpoints
+2. **Seek Additional Input**: Consult subject matter experts
+3. **Test Empirically**: Create proof-of-concept when possible
+4. **Escalate if Needed**: Involve senior reviewers for complex cases
+5. **Update Guidelines**: Use conflicts to improve future consistency
+
+## Continuous Improvement
+
+### Feedback Loops
+
+#### Model Performance Tracking
+- Monitor how labeled data affects model accuracy
+- Track false positive/negative rates over time
+- Identify areas where additional labeling is needed
+- Measure impact of labeling quality improvements
+
+#### Community Learning
+- Share interesting findings with the community
+- Publish case studies of complex vulnerabilities
+- Contribute to security education initiatives
+- Participate in security research discussions
+
+### Personal Development
+
+#### Skill Building
+- Stay updated on latest vulnerability research
+- Learn new analysis techniques and tools
+- Participate in security conferences and workshops
+- Engage with the broader security community
+
+#### Contribution Tracking
+- Monitor your labeling accuracy over time
+- Track the diversity of your contributions
+- Measure community impact of your work
+- Set personal improvement goals
+
+## Getting Started
+
+Ready to contribute high-quality security labels? Start by reviewing our [Data Labeling Guide](/auditors/data-labeling) and join our community of security experts.
+
+<CardGroup cols={2}>
+  <Card title="Start Labeling" icon="tag" href="/auditors/data-labeling">
+    Begin contributing to BevorAI's security dataset
+  </Card>
+  <Card title="Join Community" icon="users" href="https://discord.gg/bevor">
+    Connect with other security experts
+  </Card>
+</CardGroup>

@@ -1,0 +1,952 @@
+---
+title: 'Integrating Into Protocols & Chains'
+description: 'Wrapping BevorAI for specialized use cases'
+---
+
+# Integrating Into Protocols & Chains
+
+Integrate BevorAI directly into your protocol's architecture or blockchain infrastructure. Create seamless security experiences for your users, automate protocol-specific security checks, and build security directly into your protocol's DNA.
+
+## Protocol-Level Integration
+
+### Smart Contract Integration
+
+**On-Chain Security Oracles**
+```solidity
+pragma solidity ^0.8.19;
+
+import "@bevor/protocol-contracts/IBevorSecurityOracle.sol";
+
+contract ProtocolWithSecurity {
+    IBevorSecurityOracle public immutable securityOracle;
+    
+    modifier securityChecked(address target) {
+        require(
+            securityOracle.getSecurityScore(target) >= MINIMUM_SECURITY_SCORE,
+            "Security threshold not met"
+        );
+        _;
+    }
+    
+    constructor(address _securityOracle) {
+        securityOracle = IBevorSecurityOracle(_securityOracle);
+    }
+    
+    function interactWithContract(
+        address target,
+        bytes calldata data
+    ) external securityChecked(target) {
+        // Interaction only proceeds if security check passes
+        (bool success, bytes memory result) = target.call(data);
+        require(success, "Interaction failed");
+        
+        // Optional: Log interaction for security monitoring
+        securityOracle.logInteraction(target, data, result);
+    }
+    
+    function getContractSecurityInfo(
+        address target
+    ) external view returns (
+        uint256 securityScore,
+        string[] memory vulnerabilities,
+        uint256 lastAnalyzed
+    ) {
+        return securityOracle.getDetailedSecurityInfo(target);
+    }
+}
+```
+
+**Security-Gated Protocol Functions**
+```solidity
+contract DeFiProtocolWithSecurity {
+    using BevorSecurityLib for address;
+    
+    mapping(address => bool) public securityApproved;
+    
+    function addLiquidityPool(
+        address tokenA,
+        address tokenB,
+        address poolImplementation
+    ) external onlyOwner {
+        // Automated security check before adding new pool
+        require(
+            tokenA.hasPassedSecurityAudit() && 
+            tokenB.hasPassedSecurityAudit() &&
+            poolImplementation.hasPassedSecurityAudit(),
+            "Security audit required"
+        );
+        
+        // Additional protocol-specific checks
+        require(
+            !poolImplementation.hasKnownVulnerabilities(),
+            "Known vulnerabilities detected"
+        );
+        
+        _createPool(tokenA, tokenB, poolImplementation);
+    }
+    
+    function emergencyPause(address contract_) external {
+        // Allow emergency pause if critical vulnerability detected
+        require(
+            contract_.hasCriticalVulnerability() || 
+            msg.sender == owner(),
+            "Emergency pause not authorized"
+        );
+        
+        _pauseContract(contract_);
+        emit EmergencyPause(contract_, block.timestamp);
+    }
+}
+```
+
+### Protocol-Specific Security Rules
+
+**Custom Security Policies**
+```typescript
+// Define protocol-specific security requirements
+interface ProtocolSecurityPolicy {
+  name: string;
+  version: string;
+  rules: SecurityRule[];
+  enforcement: EnforcementLevel;
+}
+
+const deFiProtocolPolicy: ProtocolSecurityPolicy = {
+  name: "DeFi Protocol Security Policy",
+  version: "2.1.0",
+  rules: [
+    {
+      id: "oracle-dependency-limit",
+      description: "Limit dependency on single oracle provider",
+      check: (contract) => contract.oracleDependencies.length <= 3,
+      severity: "high",
+      remediation: "Implement oracle redundancy or circuit breakers"
+    },
+    {
+      id: "governance-timelock",
+      description: "All governance changes must have minimum timelock",
+      check: (contract) => contract.governanceTimelock >= 48 * 3600, // 48 hours
+      severity: "critical",
+      remediation: "Implement proper governance timelock"
+    },
+    {
+      id: "economic-limits",
+      description: "Economic parameters within safe bounds",
+      check: (contract) => validateEconomicParameters(contract.parameters),
+      severity: "medium",
+      remediation: "Adjust economic parameters to safe ranges"
+    }
+  ],
+  enforcement: EnforcementLevel.STRICT
+};
+```
+
+## Blockchain Infrastructure Integration
+
+### Layer 2 Integration
+
+**Rollup Security Integration**
+```typescript
+class L2SecurityIntegration {
+  async integrateWithSequencer(sequencerConfig: SequencerConfig): Promise<void> {
+    // Integrate security analysis into transaction sequencing
+    const securityMiddleware = new BevorSecurityMiddleware({
+      analysisMode: 'real-time',
+      blockingLevel: 'critical-only',
+      performance: {
+        maxLatency: '100ms',
+        throughputTarget: '10000 tps'
+      }
+    });
+    
+    // Add to sequencer pipeline
+    sequencerConfig.middleware.push(securityMiddleware);
+  }
+  
+  async setupBridgeMonitoring(bridgeContract: string): Promise<void> {
+    // Monitor cross-chain bridge security
+    await bevor.monitor.configure({
+      contract: bridgeContract,
+      focus: ['bridge-security', 'economic-attacks'],
+      realTime: true,
+      alerts: {
+        critical: 'immediate-pause',
+        high: 'alert-operators',
+        medium: 'log-and-monitor'
+      }
+    });
+  }
+  
+  async integrateFraudProofSystem(
+    fraudProofContract: string
+  ): Promise<void> {
+    // Integrate with fraud proof generation
+    const fraudProofAgent = new FraudProofSecurityAgent({
+      contract: fraudProofContract,
+      capabilities: ['state-validation', 'proof-verification'],
+      automation: {
+        generateProofs: true,
+        validateChallenges: true,
+        monitorDisputes: true
+      }
+    });
+    
+    await fraudProofAgent.deploy();
+  }
+}
+```
+
+### Validator Integration
+
+**Validator Security Enhancement**
+```rust
+use bevor_sdk::ValidatorSecurityModule;
+
+pub struct SecureValidator {
+    security_module: ValidatorSecurityModule,
+    base_validator: BaseValidator,
+}
+
+impl SecureValidator {
+    pub async fn validate_transaction(&self, tx: Transaction) -> ValidationResult {
+        // Run base validation
+        let base_result = self.base_validator.validate(&tx).await?;
+        
+        if !base_result.is_valid {
+            return base_result;
+        }
+        
+        // Additional security validation
+        let security_analysis = self.security_module
+            .analyze_transaction(&tx)
+            .await?;
+            
+        if security_analysis.has_critical_issues() {
+            return ValidationResult::rejected(
+                "Critical security issues detected"
+            );
+        }
+        
+        // Enhanced validation result with security context
+        ValidationResult::valid_with_security_context(
+            base_result,
+            security_analysis
+        )
+    }
+    
+    pub async fn validate_block(&self, block: Block) -> BlockValidationResult {
+        // Validate individual transactions
+        let mut tx_results = Vec::new();
+        for tx in &block.transactions {
+            tx_results.push(self.validate_transaction(tx).await?);
+        }
+        
+        // Block-level security analysis
+        let block_security = self.security_module
+            .analyze_block(&block, &tx_results)
+            .await?;
+            
+        BlockValidationResult {
+            transaction_results: tx_results,
+            block_security: block_security,
+            overall_valid: block_security.is_safe() && 
+                          tx_results.iter().all(|r| r.is_valid),
+        }
+    }
+}
+```
+
+## Custom User Interfaces
+
+### Protocol-Specific Dashboards
+
+**Embedded Security Dashboard**
+```typescript
+import { BevorSecurityWidget } from '@bevor/react-components';
+
+function ProtocolDashboard() {
+  return (
+    <div className="protocol-dashboard">
+      <h1>Protocol Security Overview</h1>
+      
+      {/* Embedded BevorAI security widget */}
+      <BevorSecurityWidget
+        contracts={protocolContracts}
+        network="ethereum"
+        theme="protocol-branded"
+        features={[
+          'real-time-monitoring',
+          'vulnerability-alerts',
+          'economic-analysis',
+          'governance-security'
+        ]}
+        customization={{
+          branding: {
+            logo: '/protocol-logo.png',
+            colors: protocolColors
+          },
+          layout: 'compact',
+          alerts: {
+            position: 'top-right',
+            style: 'protocol-themed'
+          }
+        }}
+      />
+      
+      {/* Protocol-specific security metrics */}
+      <ProtocolSecurityMetrics />
+    </div>
+  );
+}
+```
+
+**White-Label Security Interface**
+```javascript
+// Create branded security interface for your users
+const securityInterface = new BevorSecurityInterface({
+  branding: {
+    name: 'YourProtocol Security',
+    logo: './assets/your-logo.png',
+    colors: {
+      primary: '#your-brand-color',
+      secondary: '#your-secondary-color'
+    },
+    domain: 'security.yourprotocol.com'
+  },
+  features: {
+    contractAnalysis: true,
+    realTimeMonitoring: true,
+    incidentResponse: true,
+    reportGeneration: true
+  },
+  customization: {
+    terminologyMapping: {
+      'vulnerability': 'security_concern',
+      'exploit': 'security_incident',
+      'audit': 'security_review'
+    },
+    workflowIntegration: './workflows/protocol-security.yml'
+  }
+});
+```
+
+## Advanced Integration Patterns
+
+### Microservice Architecture
+
+**Security Microservice**
+```typescript
+import { BevorSecurityService } from '@bevor/microservice';
+
+class ProtocolSecurityService extends BevorSecurityService {
+  async analyzeProtocolTransaction(
+    tx: ProtocolTransaction
+  ): Promise<SecurityAnalysis> {
+    // Protocol-specific transaction analysis
+    const baseAnalysis = await super.analyzeTransaction(tx);
+    
+    // Add protocol-specific checks
+    const protocolChecks = await this.runProtocolChecks(tx);
+    
+    // Combine results
+    return this.combineAnalysis(baseAnalysis, protocolChecks);
+  }
+  
+  async handleSecurityEvent(event: SecurityEvent): Promise<void> {
+    // Protocol-specific event handling
+    switch (event.type) {
+      case 'critical-vulnerability':
+        await this.triggerEmergencyPause(event.contract);
+        await this.notifyGovernance(event);
+        break;
+        
+      case 'economic-anomaly':
+        await this.adjustRiskParameters(event);
+        await this.alertRiskManagement(event);
+        break;
+        
+      case 'governance-attack':
+        await this.activateGovernanceDefenses(event);
+        await this.notifyTokenHolders(event);
+        break;
+    }
+  }
+}
+
+// Deploy as microservice
+const securityService = new ProtocolSecurityService({
+  port: 3001,
+  apiVersion: 'v1',
+  authentication: 'jwt',
+  rateLimit: {
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 1000 // requests per window
+  }
+});
+```
+
+### Event-Driven Architecture
+
+**Security Event Processing**
+```typescript
+class SecurityEventProcessor {
+  async processSecurityEvents(): Promise<void> {
+    // Listen for security events from BevorAI
+    this.bevorClient.onSecurityEvent(async (event) => {
+      await this.routeEvent(event);
+    });
+  }
+  
+  private async routeEvent(event: SecurityEvent): Promise<void> {
+    // Route events based on protocol-specific logic
+    const handlers = this.getEventHandlers(event);
+    
+    // Process events in parallel where possible
+    await Promise.all(
+      handlers.map(handler => handler.process(event))
+    );
+    
+    // Update protocol state based on security findings
+    await this.updateProtocolState(event);
+  }
+  
+  private getEventHandlers(event: SecurityEvent): EventHandler[] {
+    const handlers = [];
+    
+    // Add protocol-specific handlers
+    if (event.affects('liquidity')) {
+      handlers.push(new LiquiditySecurityHandler());
+    }
+    
+    if (event.affects('governance')) {
+      handlers.push(new GovernanceSecurityHandler());
+    }
+    
+    if (event.severity === 'critical') {
+      handlers.push(new EmergencyResponseHandler());
+    }
+    
+    return handlers;
+  }
+}
+```
+
+## Chain-Specific Integrations
+
+### Custom Blockchain Integration
+
+**Native Chain Integration**
+```go
+package security
+
+import (
+    "github.com/bevor-protocol/go-sdk/security"
+    "your-chain/core"
+)
+
+type ChainSecurityModule struct {
+    bevorClient *security.Client
+    chainConfig *core.ChainConfig
+}
+
+func (csm *ChainSecurityModule) ValidateTransaction(tx *core.Transaction) error {
+    // Pre-execution security analysis
+    analysis, err := csm.bevorClient.AnalyzeTransaction(tx)
+    if err != nil {
+        return fmt.Errorf("security analysis failed: %w", err)
+    }
+    
+    // Reject transactions with critical security issues
+    if analysis.HasCriticalIssues() {
+        return fmt.Errorf("transaction rejected: %s", analysis.CriticalIssues)
+    }
+    
+    // Log security metrics for monitoring
+    csm.logSecurityMetrics(tx, analysis)
+    
+    return nil
+}
+
+func (csm *ChainSecurityModule) ValidateBlock(block *core.Block) error {
+    // Block-level security validation
+    blockAnalysis, err := csm.bevorClient.AnalyzeBlock(block)
+    if err != nil {
+        return fmt.Errorf("block security analysis failed: %w", err)
+    }
+    
+    // Check for block-level attacks (MEV, censorship, etc.)
+    if blockAnalysis.HasBlockLevelAttacks() {
+        return fmt.Errorf("block security violation: %s", blockAnalysis.Violations)
+    }
+    
+    return nil
+}
+
+func (csm *ChainSecurityModule) MonitorNetworkSecurity() {
+    go func() {
+        for {
+            networkHealth := csm.bevorClient.GetNetworkSecurityHealth()
+            
+            if networkHealth.ThreatLevel > CRITICAL_THRESHOLD {
+                csm.triggerNetworkAlert(networkHealth)
+            }
+            
+            time.Sleep(30 * time.Second)
+        }
+    }()
+}
+```
+
+### Consensus Integration
+
+**Consensus-Level Security**
+```rust
+use bevor_sdk::consensus::SecurityValidator;
+
+pub struct SecureConsensusEngine {
+    base_consensus: BaseConsensusEngine,
+    security_validator: SecurityValidator,
+}
+
+impl ConsensusEngine for SecureConsensusEngine {
+    async fn propose_block(&self, transactions: Vec<Transaction>) -> Block {
+        // Filter transactions through security analysis
+        let secure_transactions = self.filter_secure_transactions(transactions).await;
+        
+        // Create block with only secure transactions
+        let block = self.base_consensus.create_block(secure_transactions).await;
+        
+        // Validate block security before proposing
+        let security_validation = self.security_validator
+            .validate_block(&block)
+            .await;
+            
+        if !security_validation.is_safe {
+            // Fallback to safer block construction
+            return self.create_safe_block(transactions).await;
+        }
+        
+        block
+    }
+    
+    async fn validate_block(&self, block: &Block) -> ValidationResult {
+        // Run base consensus validation
+        let base_result = self.base_consensus.validate_block(block).await;
+        
+        if !base_result.is_valid {
+            return base_result;
+        }
+        
+        // Additional security validation
+        let security_result = self.security_validator
+            .comprehensive_block_analysis(block)
+            .await;
+            
+        ValidationResult {
+            is_valid: base_result.is_valid && security_result.is_safe,
+            security_context: Some(security_result),
+            base_validation: base_result,
+        }
+    }
+}
+```
+
+## Protocol-Specific Agents
+
+### Custom Protocol Agents
+
+**Lending Protocol Security Agent**
+```typescript
+class LendingProtocolAgent extends BevorAgent {
+  async analyzeLendingSecurity(
+    protocol: LendingProtocol
+  ): Promise<LendingSecurityAnalysis> {
+    const analysis = {
+      liquidationSecurity: await this.analyzeLiquidationMechanism(protocol),
+      oracleSecurity: await this.analyzeOracleIntegration(protocol),
+      interestRateModel: await this.analyzeInterestRates(protocol),
+      collateralRisks: await this.analyzeCollateralTypes(protocol),
+      flashLoanSecurity: await this.analyzeFlashLoanRisks(protocol)
+    };
+    
+    // Generate protocol-specific recommendations
+    const recommendations = this.generateLendingRecommendations(analysis);
+    
+    return {
+      ...analysis,
+      recommendations,
+      overallRisk: this.calculateOverallRisk(analysis),
+      actionableItems: this.prioritizeActions(recommendations)
+    };
+  }
+  
+  private async analyzeLiquidationMechanism(
+    protocol: LendingProtocol
+  ): Promise<LiquidationAnalysis> {
+    return {
+      liquidationThreshold: protocol.liquidationThreshold,
+      liquidationPenalty: protocol.liquidationPenalty,
+      auctionMechanism: await this.analyzeAuctionSecurity(protocol.auction),
+      frontRunningRisk: await this.assessFrontRunningRisk(protocol),
+      cascadingLiquidationRisk: await this.assessCascadingRisk(protocol)
+    };
+  }
+}
+```
+
+**AMM Protocol Security Agent**
+```python
+class AMMSecurityAgent(BevorAgent):
+    async def analyze_amm_security(self, amm_config):
+        analysis = {
+            'impermanent_loss_protection': await self.analyze_il_protection(amm_config),
+            'mev_protection': await self.analyze_mev_risks(amm_config),
+            'oracle_manipulation': await self.analyze_oracle_risks(amm_config),
+            'liquidity_risks': await self.analyze_liquidity_security(amm_config),
+            'fee_mechanism': await self.analyze_fee_security(amm_config)
+        }
+        
+        # Generate AMM-specific recommendations
+        recommendations = self.generate_amm_recommendations(analysis)
+        
+        return {
+            'analysis': analysis,
+            'recommendations': recommendations,
+            'risk_score': self.calculate_amm_risk_score(analysis),
+            'optimization_opportunities': self.find_optimizations(analysis)
+        }
+    
+    async def monitor_amm_operations(self, pool_address):
+        while self.is_monitoring:
+            # Monitor pool operations in real-time
+            recent_swaps = await self.get_recent_swaps(pool_address)
+            
+            for swap in recent_swaps:
+                # Analyze each swap for security issues
+                swap_analysis = await self.analyze_swap_security(swap)
+                
+                if swap_analysis['is_suspicious']:
+                    await self.handle_suspicious_swap(swap, swap_analysis)
+                    
+                if swap_analysis['is_attack']:
+                    await self.trigger_attack_response(swap, swap_analysis)
+            
+            await asyncio.sleep(1)  # 1 second monitoring interval
+```
+
+## Integration APIs
+
+### Protocol Integration SDK
+
+**Protocol SDK**
+```typescript
+import { BevorProtocolSDK } from '@bevor/protocol-sdk';
+
+class YourProtocolIntegration {
+  private bevor: BevorProtocolSDK;
+  
+  constructor(config: ProtocolConfig) {
+    this.bevor = new BevorProtocolSDK({
+      apiKey: config.bevorApiKey,
+      protocol: {
+        name: config.protocolName,
+        version: config.version,
+        contracts: config.contracts,
+        customRules: config.securityRules
+      },
+      integration: {
+        realTimeMonitoring: true,
+        automaticResponse: config.autoResponse,
+        customDashboard: true
+      }
+    });
+  }
+  
+  async setupProtocolSecurity(): Promise<void> {
+    // Configure protocol-specific security monitoring
+    await this.bevor.configure({
+      monitoring: {
+        contracts: this.getProtocolContracts(),
+        focus: this.getProtocolSecurityFocus(),
+        alerts: this.getProtocolAlertConfig()
+      },
+      automation: {
+        emergencyResponse: this.getEmergencyResponseConfig(),
+        parameterAdjustment: this.getParameterConfig(),
+        governanceIntegration: this.getGovernanceConfig()
+      }
+    });
+  }
+  
+  async getProtocolSecurityStatus(): Promise<ProtocolSecurityStatus> {
+    const status = await this.bevor.getSecurityStatus();
+    
+    return {
+      overallScore: status.securityScore,
+      activeThreats: status.activeThreats,
+      recentFindings: status.recentFindings,
+      recommendations: status.recommendations,
+      protocolSpecificMetrics: await this.getProtocolMetrics()
+    };
+  }
+}
+```
+
+### Webhook Integration
+
+**Protocol Event Webhooks**
+```typescript
+class ProtocolWebhookHandler {
+  async handleBevorWebhook(
+    event: BevorSecurityEvent
+  ): Promise<WebhookResponse> {
+    switch (event.type) {
+      case 'vulnerability_detected':
+        return await this.handleVulnerabilityDetected(event);
+        
+      case 'economic_anomaly':
+        return await this.handleEconomicAnomaly(event);
+        
+      case 'governance_risk':
+        return await this.handleGovernanceRisk(event);
+        
+      default:
+        return this.handleGenericSecurityEvent(event);
+    }
+  }
+  
+  private async handleVulnerabilityDetected(
+    event: VulnerabilityEvent
+  ): Promise<WebhookResponse> {
+    // Protocol-specific vulnerability handling
+    if (event.severity === 'critical') {
+      // Immediate response for critical vulnerabilities
+      await this.triggerEmergencyProtocols(event);
+      await this.notifySecurityTeam(event);
+      await this.pauseAffectedFunctions(event.contract);
+    }
+    
+    // Update protocol security dashboard
+    await this.updateSecurityDashboard(event);
+    
+    // Log for audit trail
+    await this.logSecurityEvent(event);
+    
+    return {
+      status: 'processed',
+      actions_taken: this.getActionsTaken(event),
+      next_steps: this.getNextSteps(event)
+    };
+  }
+}
+```
+
+## Deployment and Operations
+
+### Infrastructure Setup
+
+**Containerized Deployment**
+```dockerfile
+# Dockerfile for protocol security integration
+FROM node:18-alpine
+
+# Install BevorAI protocol integration
+COPY package.json package-lock.json ./
+RUN npm ci --only=production
+
+# Copy protocol-specific configuration
+COPY config/ ./config/
+COPY agents/ ./agents/
+
+# Set up security monitoring
+COPY security-config.json ./
+ENV BEVOR_API_KEY=${BEVOR_API_KEY}
+ENV PROTOCOL_NAME=${PROTOCOL_NAME}
+
+# Health check endpoint
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:3000/health || exit 1
+
+EXPOSE 3000
+CMD ["npm", "start"]
+```
+
+**Kubernetes Deployment**
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: protocol-security-service
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: protocol-security
+  template:
+    metadata:
+      labels:
+        app: protocol-security
+    spec:
+      containers:
+      - name: security-service
+        image: your-protocol/security-service:latest
+        env:
+        - name: BEVOR_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: bevor-credentials
+              key: api-key
+        - name: PROTOCOL_CONFIG
+          valueFrom:
+            configMapKeyRef:
+              name: protocol-config
+              key: security-config.json
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi" 
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+```
+
+## Monitoring and Maintenance
+
+### Integration Health Monitoring
+
+**Integration Monitoring**
+```bash
+# Monitor integration health
+bevor integration monitor \
+  --protocol your-protocol \
+  --metrics latency,throughput,accuracy \
+  --alerts integration-failure,performance-degradation
+
+# Test integration endpoints
+bevor integration test \
+  --protocol your-protocol \
+  --test-suite comprehensive \
+  --include-load-testing
+```
+
+**Performance Optimization**
+```typescript
+class IntegrationOptimizer {
+  async optimizeIntegration(
+    integration: ProtocolIntegration
+  ): Promise<OptimizationResult> {
+    // Analyze current performance
+    const metrics = await this.gatherPerformanceMetrics(integration);
+    
+    // Identify bottlenecks
+    const bottlenecks = this.identifyBottlenecks(metrics);
+    
+    // Generate optimization recommendations
+    const optimizations = this.generateOptimizations(bottlenecks);
+    
+    // Apply safe optimizations automatically
+    const safeOptimizations = optimizations.filter(o => o.risk === 'low');
+    await this.applyOptimizations(integration, safeOptimizations);
+    
+    return {
+      applied: safeOptimizations,
+      recommended: optimizations.filter(o => o.risk !== 'low'),
+      performance_improvement: await this.measureImprovement(integration)
+    };
+  }
+}
+```
+
+## Best Practices
+
+### Integration Strategy
+
+1. **Start Simple, Scale Gradually**
+   - Begin with basic API integration
+   - Add real-time monitoring incrementally  
+   - Implement advanced features based on needs
+   - Scale infrastructure as usage grows
+
+2. **Protocol-Specific Customization**
+   - Tailor security rules to your protocol's risks
+   - Customize alert thresholds for your use case
+   - Integrate with existing protocol governance
+   - Maintain protocol-specific security documentation
+
+3. **User Experience Focus**
+   - Provide clear security status indicators
+   - Offer actionable security recommendations
+   - Integrate seamlessly with existing workflows
+   - Maintain consistent branding and experience
+
+### Security Considerations
+
+#### Integration Security
+- Secure API key management and rotation
+- Validate all inputs from BevorAI APIs
+- Implement proper error handling and fallbacks
+- Monitor integration security continuously
+
+#### Operational Security
+- Regular security reviews of integration code
+- Incident response procedures for integration failures
+- Backup and recovery procedures
+- Performance monitoring and optimization
+
+## Troubleshooting
+
+### Common Integration Issues
+
+#### API Integration Problems
+```bash
+# Debug API connectivity
+bevor debug api-connection \
+  --endpoint https://api.bevor.io \
+  --api-key $BEVOR_API_KEY \
+  --test-endpoints
+
+# Validate integration configuration
+bevor validate integration \
+  --config ./integration-config.json \
+  --test-mode dry-run
+```
+
+#### Performance Issues
+```bash
+# Profile integration performance
+bevor profile integration \
+  --protocol your-protocol \
+  --duration 1h \
+  --include-recommendations
+
+# Optimize integration settings
+bevor optimize integration \
+  --protocol your-protocol \
+  --target-latency 100ms \
+  --target-throughput 1000rps
+```
+
+### Getting Support
+
+For protocol integration support:
+- **Integration Documentation**: Step-by-step integration guides
+- **Developer Community**: [Discord #protocol-integration](https://discord.gg/bevor)
+- **Enterprise Support**: [enterprise@bevor.io](mailto:enterprise@bevor.io)
+- **Custom Development**: Professional services for complex integrations
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="API Reference" icon="code" href="/api-reference/introduction">
+    Explore the complete API documentation
+  </Card>
+  <Card title="Token Economics" icon="coins" href="/token">
+    Learn about BevorAI's token model and incentives
+  </Card>
+</CardGroup>

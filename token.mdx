@@ -1,0 +1,561 @@
+---
+title: 'Token'
+description: 'Token model overview, usage, and incentives'
+---
+
+# BEVOR Token
+
+The BEVOR token powers the BevorAI ecosystem, providing incentives for security contributions, governance participation, and network effects that strengthen the entire platform.
+
+## Token Overview
+
+### Token Utility
+
+**Core Functions**
+- **Security Data Contributions**: Earn tokens for labeling security data and improving AI models
+- **Governance Participation**: Vote on protocol upgrades, security standards, and ecosystem development
+- **Access to Premium Features**: Unlock advanced analysis capabilities and priority support
+- **Network Incentives**: Reward security agents and infrastructure providers
+
+**Economic Model**
+- **Supply**: Fixed initial supply with deflationary mechanisms
+- **Distribution**: Community-driven allocation favoring security contributors
+- **Staking**: Stake tokens for enhanced features and governance power
+- **Burning**: Token burns from protocol revenue and governance decisions
+
+### Token Distribution
+
+#### Initial Allocation
+```
+Total Supply: 1,000,000,000 BEVOR
+
+Community & Contributors: 40% (400M)
+- Security data contributors: 20%
+- Open source developers: 10%
+- Early adopters and testers: 10%
+
+Ecosystem Development: 25% (250M)
+- Protocol development: 15%
+- Research and innovation: 10%
+
+Team & Advisors: 20% (200M)
+- Core team: 15%
+- Security advisors: 5%
+
+Treasury & Reserves: 15% (150M)
+- Protocol treasury: 10%
+- Emergency reserves: 5%
+```
+
+#### Vesting Schedules
+- **Community Contributors**: No vesting, earned through contributions
+- **Team**: 4-year vesting with 1-year cliff
+- **Ecosystem**: Released based on development milestones
+- **Treasury**: Governed by community proposals
+
+## Earning Mechanisms
+
+### Security Data Contributions
+
+**Data Labeling Rewards**
+```typescript
+interface LabelingReward {
+  baseReward: number;        // Base tokens per labeled finding
+  qualityMultiplier: number; // 1.0x to 3.0x based on quality
+  difficultyBonus: number;   // Extra tokens for complex vulnerabilities
+  consensusBonus: number;    // Bonus for labels that achieve consensus
+  streakMultiplier: number;  // Bonus for consistent contributions
+}
+
+// Example reward calculation
+const calculateLabelingReward = (label: SecurityLabel): number => {
+  const base = 10; // 10 BEVOR base reward
+  const quality = label.qualityScore; // 1.0 to 3.0
+  const difficulty = label.complexityScore; // 0 to 50 bonus
+  const consensus = label.hasConsensus ? 1.2 : 1.0;
+  const streak = Math.min(label.contributorStreak / 10, 2.0);
+  
+  return base * quality * consensus * streak + difficulty;
+};
+```
+
+**Contribution Types and Rewards**
+- **Vulnerability Labeling**: 10-100 BEVOR per finding
+- **False Positive Identification**: 5-25 BEVOR per correction
+- **New Pattern Discovery**: 100-1000 BEVOR for novel patterns
+- **Model Improvement Suggestions**: 50-500 BEVOR for accepted improvements
+- **Security Research Publications**: 500-5000 BEVOR for peer-reviewed research
+
+### Development Contributions
+
+**Open Source Development**
+```bash
+# Submit security improvement proposal
+bevor governance propose \
+  --type security-improvement \
+  --title "Enhanced Reentrancy Detection" \
+  --description ./proposal.md \
+  --implementation ./code-changes \
+  --reward-request 10000BEVOR
+
+# Contribute to agent development
+bevor contribute agent \
+  --agent-type economic-analysis \
+  --improvement ./agent-improvements \
+  --test-results ./test-validation \
+  --reward-calculation automatic
+```
+
+**Contribution Rewards**
+- **Bug Fixes**: 100-1000 BEVOR based on severity
+- **Feature Development**: 1000-10000 BEVOR based on scope
+- **Documentation**: 50-500 BEVOR per accepted contribution
+- **Agent Development**: 500-5000 BEVOR for new agents
+- **Integration Development**: 1000-10000 BEVOR for new integrations
+
+### Network Participation
+
+**Security Agent Operation**
+```python
+# Run security agent to earn rewards
+agent_config = {
+    'agent_type': 'vulnerability_detector',
+    'networks': ['ethereum', 'polygon'],
+    'stake_amount': 1000,  # BEVOR tokens staked
+    'reward_sharing': 0.1  # 10% to agent operator
+}
+
+# Agent operators earn rewards based on:
+# - Accuracy of vulnerability detection
+# - Uptime and reliability
+# - Community feedback and ratings
+# - Network contribution value
+```
+
+## Governance
+
+### Governance Structure
+
+**Proposal Types**
+- **Security Standard Updates**: Changes to security analysis criteria
+- **Protocol Upgrades**: Technical improvements and new features
+- **Economic Parameters**: Token economics and reward adjustments
+- **Ecosystem Grants**: Funding for security research and development
+- **Emergency Actions**: Critical security responses
+
+**Voting Mechanisms**
+```solidity
+pragma solidity ^0.8.19;
+
+contract BevorGovernance {
+    struct Proposal {
+        uint256 id;
+        string title;
+        string description;
+        ProposalType proposalType;
+        uint256 votingPower;
+        uint256 forVotes;
+        uint256 againstVotes;
+        uint256 startTime;
+        uint256 endTime;
+        bool executed;
+    }
+    
+    mapping(uint256 => Proposal) public proposals;
+    mapping(address => uint256) public stakedTokens;
+    mapping(address => mapping(uint256 => bool)) public hasVoted;
+    
+    function createProposal(
+        string memory title,
+        string memory description,
+        ProposalType proposalType
+    ) external returns (uint256) {
+        require(
+            stakedTokens[msg.sender] >= PROPOSAL_THRESHOLD,
+            "Insufficient stake for proposal"
+        );
+        
+        uint256 proposalId = ++proposalCounter;
+        proposals[proposalId] = Proposal({
+            id: proposalId,
+            title: title,
+            description: description,
+            proposalType: proposalType,
+            votingPower: 0,
+            forVotes: 0,
+            againstVotes: 0,
+            startTime: block.timestamp,
+            endTime: block.timestamp + VOTING_PERIOD,
+            executed: false
+        });
+        
+        emit ProposalCreated(proposalId, msg.sender, title);
+        return proposalId;
+    }
+    
+    function vote(uint256 proposalId, bool support) external {
+        require(!hasVoted[msg.sender][proposalId], "Already voted");
+        require(stakedTokens[msg.sender] > 0, "No voting power");
+        
+        Proposal storage proposal = proposals[proposalId];
+        require(block.timestamp <= proposal.endTime, "Voting ended");
+        
+        uint256 votingPower = stakedTokens[msg.sender];
+        
+        if (support) {
+            proposal.forVotes += votingPower;
+        } else {
+            proposal.againstVotes += votingPower;
+        }
+        
+        hasVoted[msg.sender][proposalId] = true;
+        emit VoteCast(proposalId, msg.sender, support, votingPower);
+    }
+}
+```
+
+### Governance Participation
+
+**Staking for Governance**
+```typescript
+class GovernanceParticipation {
+  async stakeForGovernance(amount: number): Promise<StakingResult> {
+    const stakingTx = await this.bevorToken.stake(amount);
+    
+    return {
+      stakedAmount: amount,
+      votingPower: this.calculateVotingPower(amount),
+      stakingRewards: this.calculateStakingRewards(amount),
+      unlockTime: this.calculateUnlockTime(),
+      transactionHash: stakingTx.hash
+    };
+  }
+  
+  async participateInGovernance(): Promise<GovernanceActivity> {
+    // Get active proposals
+    const proposals = await this.governance.getActiveProposals();
+    
+    // Analyze proposals for security impact
+    const analysis = await this.analyzeProposals(proposals);
+    
+    // Vote based on security analysis
+    const votes = this.generateVotes(analysis);
+    
+    // Submit votes
+    for (const vote of votes) {
+      await this.governance.vote(vote.proposalId, vote.support);
+    }
+    
+    return {
+      proposalsVoted: votes.length,
+      votingPower: await this.getVotingPower(),
+      rewardsEarned: await this.calculateGovernanceRewards()
+    };
+  }
+}
+```
+
+## Token Economics
+
+### Reward Mechanisms
+
+**Dynamic Reward Adjustment**
+```python
+class TokenEconomics:
+    def calculate_contribution_reward(self, contribution):
+        base_reward = self.get_base_reward(contribution.type)
+        
+        # Quality multiplier (1.0x to 3.0x)
+        quality_multiplier = self.assess_quality(contribution)
+        
+        # Scarcity multiplier (higher rewards for rare contributions)
+        scarcity_multiplier = self.calculate_scarcity(contribution.type)
+        
+        # Network effect multiplier (more valuable as network grows)
+        network_multiplier = self.get_network_effect_multiplier()
+        
+        # Time-based multiplier (early contributors get higher rewards)
+        time_multiplier = self.get_time_decay_multiplier()
+        
+        total_reward = (
+            base_reward * 
+            quality_multiplier * 
+            scarcity_multiplier * 
+            network_multiplier * 
+            time_multiplier
+        )
+        
+        return min(total_reward, self.MAX_SINGLE_REWARD)
+    
+    def calculate_staking_rewards(self, staked_amount, duration):
+        # Base staking APY
+        base_apy = 0.08  # 8% base APY
+        
+        # Governance participation bonus
+        governance_bonus = self.get_governance_participation_bonus()
+        
+        # Security contribution bonus
+        security_bonus = self.get_security_contribution_bonus()
+        
+        # Network security bonus (higher rewards when network needs more security)
+        network_security_bonus = self.get_network_security_bonus()
+        
+        effective_apy = base_apy + governance_bonus + security_bonus + network_security_bonus
+        
+        return staked_amount * effective_apy * (duration / 365.25)
+```
+
+### Deflationary Mechanisms
+
+**Token Burning**
+- **Protocol Revenue**: 50% of protocol revenue used for token buyback and burn
+- **Governance Decisions**: Community can vote to burn treasury tokens
+- **Security Violations**: Penalties for malicious actors result in token burns
+- **Efficiency Improvements**: Burns when AI efficiency reduces token demand
+
+**Supply Management**
+```solidity
+contract BevorTokenEconomics {
+    uint256 public constant MAX_SUPPLY = 1_000_000_000e18;
+    uint256 public totalBurned;
+    
+    function burnFromRevenue(uint256 amount) external onlyProtocol {
+        require(amount <= protocolRevenue, "Insufficient revenue");
+        
+        _burn(address(this), amount);
+        totalBurned += amount;
+        protocolRevenue -= amount;
+        
+        emit TokensBurnedFromRevenue(amount, totalBurned);
+    }
+    
+    function governanceBurn(uint256 amount) external onlyGovernance {
+        require(amount <= treasuryBalance, "Insufficient treasury");
+        
+        _burn(treasuryAddress, amount);
+        totalBurned += amount;
+        treasuryBalance -= amount;
+        
+        emit TokensBurnedByGovernance(amount, totalBurned);
+    }
+    
+    function getCirculatingSupply() external view returns (uint256) {
+        return totalSupply() - treasuryBalance - totalBurned;
+    }
+}
+```
+
+## Token Utility Roadmap
+
+### Current Utility (Phase 1)
+- Security data labeling rewards
+- Basic governance participation
+- Premium feature access
+- Community recognition
+
+### Expanding Utility (Phase 2)
+- Agent marketplace transactions
+- Custom analysis priority queuing
+- Advanced governance mechanisms
+- Cross-protocol security incentives
+
+### Future Utility (Phase 3)
+- Cross-chain security coordination
+- Insurance and risk management
+- Decentralized security infrastructure
+- Global security standards governance
+
+## Getting Started with Tokens
+
+### Acquiring BEVOR Tokens
+
+**Primary Methods**
+1. **Contribute Security Data**: Label vulnerabilities and earn rewards
+2. **Develop Security Tools**: Build agents and integrations
+3. **Participate in Governance**: Stake and vote to earn rewards
+4. **Token Exchange**: Purchase on supported DEXs (coming soon)
+
+**Earning Your First Tokens**
+```bash
+# Start earning through data labeling
+bevor contribute start \
+  --type data-labeling \
+  --focus-area defi-vulnerabilities \
+  --estimated-time 2h/week
+
+# Check earning potential
+bevor earnings estimate \
+  --activity-type data-labeling \
+  --hours-per-week 5 \
+  --quality-score 2.5
+```
+
+### Token Management
+
+**Wallet Integration**
+```typescript
+import { BevorTokenManager } from '@bevor/token-sdk';
+
+class TokenManager {
+  async setupTokenIntegration(walletAddress: string): Promise<void> {
+    const tokenManager = new BevorTokenManager({
+      wallet: walletAddress,
+      network: 'ethereum',
+      autoStaking: true
+    });
+    
+    // Configure automatic reward claiming
+    await tokenManager.configureAutoClaim({
+      enabled: true,
+      threshold: 100, // Auto-claim when reaching 100 BEVOR
+      stakingPercentage: 50 // Automatically stake 50% of claimed rewards
+    });
+    
+    // Set up governance notifications
+    await tokenManager.setupGovernanceAlerts({
+      newProposals: true,
+      votingReminders: true,
+      executionNotifications: true
+    });
+  }
+}
+```
+
+## Roadmap and Future Development
+
+### Token Development Phases
+
+#### Phase 1: Foundation (Current)
+- ✅ Token contract deployment
+- ✅ Basic reward mechanisms
+- ✅ Security data contribution rewards
+- ✅ Simple governance structure
+
+#### Phase 2: Expansion (Q2 2024)
+- 🚧 Advanced governance mechanisms
+- 🚧 Agent marketplace integration
+- 🚧 Cross-protocol incentives
+- 🚧 Enhanced staking features
+
+#### Phase 3: Maturation (Q4 2024)
+- ⏳ Cross-chain token functionality
+- ⏳ Insurance and risk management features
+- ⏳ Decentralized infrastructure rewards
+- ⏳ Global security standards governance
+
+### Community Governance Evolution
+
+**Governance Maturity Path**
+1. **Core Team Governance**: Initial development and security
+2. **Community Advisory**: Community input on major decisions
+3. **Hybrid Governance**: Shared decision-making with security safeguards
+4. **Full Decentralization**: Complete community governance with emergency mechanisms
+
+## Token Security
+
+### Smart Contract Security
+
+**Token Contract Audits**
+- Multiple independent security audits
+- Formal verification of critical functions
+- Continuous monitoring for vulnerabilities
+- Emergency response mechanisms
+
+**Security Features**
+```solidity
+contract BevorToken is ERC20, ReentrancyGuard, Pausable {
+    // Emergency pause functionality
+    function emergencyPause() external onlyEmergencyRole {
+        _pause();
+        emit EmergencyPause(msg.sender, block.timestamp);
+    }
+    
+    // Secure transfer with additional checks
+    function secureTransfer(
+        address to,
+        uint256 amount
+    ) external nonReentrant whenNotPaused {
+        require(to != address(0), "Invalid recipient");
+        require(amount > 0, "Invalid amount");
+        require(!isBlacklisted(to), "Recipient blacklisted");
+        
+        _transfer(msg.sender, to, amount);
+        
+        // Log for monitoring
+        emit SecureTransfer(msg.sender, to, amount);
+    }
+    
+    // Governance-controlled emergency functions
+    function emergencyWithdraw(
+        address token,
+        uint256 amount
+    ) external onlyGovernance {
+        require(token != address(this), "Cannot withdraw BEVOR");
+        IERC20(token).transfer(treasury, amount);
+    }
+}
+```
+
+### Economic Security
+
+**Tokenomics Security Measures**
+- **Gradual Release**: Vesting schedules prevent sudden supply shocks
+- **Burn Mechanisms**: Deflationary pressure maintains token value
+- **Staking Incentives**: Long-term alignment through staking rewards
+- **Governance Safeguards**: Multi-signature and timelock protections
+
+## FAQ
+
+### General Questions
+
+**Q: How do I start earning BEVOR tokens?**
+A: The easiest way is through security data labeling. Visit [app.bevor.io](https://app.bevor.io), complete the onboarding, and start labeling security findings. You'll earn tokens based on the quality and accuracy of your contributions.
+
+**Q: What can I do with BEVOR tokens?**
+A: BEVOR tokens can be used for governance voting, accessing premium features, paying for advanced analysis, and earning staking rewards. Future utility will include agent marketplace transactions and cross-protocol security incentives.
+
+**Q: How is token value maintained?**
+A: Token value is supported through utility demand, deflationary burning mechanisms, staking rewards, and the growing network effects of the security ecosystem.
+
+### Technical Questions
+
+**Q: Which networks support BEVOR tokens?**
+A: Initially deployed on Ethereum mainnet, with plans for multi-chain support including Polygon, Arbitrum, and other major networks.
+
+**Q: How are rewards calculated?**
+A: Rewards are calculated based on contribution type, quality scores, consensus achievement, difficulty bonuses, and network multipliers. The exact formula is transparent and governed by the community.
+
+**Q: Can I stake my tokens?**
+A: Yes, staking is available with flexible periods and competitive rewards. Staked tokens also provide governance voting power and access to premium features.
+
+### Governance Questions
+
+**Q: How does governance work?**
+A: Token holders can create proposals and vote on protocol changes. Voting power is based on staked tokens, and proposals require minimum thresholds to pass. Critical security decisions have additional safeguards.
+
+**Q: What decisions does governance control?**
+A: Governance controls protocol upgrades, economic parameters, treasury management, security standards, and ecosystem development funding.
+
+## Resources
+
+### Token Information
+- **Contract Address**: `0x...` (TBD - will be updated upon deployment)
+- **Token Standard**: ERC-20 with additional governance features
+- **Decimals**: 18
+- **Symbol**: BEVOR
+
+### Links and Resources
+- **Token Dashboard**: [app.bevor.io/tokens](https://app.bevor.io/tokens)
+- **Governance Portal**: [governance.bevor.io](https://governance.bevor.io)
+- **Community**: [Discord](https://discord.gg/bevor)
+- **Token Analytics**: Integration with major token tracking platforms
+
+### Developer Resources
+- **Token SDK**: `npm install @bevor/token-sdk`
+- **Smart Contract ABI**: Available in developer documentation
+- **Integration Examples**: [GitHub repository](https://github.com/Bevor-Protocol/token-examples)
+- **Technical Support**: [developers@bevor.io](mailto:developers@bevor.io)
+
+<Card title="Start Earning Tokens" icon="coins" href="https://app.bevor.io">
+  Begin contributing to BevorAI and earn your first BEVOR tokens
+</Card>

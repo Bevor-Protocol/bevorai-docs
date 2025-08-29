@@ -1,33 +1,58 @@
 ---
 title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+description: 'Build on Bevor - Create custom security agents, tools, and integrations'
 ---
 
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
+# Build on Bevor
 
-## Welcome
+Create custom security agents, tools, and integrations.
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
+Developer-friendly API for building security automation into your agents, protocols, and chains.
+
+## Welcome to BevorAI API
+
+BevorAI provides a comprehensive API for integrating advanced security auditing capabilities into your development workflow. Whether you're building custom security agents, integrating into existing protocols, or creating specialized tools, our API enables you to leverage AI-powered security analysis at scale.
 
 <Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
+  title="Interactive API Documentation"
+  icon="code"
+  href="https://api.bevor.io/docs"
 >
-  View the OpenAPI specification file
+  Explore endpoints, parameters, and examples
 </Card>
+
+## Key Integration Types
+
+### MCP Integration & Co-Piloting
+Interactive, continuous engagement through Model Context Protocol integrations with IDEs like Cursor and Windsurf.
+
+### CI/CD
+Continuous reporting and team insights integrated into your development pipeline.
+
+### API
+Custom workflows and integrations for specialized use cases and protocol-specific needs.
+
+### Terminal
+In-depth insights and automation through the BevorAI web terminal interface.
+
+### Block Explorer Scanning
+Autonomous detection pre/post deployment across major blockchain networks.
+
+### Multi-Agent Triaging (A2A)
+Risk profiling and orchestration for complex security scenarios.
+
+## On-Premises Deployment
+
+<Note>
+  Enterprise on-premises deployment is coming soon. For early access and custom deployment options, contact our sales team at [contact@bevor.io](mailto:contact@bevor.io).
+</Note>
 
 ## Authentication
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+All API endpoints are authenticated using Bearer tokens. Include your API key in the Authorization header:
 
-```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
+```bash
+Authorization: Bearer YOUR_API_KEY
 ```
+
+Get your API key from the [BevorAI Dashboard](https://app.bevor.io).

@@ -1,0 +1,255 @@
+---
+title: 'Using the BevorAI Terminal'
+description: 'Secure auditing directly in the web terminal'
+---
+
+# Using the BevorAI Terminal
+
+The BevorAI Terminal provides a powerful, web-based interface for comprehensive security analysis. Perfect for detailed auditing sessions, collaborative reviews, and in-depth contract analysis.
+
+## Getting Started
+
+### Accessing the Terminal
+
+1. Visit [app.bevor.io](https://app.bevor.io)
+2. Sign in to your BevorAI account
+3. Navigate to the **Terminal** section
+4. Choose your preferred analysis environment
+
+### Interface Overview
+
+The terminal interface consists of several key components:
+
+- **Code Editor**: Multi-file editor with syntax highlighting
+- **Analysis Panel**: Real-time security findings and recommendations
+- **Command Interface**: Execute security analysis commands
+- **Results Dashboard**: Comprehensive reporting and export options
+- **Collaboration Tools**: Share findings and work with team members
+
+## Core Features
+
+### Multi-File Analysis
+
+**Project Upload**
+- Drag and drop entire project folders
+- Git repository integration for direct imports
+- Support for common project structures (Hardhat, Foundry, Truffle)
+- Automatic dependency resolution and mapping
+
+**File Management**
+- Navigate complex project structures
+- View multiple files simultaneously
+- Track changes and analysis history
+- Organize files by security relevance
+
+### Comprehensive Security Scanning
+
+**Vulnerability Detection**
+```bash
+# Basic security scan
+bevor scan ./contracts
+
+# Deep analysis with context
+bevor scan ./contracts --deep --include-dependencies
+
+# Specific vulnerability types
+bevor scan ./contracts --focus reentrancy,access-control
+
+# Export results
+bevor scan ./contracts --output json > security-report.json
+```
+
+**Analysis Commands**
+- `bevor scan` - Run comprehensive security analysis
+- `bevor check` - Quick vulnerability check
+- `bevor explain` - Get detailed explanations of findings
+- `bevor fix` - Generate remediation suggestions
+- `bevor compare` - Compare versions for security regressions
+
+### Interactive Analysis
+
+**Guided Auditing**
+- Step-by-step audit workflows
+- Interactive vulnerability exploration
+- Contextual help and documentation
+- Expert system guidance for complex issues
+
+**Real-Time Collaboration**
+- Share terminal sessions with team members
+- Collaborative annotation and discussion
+- Real-time finding validation
+- Team consensus building tools
+
+## Advanced Features
+
+### Custom Analysis Profiles
+
+Create specialized analysis configurations for different use cases:
+
+#### DeFi Protocol Profile
+```json
+{
+  "profile": "defi-protocol",
+  "focus_areas": [
+    "economic_attacks",
+    "oracle_manipulation", 
+    "liquidity_risks",
+    "governance_vulnerabilities"
+  ],
+  "severity_weights": {
+    "economic": 1.5,
+    "governance": 1.2,
+    "technical": 1.0
+  }
+}
+```
+
+#### NFT Project Profile
+```json
+{
+  "profile": "nft-project",
+  "focus_areas": [
+    "access_control",
+    "metadata_security",
+    "royalty_enforcement",
+    "marketplace_integration"
+  ],
+  "special_checks": [
+    "erc721_compliance",
+    "opensea_compatibility"
+  ]
+}
+```
+
+### Automated Reporting
+
+**Report Generation**
+- Executive summaries for stakeholders
+- Technical reports for developers
+- Audit trails for compliance
+- Comparative analysis across versions
+
+**Export Formats**
+- PDF reports with charts and visualizations
+- JSON data for programmatic processing
+- CSV for spreadsheet analysis
+- Markdown for documentation integration
+
+### Integration Capabilities
+
+**Webhook Integration**
+```javascript
+// Configure webhooks for real-time notifications
+const webhookConfig = {
+  url: "https://your-endpoint.com/bevor-webhook",
+  events: ["vulnerability_found", "analysis_complete"],
+  filters: {
+    severity: ["critical", "high"],
+    types: ["reentrancy", "access_control"]
+  }
+};
+```
+
+**API Access**
+```bash
+# Export findings via API
+curl -H "Authorization: Bearer YOUR_API_KEY" \
+     "https://api.bevor.io/v1/analysis/results/{session_id}"
+```
+
+## Best Practices
+
+### Effective Auditing Workflow
+
+1. **Preparation**
+   - Set up appropriate analysis profile
+   - Configure team collaboration settings
+   - Review project documentation and specifications
+   - Establish audit scope and objectives
+
+2. **Initial Analysis**
+   - Run comprehensive scan across all contracts
+   - Review high-severity findings first
+   - Identify critical paths and entry points
+   - Map out contract interactions and dependencies
+
+3. **Deep Dive Investigation**
+   - Focus on complex business logic
+   - Analyze economic incentives and game theory
+   - Test edge cases and boundary conditions
+   - Verify findings with manual analysis
+
+4. **Documentation and Reporting**
+   - Document all findings with clear descriptions
+   - Provide specific remediation recommendations
+   - Create executive summary for stakeholders
+   - Export detailed technical reports
+
+### Performance Optimization
+
+#### Large Project Handling
+- Use incremental analysis for large codebases
+- Focus on high-risk areas first
+- Leverage parallel analysis capabilities
+- Configure appropriate timeout settings
+
+#### Memory Management
+- Clear analysis cache periodically
+- Manage file upload sizes efficiently
+- Use streaming analysis for very large files
+- Monitor resource usage in browser
+
+## Collaboration Features
+
+### Team Workspaces
+
+**Shared Sessions**
+- Multiple team members in same terminal session
+- Real-time cursor sharing and collaboration
+- Synchronized analysis results and annotations
+- Persistent session state across team members
+
+**Permission Management**
+- Role-based access control (Admin, Auditor, Viewer)
+- Granular permissions for different analysis features
+- Audit trail of all team actions
+- Secure sharing with external collaborators
+
+### Communication Tools
+
+**Inline Comments**
+- Add comments directly to code lines
+- Tag team members for specific issues
+- Thread discussions around findings
+- Resolution tracking and status updates
+
+**Finding Discussion**
+- Dedicated discussion threads for each vulnerability
+- Expert opinion gathering and consensus building
+- Evidence sharing and validation
+- Decision documentation and rationale
+
+## Security and Privacy
+
+### Data Protection
+- End-to-end encryption for sensitive code
+- Temporary analysis with automatic cleanup
+- No permanent storage of proprietary code
+- Compliance with enterprise security requirements
+
+### Access Control
+- Multi-factor authentication support
+- IP allowlisting for enterprise accounts
+- Session timeout and automatic logout
+- Comprehensive audit logging
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Post-Deployment Scanning" icon="radar" href="/auditors/post-deployment">
+    Learn about monitoring deployed contracts
+  </Card>
+  <Card title="Data Labeling" icon="tag" href="/auditors/data-labeling">
+    Contribute to BevorAI's security knowledge base
+  </Card>
+</CardGroup>
