@@ -104,7 +104,7 @@
             ]
           }
         ],
-        "openapi": "/api-reference/openapi.json"
+        "openapi": "https://testing.api.bevor.io/openapi.json"
       }
     ],
     "global": {
