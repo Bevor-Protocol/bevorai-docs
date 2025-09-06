@@ -99,7 +99,8 @@
               "api-reference/concepts",
               "api-reference/code-versions",
               "api-reference/audits",
-              "api-reference/error-handling"
+              "api-reference/error-handling",
+              "api-reference/error-codes"
             ]
           }
         ],
