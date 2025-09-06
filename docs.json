@@ -95,11 +95,15 @@
           {
             "group": "Getting Started",
             "pages": [
-              "api-reference/introduction"
+              "api-reference/introduction",
+              "api-reference/concepts",
+              "api-reference/code-versions",
+              "api-reference/audits",
+              "api-reference/error-handling"
             ]
           }
         ],
-        "openapi": "https://api.bevor.io/openapi.json"
+        "openapi": "/api-reference/openapi.json"
       }
     ],
     "global": {

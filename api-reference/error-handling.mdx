@@ -1,0 +1,344 @@
+---
+title: 'Error Handling'
+description: 'Comprehensive guide to handling errors in the BevorAI API'
+---
+
+# Error Handling
+
+The BevorAI API uses conventional HTTP response codes and provides detailed error information to help you understand and resolve issues quickly.
+
+## Response Format
+
+All error responses follow a consistent JSON structure:
+
+```json
+{
+  "message": "Human-readable error description",
+  "code": "ERROR_CODE"
+}
+```
+
+## HTTP Status Codes
+
+The API uses standard HTTP status codes to indicate the success or failure of requests:
+
+| Status Code | Description |
+|-------------|-------------|
+| `200` | Success - Request completed successfully |
+| `201` | Created - Resource created successfully |
+| `400` | Bad Request - Invalid request parameters |
+| `401` | Unauthorized - Invalid or missing authentication |
+| `403` | Forbidden - Insufficient permissions |
+| `404` | Not Found - Resource not found |
+| `409` | Conflict - Resource already exists or conflict occurred |
+| `422` | Unprocessable Entity - Validation failed |
+| `429` | Too Many Requests - Rate limit exceeded |
+| `500` | Internal Server Error - Server-side error |
+| `502` | Bad Gateway - Upstream service error |
+| `503` | Service Unavailable - Service temporarily unavailable |
+
+## Error Codes
+
+### Authentication Errors
+
+<CodeGroup>
+
+```json 401 Unauthorized
+{
+  "message": "Invalid API key provided",
+  "code": "INVALID_API_KEY"
+}
+```
+
+```json 401 Unauthorized
+{
+  "message": "API key has expired",
+  "code": "EXPIRED_API_KEY"
+}
+```
+
+```json 401 Unauthorized
+{
+  "message": "Missing Authorization header",
+  "code": "MISSING_AUTH_HEADER"
+}
+```
+
+</CodeGroup>
+
+### Validation Errors
+
+<CodeGroup>
+
+```json 400 Bad Request
+{
+  "message": "Invalid request parameters",
+  "code": "INVALID_PARAMETERS"
+}
+```
+
+```json 422 Unprocessable Entity
+{
+  "message": "Contract address format is invalid",
+  "code": "INVALID_CONTRACT_ADDRESS"
+}
+```
+
+```json 422 Unprocessable Entity
+{
+  "message": "Network not supported",
+  "code": "UNSUPPORTED_NETWORK"
+}
+```
+
+</CodeGroup>
+
+### Resource Errors
+
+<CodeGroup>
+
+```json 404 Not Found
+{
+  "message": "Contract not found",
+  "code": "CONTRACT_NOT_FOUND"
+}
+```
+
+```json 404 Not Found
+{
+  "message": "Scan not found",
+  "code": "SCAN_NOT_FOUND"
+}
+```
+
+```json 409 Conflict
+{
+  "message": "Scan already in progress",
+  "code": "SCAN_IN_PROGRESS"
+}
+```
+
+</CodeGroup>
+
+### Rate Limiting
+
+<CodeGroup>
+
+```json 429 Too Many Requests
+{
+  "message": "Rate limit exceeded. Try again in 60 seconds",
+  "code": "RATE_LIMIT_EXCEEDED"
+}
+```
+
+</CodeGroup>
+
+### Server Errors
+
+<CodeGroup>
+
+```json 500 Internal Server Error
+{
+  "message": "Internal server error occurred",
+  "code": "INTERNAL_ERROR"
+}
+```
+
+```json 503 Service Unavailable
+{
+  "message": "Service temporarily unavailable",
+  "code": "SERVICE_UNAVAILABLE"
+}
+```
+
+</CodeGroup>
+
+## Request Tracking
+
+Every API request includes a unique request identifier in the response headers:
+
+```
+bevor-request-id: req_1234567890abcdef
+```
+
+This identifier is crucial for:
+
+- **Debugging**: Reference the request ID when contacting support
+- **Logging**: Track specific requests in your application logs
+- **Support**: Help our team quickly locate and resolve issues
+
+### Using Request IDs
+
+Always capture and log the `bevor-request-id` header for error responses:
+
+```javascript
+fetch('https://api.bevor.io/v1/scan', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_API_KEY',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    contract_address: '0x...',
+    network: 'ethereum'
+  })
+})
+.then(response => {
+  const requestId = response.headers.get('bevor-request-id');
+  
+  if (!response.ok) {
+    return response.json().then(error => {
+      console.error(`Request ${requestId} failed:`, error);
+      throw new Error(`${error.message} (Request ID: ${requestId})`);
+    });
+  }
+  
+  return response.json();
+})
+.catch(error => {
+  console.error('Request failed:', error);
+});
+```
+
+## Best Practices
+
+### 1. Implement Retry Logic
+
+For transient errors (5xx status codes), implement exponential backoff:
+
+```javascript
+async function makeRequestWithRetry(url, options, maxRetries = 3) {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await fetch(url, options);
+      
+      if (response.ok) {
+        return response;
+      }
+      
+      // Don't retry client errors (4xx)
+      if (response.status >= 400 && response.status < 500) {
+        throw new Error(`Client error: ${response.status}`);
+      }
+      
+      // Retry server errors (5xx)
+      if (attempt === maxRetries) {
+        throw new Error(`Server error after ${maxRetries} attempts`);
+      }
+      
+      // Exponential backoff
+      const delay = Math.pow(2, attempt) * 1000;
+      await new Promise(resolve => setTimeout(resolve, delay));
+      
+    } catch (error) {
+      if (attempt === maxRetries) {
+        throw error;
+      }
+    }
+  }
+}
+```
+
+### 2. Handle Rate Limits
+
+Respect rate limits and implement proper backoff:
+
+```javascript
+async function handleRateLimit(response) {
+  if (response.status === 429) {
+    const retryAfter = response.headers.get('Retry-After');
+    const delay = retryAfter ? parseInt(retryAfter) * 1000 : 60000; // Default 60s
+    
+    console.log(`Rate limited. Retrying after ${delay}ms`);
+    await new Promise(resolve => setTimeout(resolve, delay));
+    return true; // Indicate retry is needed
+  }
+  return false;
+}
+```
+
+### 3. Validate Inputs
+
+Always validate inputs before making API calls:
+
+```javascript
+function validateContractAddress(address) {
+  if (!address || typeof address !== 'string') {
+    throw new Error('Contract address is required');
+  }
+  
+  if (!/^0x[a-fA-F0-9]{40}$/.test(address)) {
+    throw new Error('Invalid contract address format');
+  }
+  
+  return true;
+}
+```
+
+### 4. Log Errors Appropriately
+
+Include request IDs and context in your error logs:
+
+```javascript
+function logError(error, requestId, context = {}) {
+  console.error({
+    message: error.message,
+    code: error.code,
+    requestId,
+    context,
+    timestamp: new Date().toISOString()
+  });
+}
+```
+
+## Common Error Scenarios
+
+### Invalid Contract Address
+
+```json
+{
+  "message": "Contract address format is invalid",
+  "code": "INVALID_CONTRACT_ADDRESS"
+}
+```
+
+**Solution**: Ensure the contract address is a valid Ethereum address (42 characters starting with '0x').
+
+### Unsupported Network
+
+```json
+{
+  "message": "Network not supported",
+  "code": "UNSUPPORTED_NETWORK"
+}
+```
+
+**Solution**: Check the [supported networks](/api-reference/networks) and use a valid network identifier.
+
+### Insufficient Permissions
+
+```json
+{
+  "message": "Insufficient permissions for this operation",
+  "code": "INSUFFICIENT_PERMISSIONS"
+}
+```
+
+**Solution**: Verify your API key has the required permissions for the operation you're attempting.
+
+## Getting Help
+
+If you encounter errors that aren't covered in this documentation:
+
+1. **Check the request ID**: Include the `bevor-request-id` in your support request
+2. **Review your request**: Ensure all required parameters are provided correctly
+3. **Check API status**: Visit our [status page](https://status.bevor.io) for service updates
+4. **Contact support**: Reach out to [contact@bevor.io](mailto:contact@bevor.io) with:
+   - The error message and code
+   - The request ID
+   - Your API key (for authentication issues)
+   - Steps to reproduce the error
+
+<Note>
+  Never share your API key in public forums or repositories. Always use environment variables or secure configuration management.
+</Note>

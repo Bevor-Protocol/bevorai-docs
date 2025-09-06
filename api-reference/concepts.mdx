@@ -1,0 +1,135 @@
+---
+title: 'Concepts'
+description: 'Core concepts for building with the BevorAI API'
+---
+
+# Core Concepts
+
+Understanding the fundamental concepts of the BevorAI API will help you build effective security integrations and workflows.
+
+## Authentication & API Keys
+
+All API endpoints require authentication using Bearer tokens. Include your API key in the Authorization header:
+
+```bash
+Authorization: Bearer YOUR_API_KEY
+```
+
+### API Key Management
+
+- **Creation & Refresh**: API keys can be created and refreshed through the [BevorAI Dashboard](https://app.bevor.io)
+- **Team Scoping**: API keys are scoped to specific teams, ensuring proper access control
+- **Permission Scopes**: API keys have their own scopes, allowing you to create read-only keys for different environments
+- **Security**: Never share API keys in public repositories or client-side code
+
+### API Key Scopes
+
+API keys support different permission levels to match your security requirements:
+
+- **Full Access**: Complete read and write access to all team resources
+- **Read-Only**: View-only access to projects, code versions, and audit results
+- **Custom Scopes**: Granular permissions for specific operations or resources
+
+<Note>
+  Use read-only API keys in production environments or CI/CD pipelines where you only need to retrieve audit results and don't require write access to create new resources.
+</Note>
+
+<Card
+  title="Get Your API Key"
+  icon="key"
+  href="https://app.bevor.io"
+>
+  Create and manage API keys in the dashboard
+</Card>
+
+## Teams
+
+Teams are the top-level organizational unit in BevorAI:
+
+- **Access Control**: API keys are scoped to teams, controlling which resources you can access
+- **Management**: Creating and updating teams is only accessible via the [BevorAI Dashboard](https://app.bevor.io)
+- **Collaboration**: Teams enable multiple users to collaborate on security projects
+
+<Note>
+  Team management operations (create, update, delete) are not available through the API. Use the dashboard for team administration.
+</Note>
+
+## Projects
+
+Projects are generic containers for logical separation of code and security work:
+
+- **Organization**: Use projects to group related contract scans, code iterations, or security assessments
+- **Flexibility**: Projects can represent different applications, protocols, or development phases
+- **Tracking**: All audits and scans within a project are grouped together for easy management
+
+### Project Use Cases
+
+- **Contract Development**: Track all scans for a specific smart contract
+- **Protocol Iterations**: Monitor security across different versions of your protocol
+- **Feature Development**: Separate security assessments for different features or modules
+
+## Code Versions
+
+Code versions represent specific iterations or snapshots of your codebase:
+
+- **Versioning**: Track different versions of your smart contracts or applications
+- **Audit Tracking**: Each code version can have multiple audits associated with it
+- **Iteration Management**: Compare security findings across different code versions
+
+## Audits
+
+Audits are security assessments performed on your code versions:
+
+- **Non-Deterministic**: Audits may produce different results on subsequent runs
+- **Multiple Audits**: It's recommended to create multiple audits per code version for comprehensive coverage
+- **AI-Powered**: Leverages advanced AI models for thorough security analysis
+
+### Audit Best Practices
+
+- **Multiple Runs**: Create several audits for the same code version to catch different potential issues
+- **Regular Scanning**: Schedule audits at key development milestones
+- **Comparison**: Compare audit results across different code versions to track security improvements
+
+## Workflow Example
+
+Here's a typical workflow using these concepts:
+
+1. **Team Setup**: Create a team in the dashboard for your organization
+2. **API Key**: Generate an API key scoped to your team
+3. **Project Creation**: Create a project for your smart contract development
+4. **Code Version**: Create a code version for each major iteration
+5. **Audits**: Run multiple audits on each code version for comprehensive security coverage
+
+<Card
+  title="Interactive API Documentation"
+  icon="code"
+  href="https://api.bevor.io/docs"
+>
+  Explore endpoints, parameters, and examples
+</Card>
+
+## Integration Types
+
+### MCP Integration & Co-Piloting
+Interactive, continuous engagement through Model Context Protocol integrations with IDEs like Cursor and Windsurf.
+
+### CI/CD
+Continuous reporting and team insights integrated into your development pipeline.
+
+### API
+Custom workflows and integrations for specialized use cases and protocol-specific needs.
+
+### Terminal
+In-depth insights and automation through the BevorAI web terminal interface.
+
+### Block Explorer Scanning
+Autonomous detection pre/post deployment across major blockchain networks.
+
+### Multi-Agent Triaging (A2A)
+Risk profiling and orchestration for complex security scenarios.
+
+## On-Premises Deployment
+
+<Note>
+  Enterprise on-premises deployment is coming soon. For early access and custom deployment options, contact our sales team at [contact@bevor.io](mailto:contact@bevor.io).
+</Note>

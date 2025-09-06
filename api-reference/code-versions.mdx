@@ -1,0 +1,233 @@
+---
+title: 'Code Versions'
+description: 'Creating and managing code versions for security audits'
+---
+
+# Code Versions
+
+Code versions represent specific iterations or snapshots of your codebase that can be analyzed for security vulnerabilities and gas optimization opportunities. BevorAI supports multiple ways to create code versions, from simple contract scans to complex repository integrations.
+
+## Supported Code Version Types
+
+### Contract Scans via Explorer
+
+Scan deployed contracts directly from blockchain explorers:
+
+- **Automatic Analysis**: BevorAI automatically analyzes the deployed contract bytecode
+- **Source Code Detection**: Attempts to identify and fetch source code from verified contracts
+- **Network Support**: Works across major blockchain networks
+- **Contract Insights**: Provides detailed insights into the specific contract of interest
+
+```bash
+curl -X POST https://api.bevor.io/v1/code-versions \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "project_id": "proj_1234567890",
+    "type": "contract_scan",
+    "contract_address": "0x1234567890123456789012345678901234567890",
+    "network": "ethereum"
+  }'
+```
+
+### Local File Upload
+
+Upload individual smart contract files for analysis:
+
+- **Direct Upload**: Upload `.sol` files directly through the API
+- **Quick Analysis**: Fast analysis for single contract files
+- **Version Control**: Track changes to individual contracts
+
+```bash
+curl -X POST https://api.bevor.io/v1/code-versions \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: multipart/form-data" \
+  -F "project_id=proj_1234567890" \
+  -F "type=local_file" \
+  -F "file=@contracts/Token.sol"
+```
+
+### Local Folder Upload
+
+Upload entire project directories for comprehensive analysis:
+
+- **Project Structure**: Maintains folder structure and dependencies
+- **Multi-Contract Analysis**: Analyzes all contracts in the project
+- **Dependency Resolution**: Handles import statements and dependencies
+- **Scope Specification**: May require more granular scope specification for large projects
+
+```bash
+curl -X POST https://api.bevor.io/v1/code-versions \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: multipart/form-data" \
+  -F "project_id=proj_1234567890" \
+  -F "type=local_folder" \
+  -F "folder=@./contracts"
+```
+
+### Public GitHub Repository
+
+Connect to public GitHub repositories for continuous analysis:
+
+- **Repository Connection**: Set up via the [BevorAI Dashboard](https://app.bevor.io)
+- **Branch Selection**: Choose specific branches or commits to analyze
+- **Automatic Updates**: Option to automatically analyze new commits
+- **Scope Granularity**: May need to specify scope more granularly for large repositories
+
+```bash
+curl -X POST https://api.bevor.io/v1/code-versions \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "project_id": "proj_1234567890",
+    "type": "github_repository",
+    "repository_id": "repo_1234567890",
+    "branch": "main",
+    "commit_sha": "abc123def456"
+  }'
+```
+
+### Private GitHub Repository
+
+Secure integration with private repositories:
+
+- **Secure Access**: OAuth integration for secure repository access
+- **Permission Management**: Granular permissions for repository access
+- **Dashboard Setup**: Repository connection configured through the dashboard
+- **Enterprise Support**: Full support for private and enterprise repositories
+
+<Note>
+  GitHub repository connections (both public and private) are configured through the [BevorAI Dashboard](https://app.bevor.io). Once connected, you can create code versions via the API using the repository ID.
+</Note>
+
+## Scope Considerations
+
+### Contract Scans
+Contract scans provide automatic insights into the specific contract of interest, making scope specification straightforward.
+
+### Other Code Version Types
+For local files, folders, and GitHub repositories, you may need to specify scope more granularly:
+
+- **Large Projects**: Specify particular contracts or functions to focus analysis
+- **Multi-Contract Projects**: Choose which contracts to include in the audit
+- **Function-Level Scope**: Target specific functions for detailed analysis
+
+## Code Version Lifecycle
+
+### 1. Creation
+- Choose the appropriate code version type
+- Upload or connect your code source
+- Specify project and any required parameters
+
+### 2. Processing
+- Code is analyzed and indexed
+- Dependencies are resolved
+- Audit-ready structure is prepared
+
+### 3. Audit Ready
+- Code version is available for audit creation
+- Scope can be specified when creating audits
+- Multiple audits can be run on the same code version
+
+### 4. Version Management
+- Track changes across different code versions
+- Compare audit results between versions
+- Maintain version history for your projects
+
+## Best Practices
+
+### Repository Organization
+- **Clear Structure**: Organize contracts in logical folder structures
+- **Import Management**: Use clear import paths and avoid circular dependencies
+- **Documentation**: Include comments and documentation in your contracts
+
+### Version Control
+- **Meaningful Commits**: Use descriptive commit messages for better tracking
+- **Branch Strategy**: Use feature branches for development and main branch for stable releases
+- **Tagging**: Tag important releases for easy reference
+
+### Scope Optimization
+- **Targeted Analysis**: Use specific scope for large projects to focus on critical components
+- **Incremental Audits**: Run audits on specific changes rather than entire codebase when possible
+- **Function-Level Focus**: Target entry point functions for detailed analysis
+
+## Upcoming Features
+
+### MCP Integration
+
+<Note>
+  **Coming Soon**: MCP (Model Context Protocol) support will allow you to interface with the BevorAI API directly from your IDE. This will enable seamless integration with development workflows and real-time security analysis.
+</Note>
+
+### Chat Integration
+
+<Note>
+  **Coming Soon**: Chat functionality within the dashboard will allow you to have conversations directly with audit findings and their corresponding source code. This will make it easier to understand and address security issues through interactive dialogue.
+</Note>
+
+## Integration Examples
+
+### CI/CD Pipeline Integration
+```yaml
+# .github/workflows/security-analysis.yml
+name: Security Analysis
+on: [push, pull_request]
+jobs:
+  security-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Create Code Version
+        run: |
+          curl -X POST https://api.bevor.io/v1/code-versions \
+            -H "Authorization: Bearer ${{ secrets.BEVOR_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "project_id": "${{ secrets.BEVOR_PROJECT_ID }}",
+              "type": "github_repository",
+              "repository_id": "${{ secrets.BEVOR_REPO_ID }}",
+              "branch": "${{ github.ref_name }}",
+              "commit_sha": "${{ github.sha }}"
+            }'
+```
+
+### Development Workflow
+```bash
+# Create code version for local development
+git add .
+git commit -m "Add new token functionality"
+
+# Create code version from local folder
+curl -X POST https://api.bevor.io/v1/code-versions \
+  -H "Authorization: Bearer $BEVOR_API_KEY" \
+  -H "Content-Type: multipart/form-data" \
+  -F "project_id=proj_1234567890" \
+  -F "type=local_folder" \
+  -F "folder=@./contracts"
+
+# Create audit for the new code version
+curl -X POST https://api.bevor.io/v1/audits \
+  -H "Authorization: Bearer $BEVOR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "project_id": "proj_1234567890",
+    "code_version_id": "cv_1234567890",
+    "scope": "entire_codebase"
+  }'
+```
+
+## Getting Started
+
+1. **Choose Your Method**: Select the code version type that best fits your workflow
+2. **Set Up Repository** (if using GitHub): Connect your repository through the dashboard
+3. **Create Code Version**: Use the API to create your first code version
+4. **Run Audits**: Create audits to analyze your code for security issues
+5. **Iterate**: Make improvements and create new code versions
+
+<Card
+  title="Connect Your Repository"
+  icon="github"
+  href="https://app.bevor.io"
+>
+  Set up GitHub repository connections in the dashboard
+</Card>
