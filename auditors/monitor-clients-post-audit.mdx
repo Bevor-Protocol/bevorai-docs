@@ -1,0 +1,98 @@
+---
+title: 'Monitor your work'
+description: 'Catch vulnerabilities for your clients before hackers do'
+---
+Monitor and analyze deployed smart contracts across major blockchain networks. BevorAI provides continuous security monitoring, real-time threat detection, and comprehensive analysis of live contracts.
+
+## Post-Deployment Monitoring Methods
+
+### Manual (Dashboard)
+
+- Open the Dashboard: <a href="https://app.bevor.io">app.bevor.io</a>
+- Paste a contract address or select from your projects to start monitoring immediately
+- View findings, configure alerts, and export reports
+
+### Agent / API
+
+- Automate monitoring via scheduled jobs or infrastructure agents using the Bevor API
+- Recommended for teams that want continuous checks across many contracts or networks
+- See the <a href="/api-reference/introduction">API Reference</a> for endpoints and examples
+
+## Supported Networks
+
+| Network Type | Network Name | Capabilities |
+|--------------|--------------|--------------|
+| **Mainnet** | Ethereum | Complete transaction and state analysis |
+| | Polygon | High-frequency monitoring and MEV analysis |
+| | Arbitrum | Layer 2 specific security patterns |
+| | Optimism | Optimistic rollup security considerations |
+| | Base | Coinbase L2 monitoring and analysis |
+| | Avalanche | Subnet security and cross-chain analysis |
+| | BNB Smart Chain | BSC-specific vulnerability patterns |
+| **Testnet** | Goerli | Ethereum testnet analysis |
+| | Mumbai | Polygon testnet monitoring |
+| | Arbitrum Goerli | L2 testnet security testing |
+| | Optimism Goerli | Optimistic testnet analysis |
+
+<Note>
+  Need monitoring for a different network? Email [contact@bevor.io](mailto:contact@bevor.io) to request new network support.
+</Note>
+
+## Best Practices
+
+### Monitoring Strategy
+
+1. **Immediate Post-Deployment** (0-48 hours)
+   - Intensive real-time monitoring
+   - Manual review of all transactions
+   - Community sentiment tracking
+   - Immediate response team on standby
+
+2. **Early Operation** (48 hours - 2 weeks)
+   - Automated monitoring with human oversight
+   - Pattern establishment and baseline creation
+   - User behavior analysis
+   - Economic parameter validation
+
+3. **Mature Operation** (2+ weeks)
+   - Automated monitoring with exception-based alerts
+   - Periodic comprehensive reviews
+   - Long-term trend analysis
+   - Continuous improvement based on learnings
+
+### Alert Management
+
+- **Tune Alert Sensitivity**: Balance between false positives and missed threats
+- **Establish Response Procedures**: Define clear escalation and response protocols
+- **Regular Review**: Periodically assess and update alert configurations
+- **Team Training**: Ensure all team members understand alert meanings and responses
+
+## Troubleshooting
+
+### Common Monitoring Issues
+
+#### Network Connectivity
+- Verify RPC endpoint availability
+- Check for rate limiting issues
+- Configure backup node providers
+- Monitor network synchronization status
+
+#### Analysis Performance
+- Optimize scanning frequency for high-traffic contracts
+- Use targeted scanning for specific vulnerability types
+- Configure appropriate timeout settings
+- Balance thoroughness with performance requirements
+
+### Getting Support
+
+For technical issues or questions:
+- **Documentation**: Comprehensive guides at [docs.bevor.io](https://docs.bevor.io)
+- **Direct Support**: Email [contact@bevor.io](mailto:contact@bevor.io)
+- **Emergency**: Critical security issues get priority response
+
+## Next Steps
+
+<Card title="API Integration" icon="code" href="/api-reference/introduction">
+  Build custom security tools and workflows for monitoring
+</Card>
+
