@@ -7,7 +7,7 @@
     "light": "#60A5FA", 
     "dark": "#1E40AF"
   },
-  "favicon": "/favicon.png",
+  "favicon": "https://raw.githubusercontent.com/Bevor-Protocol/bevorai-docs/refs/heads/main/favicon.ico",
   "navigation": {
     "tabs": [
       {
