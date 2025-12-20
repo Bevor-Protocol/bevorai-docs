@@ -124,10 +124,10 @@ For local files, folders, and GitHub repositories, you may need to specify scope
 - Dependencies are resolved
 - Audit-ready structure is prepared
 
-### 3. Audit Ready
-- Code version is available for audit creation
-- Scope can be specified when creating audits
-- Multiple audits can be run on the same code version
+### 3. Ready for Analysis
+- Code version is ready to be analyzed
+- Scope can be specified when creating analyses
+- Multiple analyses can be run on the same code version
 
 ### 4. Version Management
 - Track changes across different code versions
@@ -148,7 +148,7 @@ For local files, folders, and GitHub repositories, you may need to specify scope
 
 ### Scope Optimization
 - **Targeted Analysis**: Use specific scope for large projects to focus on critical components
-- **Incremental Audits**: Run audits on specific changes rather than entire codebase when possible
+- **Incremental Audits**: Run analyses on specific changes rather than entire codebase when possible
 - **Function-Level Focus**: Target entry point functions for detailed analysis
 
 ## Upcoming Features
@@ -161,8 +161,19 @@ For local files, folders, and GitHub repositories, you may need to specify scope
 
 ### Chat Integration
 
+Chat functionality allows you to interact with your code and analysis findings through conversational AI:
+
+#### Code Version Chats
+- **Question Answering**: Chat directly with a code version to ask questions about the codebase
+- **Context Awareness**: The AI has full context of the code version and can answer questions about implementation, structure, and functionality
+
+#### Analysis Chats
+- **Question Answering**: Ask questions about analysis findings and security issues
+- **Triaging**: Discuss and prioritize security findings to determine which issues need immediate attention
+- **Optimization**: Get recommendations for optimizing and fixing security vulnerabilities
+
 <Note>
-  **Coming Soon**: Chat functionality within the dashboard will allow you to have conversations directly with audit findings and their corresponding source code. This will make it easier to understand and address security issues through interactive dialogue.
+  Chat functionality is available through the [BevorAI Dashboard](https://app.bevor.io) and can be initiated via the API for programmatic access.
 </Note>
 
 ## Integration Examples

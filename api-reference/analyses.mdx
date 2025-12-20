@@ -1,15 +1,14 @@
 ---
-title: 'Audits'
-description: 'Understanding security audits and their findings in BevorAI'
+title: 'Analyses'
+description: 'Understanding security analyses and their findings in BevorAI'
 ---
 
-# Audits
 
-Audits are comprehensive security assessments that analyze your smart contracts for vulnerabilities, gas optimization opportunities, and best practices. Each audit produces detailed findings with severity classifications to help you prioritize security improvements.
+Analyses are comprehensive security assessments that analyze your smart contracts for vulnerabilities, gas optimization opportunities, and best practices. Each analysis produces detailed findings with severity classifications to help you prioritize security improvements.
 
-## What Audits Produce
+## What Analyses Produce
 
-Audits generate two main types of findings:
+Analyses generate two main types of findings:
 
 ### Security Findings
 Comprehensive analysis of potential security vulnerabilities including:
@@ -26,45 +25,28 @@ Optimization opportunities to improve contract efficiency:
 - **Function Optimization**: Tips for optimizing function execution costs
 
 <Warning>
-  **Human Oversight Required**: While AI-powered audits provide comprehensive analysis, they should always be complemented with human review. Security experts should validate findings, assess business logic risks, and make final decisions about remediation priorities.
+  **Human Oversight Required**: While AI-powered analyses provide comprehensive analysis, they should always be complemented with human review. Security experts should validate findings, assess business logic risks, and make final decisions about remediation priorities.
 </Warning>
 
-## Audit Scope
+## Analysis Scope
 
-When creating an audit, you can specify the scope of analysis to focus on specific areas of your codebase:
-
-### Scope Options
-
-#### Entire Codebase
-Analyze all contracts and functions in your project for comprehensive coverage.
-
-#### Specific Sources
-Target particular source files for focused analysis on specific components.
-
-#### Specific Contracts
-Analyze individual smart contracts, useful for large projects with multiple contracts.
-
-#### Specific Functions
-Focus on particular functions that are "auditable" - entry point functions that are publicly accessible and read/write state.
-
-### Auditable Functions
-
-"Auditable" functions are entry points to your smart contract that meet specific criteria:
+When creating an analysis, you can specify the scope in order to focus on specific areas of your codebase.
+We constrain these to what we consider "auditable" functions, which are are entry points to your smart contract that meet specific criteria:
 
 - **Public Accessibility**: Functions that can be called by external users or contracts
 - **State Modification**: Functions that read or write contract state
 - **Entry Points**: Functions that serve as the primary interface to your contract's functionality
 
 <Note>
-  Contracts can inherit or override functions, so the context in which functions are called is important for accurate analysis. BevorAI considers inheritance chains and function overrides when determining audit scope.
+  Contracts can inherit or override functions, so the context in which functions are called is important for accurate analysis. BevorAI considers inheritance chains and function overrides when determining analysis scope.
 </Note>
 
-## Creating Audits
+## Creating Analyses
 
-### Basic Audit Creation
+### Basic Analysis Creation
 
 ```bash
-curl -X POST https://api.bevor.io/v1/audits \
+curl -X POST https://api.bevor.io/v1/analyses \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -74,10 +56,10 @@ curl -X POST https://api.bevor.io/v1/audits \
   }'
 ```
 
-### Scoped Audit Creation
+### Scoped Analysis Creation
 
 ```bash
-curl -X POST https://api.bevor.io/v1/audits \
+curl -X POST https://api.bevor.io/v1/analyses \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -92,12 +74,12 @@ curl -X POST https://api.bevor.io/v1/audits \
   }'
 ```
 
-## Audit Lifecycle
+## Analysis Lifecycle
 
-### 1. Audit Creation
+### 1. Analysis Creation
 - Specify project, code version, and scope
-- Audit is queued for processing
-- Receive audit ID for tracking
+- Analysis is queued for processing
+- Receive analysis ID for tracking
 
 ### 2. Processing
 - AI models analyze your code
@@ -112,17 +94,17 @@ curl -X POST https://api.bevor.io/v1/audits \
 ### 4. Iteration
 - Address findings in your code
 - Create new code version
-- Run additional audits to verify fixes
+- Run additional analyses to verify fixes
 
 ## Best Practices
 
-### Multiple Audits
-Since audits are non-deterministic, create multiple audits for the same code version:
+### Multiple Analyses
+Since analyses are non-deterministic, create multiple analyses for the same code version:
 
 ```bash
-# Create multiple audits for comprehensive coverage
+# Create multiple analyses for comprehensive coverage
 for i in {1..3}; do
-  curl -X POST https://api.bevor.io/v1/audits \
+  curl -X POST https://api.bevor.io/v1/analyses \
     -H "Authorization: Bearer YOUR_API_KEY" \
     -H "Content-Type: application/json" \
     -d '{
@@ -145,17 +127,17 @@ Choose appropriate scope based on your needs:
 2. **Expert Review**: Have security experts validate findings
 3. **Business Logic**: Assess findings in context of your specific use case
 4. **Prioritization**: Focus on critical and high-severity issues first
-5. **Remediation**: Implement fixes and verify with follow-up audits
+5. **Remediation**: Implement fixes and verify with follow-up analyses
 
 ## Continuous Improvement
 
 <Note>
-  We're constantly working on improving the functionality and performance of audits. New analysis techniques, expanded vulnerability detection, and enhanced gas optimization recommendations are regularly added to provide more comprehensive and accurate results.
+  We're constantly working on improving the functionality and performance of analyses. New analysis techniques, expanded vulnerability detection, and enhanced gas optimization recommendations are regularly added to provide more comprehensive and accurate results.
 </Note>
 
 ### What We're Improving
 - **Detection Accuracy**: Enhanced AI models for better vulnerability detection
-- **Performance**: Faster audit processing and more efficient analysis
+- **Performance**: Faster analysis processing and more efficient analysis
 - **Coverage**: Expanded support for new Solidity features and patterns
 - **Gas Analysis**: More sophisticated gas optimization recommendations
 - **Integration**: Better integration with development workflows
@@ -164,17 +146,17 @@ Choose appropriate scope based on your needs:
 
 ### CI/CD Integration
 ```yaml
-# .github/workflows/security-audit.yml
-name: Security Audit
+# .github/workflows/security-analysis.yml
+name: Security Analysis
 on: [push, pull_request]
 jobs:
-  audit:
+  analysis:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Run BevorAI Audit
+      - name: Run BevorAI Analysis
         run: |
-          curl -X POST https://api.bevor.io/v1/audits \
+          curl -X POST https://api.bevor.io/v1/analyses \
             -H "Authorization: Bearer ${{ secrets.BEVOR_API_KEY }}" \
             -H "Content-Type: application/json" \
             -d '{
@@ -186,12 +168,12 @@ jobs:
 
 ### Development Workflow
 ```bash
-# Create audit after major changes
+# Create analysis after major changes
 git commit -m "Add new token functionality"
 git push
 
-# Create audit for new code version
-curl -X POST https://api.bevor.io/v1/audits \
+# Create analysis for new code version
+curl -X POST https://api.bevor.io/v1/analyses \
   -H "Authorization: Bearer $BEVOR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -205,14 +187,14 @@ curl -X POST https://api.bevor.io/v1/audits \
 
 1. **Create a Project**: Set up a project in your team
 2. **Upload Code**: Create a code version with your smart contract code
-3. **Run Initial Audit**: Start with entire codebase scope
+3. **Run Initial Analysis**: Start with entire codebase scope
 4. **Review Findings**: Analyze security and gas findings
-5. **Iterate**: Address issues and run follow-up audits
+5. **Iterate**: Address issues and run follow-up analyses
 
 <Card
-  title="Start Your First Audit"
+  title="Start Your First Analysis"
   icon="shield"
   href="https://app.bevor.io"
 >
-  Create a project and run your first security audit
+  Create a project and run your first security analysis
 </Card>

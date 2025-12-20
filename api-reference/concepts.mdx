@@ -21,6 +21,7 @@ Authorization: Bearer YOUR_API_KEY
 - **Team Scoping**: API keys are scoped to specific teams, ensuring proper access control
 - **Permission Scopes**: API keys have their own scopes, allowing you to create read-only keys for different environments
 - **Security**: Never share API keys in public repositories or client-side code
+- **User-Specific**: API keys will technically be scoped to the user that created them. This is fine for most use-cases, but you might lose granularity in billing and activities.
 
 ### API Key Scopes
 
@@ -58,9 +59,10 @@ Teams are the top-level organizational unit in BevorAI:
 
 Projects are generic containers for logical separation of code and security work:
 
-- **Organization**: Use projects to group related contract scans, code iterations, or security assessments
+- **Organization**: Use projects to group related contract repositories, code iterations, or security assessments
 - **Flexibility**: Projects can represent different applications, protocols, or development phases
 - **Tracking**: All audits and scans within a project are grouped together for easy management
+- **Github**: By default, each github repository will be its own project once linked
 
 ### Project Use Cases
 
@@ -73,22 +75,24 @@ Projects are generic containers for logical separation of code and security work
 Code versions represent specific iterations or snapshots of your codebase:
 
 - **Versioning**: Track different versions of your smart contracts or applications
-- **Audit Tracking**: Each code version can have multiple audits associated with it
+- **Analysis Tracking**: Each code version can have multiple analyses associated with it
 - **Iteration Management**: Compare security findings across different code versions
+- **Github**: With our github integration, each commit will generate a new code version, and associate it with the parent version
 
-## Audits
+## Analyses
 
-Audits are security assessments performed on your code versions:
+Analyses are security assessments performed on your code versions:
 
-- **Non-Deterministic**: Audits may produce different results on subsequent runs
-- **Multiple Audits**: It's recommended to create multiple audits per code version for comprehensive coverage
+- **Non-Deterministic**: Analyses may produce different results on subsequent runs
+- **Iteratives**: Each analysis can be iterated on either manually, or automatically via our chat interface for arbitration
+- **Inheritance**: If analyses are built upon prior versions, information is retained if we detect no changes in relevant segments of the underlying code
 - **AI-Powered**: Leverages advanced AI models for thorough security analysis
 
 ### Audit Best Practices
 
-- **Multiple Runs**: Create several audits for the same code version to catch different potential issues
-- **Regular Scanning**: Schedule audits at key development milestones
-- **Comparison**: Compare audit results across different code versions to track security improvements
+- **Regular Scanning**: Schedule analyses at key development milestones
+- **Comparison**: Compare analysis results across different code versions to track security improvements
+- **Triage**: Triage with your team, and our internal AI-automated systems, for optimal results
 
 ## Workflow Example
 
@@ -98,7 +102,10 @@ Here's a typical workflow using these concepts:
 2. **API Key**: Generate an API key scoped to your team
 3. **Project Creation**: Create a project for your smart contract development
 4. **Code Version**: Create a code version for each major iteration
-5. **Audits**: Run multiple audits on each code version for comprehensive security coverage
+5. **Question Answering**: Use our chat interface to help onboard to the codebase, if it's unfamiliar to you
+6. **Analysis**: Generate your initial security analysis using our automated tooling
+7. **Triage**: Take the initial findings and triage in our chat interface to curate your findings, and produce new ones
+8. **Collaborate**: Link your findings with your team members, fork their analyses, and iterate
 
 <Card
   title="Interactive API Documentation"
@@ -119,8 +126,8 @@ Continuous reporting and team insights integrated into your development pipeline
 ### API
 Custom workflows and integrations for specialized use cases and protocol-specific needs.
 
-### Terminal
-In-depth insights and automation through the BevorAI web terminal interface.
+### Dashboard
+In-depth insights and automation through the BevorAI dashboard.
 
 ### Block Explorer Scanning
 Autonomous detection pre/post deployment across major blockchain networks.

@@ -36,7 +36,7 @@
                 ]
               },
               {
-                "group": "Accelerate Your Audits",
+                "group": "Accelerate Your Security Analysis",
                 "icon": "bolt",
                 "pages": [
                   "auditors/mcp-integrations",
@@ -98,13 +98,13 @@
               "api-reference/introduction",
               "api-reference/concepts",
               "api-reference/code-versions",
-              "api-reference/audits",
+              "api-reference/analyses",
               "api-reference/error-handling",
               "api-reference/error-codes"
             ]
           }
         ],
-        "openapi": "https://testing.api.bevor.io/openapi.json"
+        "openapi": "./api-reference/openapi.json"
       }
     ],
     "global": {
