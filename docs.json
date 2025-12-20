@@ -7,7 +7,7 @@
     "light": "#60A5FA", 
     "dark": "#1E40AF"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "https://raw.githubusercontent.com/Bevor-Protocol/bevorai-docs/refs/heads/main/favicon.ico",
   "navigation": {
     "tabs": [
       {
@@ -23,27 +23,38 @@
             ]
           },
           {
+            "group": "Features",
+            "icon": "plug",
+            "pages": [
+              "auditors/dashboard",
+              "auditors/mcp-integrations",
+              "developers/cicd-integration"
+            ]
+          },
+          {
             "group": "For Security Auditors", 
             "icon": "shield",
             "pages": [
               "auditors/overview",
               {
-                "group": "Improve BevorAI",
-                "icon": "chart-line",
+                "group": "Auditing Firms",
+                "icon": "buildings",
                 "pages": [
-                  "auditors/data-labeling",
-                  "auditors/labeling-best-practices"
+                  "auditors/speeding-up-audit-quotes",
+                  "auditors/improving-process",
+                  "auditors/privacy-for-nda-clients"
                 ]
               },
               {
-                "group": "Accelerate Your Security Analysis",
-                "icon": "bolt",
+                "group": "Solo Auditors",
+                "icon": "user",
                 "pages": [
-                  "auditors/mcp-integrations",
-                  "auditors/terminal",
-                  "auditors/post-deployment"
+                  "auditors/win-more-audit-competitions",
+                  "auditors/audit-like-a-firm",
+                  "auditors/data-labeling"
                 ]
-              }
+              },
+              "auditors/monitor-clients-post-audit"
             ]
           },
           {
@@ -55,9 +66,7 @@
                 "group": "During Development & Pre-Deployment",
                 "icon": "wrench",
                 "pages": [
-                  "developers/mcp-secure-coding",
-                  "developers/cicd-integration", 
-                  "developers/testnet-security"
+                  "developers/mcp-secure-coding"
                 ]
               },
               {
@@ -82,7 +91,6 @@
             "group": "Resources",
             "icon": "book",
             "pages": [
-              "token",
               "faq",
               "glossary"
             ]
@@ -95,7 +103,6 @@
           {
             "group": "Getting Started",
             "pages": [
-              "api-reference/introduction",
               "api-reference/concepts",
               "api-reference/code-versions",
               "api-reference/analyses",
@@ -110,14 +117,9 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Terminal",
+          "anchor": "Dashboard",
           "href": "https://app.bevor.io",
-          "icon": "terminal"
-        },
-        {
-          "anchor": "API Docs",
-          "href": "https://api.bevor.io/docs",
-          "icon": "code"
+          "icon": "desktop"
         },
         {
           "anchor": "GitHub",
@@ -125,9 +127,9 @@
           "icon": "github"
         },
         {
-          "anchor": "Discord",
-          "href": "https://discord.gg/bevor",
-          "icon": "discord"
+          "anchor": "Telegram",
+          "href": "https://t.me/CertaiKVirtuals",
+          "icon": "telegram"
         }
       ]
     }
@@ -145,7 +147,7 @@
     ],
     "primary": {
       "type": "button",
-      "label": "Terminal",
+      "label": "Dashboard",
       "href": "https://app.bevor.io"
     }
   },

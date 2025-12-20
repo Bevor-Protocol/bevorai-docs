@@ -1,0 +1,79 @@
+---
+title: 'Dashboard'
+description: 'Secure auditing directly in the dashboard'
+---
+The BevorAI Dashboard provides a powerful, web-based interface for comprehensive security analysis. Perfect for detailed auditing sessions, collaborative reviews, and in-depth contract analysis.
+
+## Getting Started
+
+### Accessing the Dashboard 
+
+1. Visit [app.bevor.io](https://app.bevor.io)
+2. Sign in to your BevorAI account
+3. Add your team members 
+4. Upload Contract and audit
+
+### Dashboard Demo
+
+<video
+  autoPlay
+  muted
+  loop
+  playsInline
+  className="w-full aspect-video rounded-xl"
+  src="https://github.com/Bevor-Protocol/bevorai-docs/raw/refs/heads/main/videos/Demo.mp4"
+></video>
+
+Watch this quick overview to see the BevorAI Dashboard in action. The video demonstrates key features including:
+
+- Contract upload and analysis
+- Real-time security scanning
+- Detailed vulnerability reports
+- Collaborative review tools
+- Interactive code exploration
+
+
+## How to upload contracts to Bevor
+<AccordionGroup>
+  <Accordion icon="folder" title="Upload Project Folders">
+    1. Click "Upload Project" in the dashboard
+    2. Select your project folder containing smart contracts
+    3. Click "Start Analysis" to begin security scan
+  </Accordion>
+
+  <Accordion icon="github" title="Import from GitHub">
+    1. Click "Connect GitHub" in settings
+    2. Select repository with your contracts
+    3. Choose branch and files to analyze
+    4. Repository will sync automatically
+    
+    <Tip>Enable auto-sync to analyze new commits automatically</Tip>
+  </Accordion>
+
+  <Accordion icon="link" title="Analyze Deployed Contract">
+    1. Click "Add Contract Address" 
+    2. Enter the contract address
+    3. Bevor automatically picks up the network
+    4. BevorAI will fetch and analyze the verified source code
+    
+    <Note>Contract must be verified on the network explorer</Note>
+  </Accordion>
+
+  <Accordion icon="clipboard" title="Copy & Paste Code">
+    1. Click "New Analysis" in dashboard
+    2. Paste your contract code into the editor
+    3. Select compiler version and settings
+    4. Run analysis on the pasted code
+  </Accordion>
+</AccordionGroup>
+
+## Advanced Bevor Integrations (Coming Soon)
+
+<CardGroup cols={2}>
+  <Card title="MCP" icon="keyboard" href="/auditors/mcp-integrations">
+    Security as you type - Get real-time feedback in your IDE
+  </Card>
+  <Card title="CI/CD" icon="gears" href="/developers/cicd-integration">
+    Automate security checks in your development workflow
+  </Card>
+</CardGroup>
