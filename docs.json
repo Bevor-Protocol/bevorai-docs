@@ -109,9 +109,29 @@
               "api-reference/error-handling",
               "api-reference/error-codes"
             ]
+          },
+          {
+            "group": "Business API",
+            "openapi": {
+              "source": "http://localhost:8000/business/openapi.json",
+              "directory": "api-reference/business"
+            }
+          },
+          {
+            "group": "Graph API",
+            "openapi": {
+              "source": "http://localhost:8000/graph/openapi.json",
+              "directory": "api-reference/graph"
+            }
+          },
+          {
+            "group": "Security API",
+            "openapi": {
+              "source": "http://localhost:8000/security/openapi.json",
+              "directory": "api-reference/security"
+            }
           }
-        ],
-        "openapi": "./api-reference/openapi.json"
+        ]
       }
     ],
     "global": {
