@@ -1,54 +1,37 @@
 ---
 title: 'Integrations'
-description: 'MCP, Dashboard, CI/CD, API integration options for BevorAI'
+description: 'Dashboard, CLI, SDK, API, CI/CD, and agent skills powered by one graph'
 ---
 
-# Integrations
+<Warning>
+  All Bevor integrations are coming soon. These pages are product previews.
+</Warning>
 
-Choose the integrations that fit your workflow.
+# Works wherever your team does
 
-### For auditors and developers
+Dashboard, CLI, API, SDK, or CI/CD. One graph, every surface. Choose the interface that fits the work without fragmenting security context.
 
 <CardGroup cols={2}>
-  <Card
-    title="MCP Integration"
-    icon="keyboard"
-    href="/auditors/mcp-integrations"
-  >
-    Security as you type - Get real-time security feedback directly in your IDE as you write code.
+  <Card title="Dashboard" icon="grid-2" href="/features/dashboard">
+    Triage findings, explore attack vectors, and collaborate with your team.
   </Card>
-
-  <Card
-    title="Dashboard"
-    icon="desktop"
-    href="/auditors/terminal" 
-  >
-    Interactive dashboard for running security audits and analyzing smart contracts with detailed findings.
+  <Card title="CLI" icon="terminal" href="/features/cli">
+    Trigger analyses, stream findings, and script security into any workflow.
+  </Card>
+  <Card title="SDK" icon="cube" href="/features/sdk">
+    Embed Bevor directly into internal tooling or custom agents.
+  </Card>
+  <Card title="API" icon="server" href="/features/api">
+    Access every analysis, finding, and event programmatically at scale.
+  </Card>
+  <Card title="CI/CD" icon="code-branch" href="/features/cicd">
+    Gate merges on findings while security context stays fresh on every push.
+  </Card>
+  <Card title="Bevor Skills" icon="sparkles" href="/features/bevor-skills">
+    Help coding agents use the Bevor CLI and SDK correctly and efficiently.
   </Card>
 </CardGroup>
 
-### For developers and chains
+## One shared system
 
-<CardGroup cols={2}>
-  <Card
-    title="CI/CD Pipeline"
-    icon="gears"
-    href="/developers/cicd-integration"
-  >
-    Automate security checks in your development workflow by integrating BevorAI into your CI/CD pipeline.
-  </Card>
-
-  <Card
-    title="API"
-    icon="code"
-    href="/api-reference/introduction"
-  >
-    Build with Bevor - Integrate our security analysis capabilities directly into your applications.
-  </Card>
-</CardGroup>
-
-## Need help?
-
-- Check our [FAQ](/faq)
-- Join our [Telegram](https://t.me/CertaiKVirtuals)
-- Contact [contact@bevor.io](mailto:contact@bevor.io)
+Each surface reads from and contributes to the same project graph. A finding surfaced through CI/CD can be triaged in the Dashboard, inspected through the CLI, and connected to internal automation through the SDK or API without losing its history.

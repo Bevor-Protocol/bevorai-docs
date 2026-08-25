@@ -5,26 +5,26 @@ description: 'Build on Bevor - Create custom security agents, tools, and integra
 
 # Build on Bevor
 
+<Warning>
+  The public Bevor API is coming soon. Endpoints, authentication, and examples in this reference are previews and should not be used against production systems yet.
+</Warning>
+
 Create custom security agents, tools, and integrations.
 
 Developer-friendly API for building security automation into your agents, protocols, and chains.
 
-## Welcome to BevorAI API
+## Welcome to Bevor API
 
-BevorAI provides a comprehensive API for integrating advanced security auditing capabilities into your development workflow. Whether you're building custom security agents, integrating into existing protocols, or creating specialized tools, our API enables you to leverage AI-powered security analysis at scale.
+Bevor provides a comprehensive API for integrating advanced security auditing capabilities into your development workflow. Whether you're building custom security agents, integrating into existing protocols, or creating specialized tools, our API enables you to leverage AI-powered security analysis at scale.
 
-<Card
-  title="Interactive API Documentation"
-  icon="code"
-  href="https://api.bevor.io/docs"
->
-  Explore endpoints, parameters, and examples
+<Card title="API concepts" icon="code" href="/api-reference/concepts">
+  Preview resources, authentication, and analysis workflows.
 </Card>
 
 ## Key Integration Types
 
-### MCP Integration & Co-Piloting
-Interactive, continuous engagement through Model Context Protocol integrations with IDEs like Cursor and Windsurf.
+### CLI and SDK
+Use terminal and typed Python interfaces backed by the same API resources.
 
 ### CI/CD
 Continuous reporting and team insights integrated into your development pipeline.
@@ -33,10 +33,10 @@ Continuous reporting and team insights integrated into your development pipeline
 Custom workflows and integrations for specialized use cases and protocol-specific needs.
 
 ### Dashboard
-In-depth insights and automation through the BevorAI web dashboard interface.
+In-depth insights and automation through the Bevor web dashboard interface.
 
-### Block Explorer Scanning
-Autonomous detection pre/post deployment across major blockchain networks.
+### Bevor Skills
+Help coding agents use the CLI and SDK through a bounded, graph-aware workflow.
 
 ### Multi-Agent Triaging (A2A)
 Risk profiling and orchestration for complex security scenarios.
@@ -49,10 +49,10 @@ Risk profiling and orchestration for complex security scenarios.
 
 ## Authentication
 
-All API endpoints are authenticated using Bearer tokens. Include your API key in the Authorization header:
+At launch, API endpoints will use Bearer tokens in the Authorization header:
 
 ```bash
 Authorization: Bearer YOUR_API_KEY
 ```
 
-Get your API key from the [BevorAI Dashboard](https://app.bevor.io).
+API-key creation will be documented when public access opens.

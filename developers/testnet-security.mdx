@@ -5,7 +5,7 @@ description: 'Pre-deployment validation and testing on testnets'
 
 # Testnet Security Checks
 
-Validate your smart contracts' security on testnets before mainnet deployment. BevorAI provides comprehensive testnet analysis to identify vulnerabilities, test attack scenarios, and ensure your contracts are production-ready.
+Validate your smart contracts' security on testnets before mainnet deployment. Bevor provides comprehensive testnet analysis to identify vulnerabilities, test attack scenarios, and ensure your contracts are production-ready.
 
 <Tip>
   Building a chain or testing deployed contracts? Paste a contract address into the <a href="https://app.bevor.io">Dashboard</a> to analyze instantly. Chain builders can also schedule cron jobs to scan their network using the <a href="/api-reference/introduction">API Reference</a>.
@@ -212,7 +212,7 @@ feature-security:
       npm run deploy:feature-testnet
       echo "FEATURE_CONTRACT_ADDRESS=$(cat .deployed-address)" >> $GITHUB_ENV
       
-  - name: BevorAI Feature Analysis
+  - name: Bevor Feature Analysis
     run: |
       bevor analyze-feature \
         --contract $FEATURE_CONTRACT_ADDRESS \
@@ -249,7 +249,7 @@ bevor certify-release \
 
 **Automated Test Creation**
 ```javascript
-// BevorAI generates security tests based on analysis
+// Bevor generates security tests based on analysis
 const securityTests = await bevor.generateTests({
   contract: '0x1234...abcd',
   network: 'goerli',
@@ -369,8 +369,8 @@ For testnet-specific issues:
 ## Next Steps
 
 <CardGroup cols={2}>
-  <Card title="Mainnet Monitoring" icon="globe" href="/developers/mainnet-monitoring">
-    Set up production security monitoring
+  <Card title="Graph-native Analysis" icon="share-nodes" href="/features/graph-native-analysis">
+    See how Bevor follows impact beyond changed lines
   </Card>
   <Card title="Custom Agents" icon="robot" href="/developers/custom-agents">
     Build specialized security agents for your protocol

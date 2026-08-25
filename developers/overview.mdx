@@ -1,95 +1,39 @@
 ---
-title: 'Overview'
-description: 'Guides for those creating on top of BevorAI or integrating it into their workflows'
+title: 'For Developers & Builders'
+description: 'Bring graph-native security into development tools and workflows'
 ---
 
-# For Developers & Builders
+<Warning>
+  Bevor and its developer integrations are coming soon. These pages describe the intended interfaces, not launch-ready setup steps.
+</Warning>
 
-Guides for those creating on top of BevorAI or integrating it into their workflows.
+# Security context where development happens
 
-BevorAI provides comprehensive security tools and APIs that integrate seamlessly into every stage of your development lifecycle. Whether you're building new protocols, enhancing existing applications, or creating specialized security tools, our platform offers the flexibility and power you need.
+Use Bevor's graph to understand how a change affects the broader system, then carry findings and remediation evidence through the tools your team already uses.
 
-## Development Lifecycle Integration
-
-### During Development & Pre-Deployment
-
-Integrate security directly into your development workflow with real-time analysis, automated CI/CD checks, and comprehensive pre-deployment validation.
-
-<CardGroup cols={3}>
-  <Card title="MCP for Secure Coding" icon="code" href="/developers/mcp-secure-coding">
-    Integrate BevorAI into your IDE for real-time security guidance
-  </Card>
-  <Card title="CI/CD Integration" icon="github" href="/developers/cicd-integration">
-    Automate security checks in your deployment pipeline
-  </Card>
-  <Card title="Security Dashboard" icon="desktop" href="https://app.bevor.io">
-    Monitor and analyze your contract repository
-  </Card>
-</CardGroup>
-
-### Post-Deployment
-
-Monitor and secure your deployed contracts with continuous surveillance, real-time threat detection, and network-wide security insights.
+## Product surfaces
 
 <CardGroup cols={2}>
-  <Card title="Mainnet Security Monitoring" icon="shield-check" href="/developers/mainnet-monitoring">
-    Set up ongoing or on-demand scanning of deployed contracts
+  <Card title="CLI" icon="terminal" href="/features/cli">
+    Trigger analyses and inspect graph relationships from local workflows.
   </Card>
-  <Card title="Network-Level Monitoring" icon="network-wired" href="/developers/network-monitoring">
-    Monitor entire blockchain networks and ecosystems
+  <Card title="SDK" icon="cube" href="/features/sdk">
+    Embed typed Bevor resources in internal tooling and custom agents.
   </Card>
-</CardGroup>
-
-### Building on BevorAI
-
-Create custom security solutions, integrate BevorAI into your protocols, and build specialized tools that leverage our AI-powered security infrastructure.
-
-<CardGroup cols={2}>
-  <Card title="Creating Agents & Tools" icon="robot" href="/developers/custom-agents">
-    Build custom security agents and automated workflows
+  <Card title="API" icon="server" href="/features/api">
+    Build direct integrations over projects, analyses, and findings.
   </Card>
-  <Card title="Protocol Integration" icon="puzzle-piece" href="/developers/protocol-integration">
-    Wrap BevorAI for specialized protocol use cases
+  <Card title="CI/CD" icon="code-branch" href="/features/cicd">
+    Preview graph-aware security checks for pull requests and pushes.
   </Card>
-</CardGroup>
-
-## Key Benefits for Developers
-
-### **Real-Time Security Feedback**
-Get instant security analysis as you write code, with intelligent suggestions and vulnerability prevention built directly into your development environment.
-
-### **Automated Security Gates**
-Implement security checkpoints in your CI/CD pipeline that prevent vulnerable code from reaching production while maintaining development velocity.
-
-### **Comprehensive Monitoring**
-Monitor your deployed contracts and entire protocol ecosystems with AI-powered threat detection and real-time security insights.
-
-### **Custom Security Solutions**
-Build specialized security tools and agents that understand your protocol's unique requirements and risk profile.
-
-## Getting Started
-
-New to BevorAI development? Start with our integration guides based on where you are in your development process:
-
-- **Just Starting Development?** Begin with [MCP for Secure Coding](/developers/mcp-secure-coding)
-- **Ready to Deploy?** Check out [Testnet Security Checks](/developers/testnet-security)  
-- **Already Deployed?** Set up [Mainnet Security Monitoring](/developers/mainnet-monitoring)
-- **Building Advanced Tools?** Explore [Creating Agents & Tools](/developers/custom-agents)
-
-## Developer Resources
-
-<CardGroup cols={2}>
-  <Card title="API Documentation" icon="book" href="https://api.bevor.io/docs">
-    Interactive API docs with examples and testing
+  <Card title="Bevor Skills" icon="sparkles" href="/features/bevor-skills">
+    Help coding agents use the CLI and SDK effectively.
   </Card>
-  <Card title="GitHub Repository" icon="github" href="https://github.com/Bevor-Protocol">
-    Open source tools, examples, and integrations
-  </Card>
-  <Card title="API Reference" icon="code" href="/api-reference/introduction">
-    Explore REST API endpoints and examples
+  <Card title="Custom agents and tools" icon="robot" href="/developers/custom-agents">
+    Design specialized workflows on Bevor's interfaces.
   </Card>
 </CardGroup>
 
----
+## Custom solutions
 
-Ready to enhance your development workflow with AI-powered security? Choose your integration path above and start building more secure applications today.
+Specialized monitoring, protocol integrations, and ecosystem tooling are not core Bevor product surfaces. Teams can build those solutions on the SDK or API when their use case requires them.

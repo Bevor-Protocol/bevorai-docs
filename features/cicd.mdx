@@ -1,0 +1,31 @@
+---
+title: 'CI/CD'
+description: 'Gate merges on findings while security context stays fresh on every push'
+---
+
+<Warning>
+  Bevor CI/CD integration is coming soon. This page is a product preview.
+</Warning>
+
+# Security context on every change
+
+CI/CD connects pull requests and pushes to the same graph used everywhere else. Instead of running an isolated scanner, the planned integration will evaluate a change against project history and the downstream code it can affect.
+
+## Planned workflow
+
+<Steps>
+  <Step title="Synchronize the change">
+    Connect the branch and its code version to the existing project graph.
+  </Step>
+  <Step title="Analyze the affected graph">
+    Review relationships beyond the textual diff and reuse relevant validated context.
+  </Step>
+  <Step title="Apply a policy">
+    Report or gate based on validated severity, affected scope, and project rules.
+  </Step>
+  <Step title="Preserve the result">
+    Keep findings, decisions, and remediations available to the Dashboard, CLI, SDK, and API.
+  </Step>
+</Steps>
+
+Pipeline YAML, secret configuration, and installation instructions will be added when the integration is ready for public use.
