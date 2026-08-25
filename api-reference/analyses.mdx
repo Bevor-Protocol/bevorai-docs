@@ -1,6 +1,6 @@
 ---
 title: 'Analyses'
-description: 'Understanding security analyses and their findings in BevorAI'
+description: 'Understanding security analyses and their findings in Bevor'
 ---
 
 
@@ -38,7 +38,7 @@ We constrain these to what we consider "auditable" functions, which are are entr
 - **Entry Points**: Functions that serve as the primary interface to your contract's functionality
 
 <Note>
-  Contracts can inherit or override functions, so the context in which functions are called is important for accurate analysis. BevorAI considers inheritance chains and function overrides when determining analysis scope.
+  Contracts can inherit or override functions, so the context in which functions are called is important for accurate analysis. Bevor considers inheritance chains and function overrides when determining analysis scope.
 </Note>
 
 ## Creating Analyses
@@ -123,7 +123,7 @@ Choose appropriate scope based on your needs:
 - **Large Projects**: Use specific contracts scope for manageable analysis
 
 ### Human Review Process
-1. **Automated Analysis**: Let BevorAI identify potential issues
+1. **Automated Analysis**: Let Bevor identify potential issues
 2. **Expert Review**: Have security experts validate findings
 3. **Business Logic**: Assess findings in context of your specific use case
 4. **Prioritization**: Focus on critical and high-severity issues first
@@ -154,7 +154,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Run BevorAI Analysis
+      - name: Run Bevor Analysis
         run: |
           curl -X POST https://api.bevor.io/v1/analyses \
             -H "Authorization: Bearer ${{ secrets.BEVOR_API_KEY }}" \

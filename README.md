@@ -28,6 +28,22 @@ mint dev
 
 View your local preview at `http://localhost:3000`.
 
+### Generated references
+
+The CLI and Python SDK references are generated from the sibling `bevorai-api` repository. Regenerate them after changing the Typer command tree or security SDK resources:
+
+```bash
+../bevorai-api/.venv/bin/python scripts/generate_cli_reference.py \
+  --api-root ../bevorai-api \
+  --output cli-reference
+
+python3 scripts/generate_sdk_reference.py \
+  --api-root ../bevorai-api \
+  --output sdk-reference/python
+```
+
+Pass `--check` to either command in CI to verify that committed reference pages are current without rewriting them.
+
 ## Publishing changes
 
 Install our GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app) to propagate changes from your repo to your deployment. Changes are deployed to production automatically after pushing to the default branch.

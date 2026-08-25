@@ -1,0 +1,29 @@
+---
+title: 'API Reference'
+description: 'Preview the resource model and endpoints planned for the Bevor API'
+---
+
+<Warning>
+  The public Bevor API is coming soon. This reference documents a planned interface and should not be used against production systems yet.
+</Warning>
+
+# Programmatic access to one security graph
+
+The API will expose the projects, code versions, analyses, findings, and related resources that power Bevor's other surfaces. It is intended for direct integrations and custom systems that need control at the HTTP boundary.
+
+<CardGroup cols={2}>
+  <Card title="Core concepts" icon="diagram-project" href="/api-reference/concepts">
+    Understand teams, projects, code versions, analyses, and inheritance.
+  </Card>
+  <Card title="Code versions" icon="code-commit" href="/api-reference/code-versions">
+    Preview how source snapshots connect across a project.
+  </Card>
+  <Card title="Analyses" icon="magnifying-glass-chart" href="/api-reference/analyses">
+    Preview analysis creation, status, findings, and relationships.
+  </Card>
+  <Card title="Error handling" icon="triangle-exclamation" href="/api-reference/error-handling">
+    Preview error shapes and client behavior.
+  </Card>
+</CardGroup>
+
+For a higher-level product view, see the [API integration guide](/features/api).

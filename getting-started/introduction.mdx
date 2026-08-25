@@ -1,27 +1,40 @@
 ---
 title: 'Introduction'
-description: 'Overview of BevorAI, capabilities, and core concepts'
+description: 'Security that compounds across every analysis, finding, and code change'
 ---
 
-BevorAI is the AI co-pilot for smart contract security - an API and platform that integrates across development, devops, chat, and auditing lifecycles.
+<Warning>
+  Bevor is in development. The platform and every integration described in these docs are coming soon.
+</Warning>
 
+# Security that compounds
 
+Bevor is AI-native security infrastructure with persistent context. It connects every analysis, finding, remediation, and code change so your team never starts from scratch.
 
-<Frame>
-  <img src="/images/bevor-terminal.png" alt="BevorAI Dashboard Interface" />
+Instead of producing another isolated report, Bevor builds a living security record around your codebase. Frontier models, static analyzers, specialist agents, and human auditors can all contribute to the same graph.
+
+<Frame caption="The Bevor graph visualization of the Seaport protocol">
+  <img
+    src="/images/seaport-graph.png"
+    alt="Zoomed-in Bevor graph visualization of the Seaport protocol"
+  />
 </Frame>
 
-**BevorAI is for auditors and developers.** Auditors accelerate their process with AI-powered analysis, while developers get continuous security feedback from pre- to post-deployment.
+## One graph, every surface
 
-## Getting Started
-
-Ready to enhance your security posture? Check out our [Quickstart Guide](/getting-started/quickstart) to get up and running in under 5 minutes.
+Use the same security context from the Dashboard, CLI, SDK, API, or CI/CD. Findings and decisions remain connected whether a person is triaging in the browser, a coding agent is exploring through the CLI, or an internal tool is calling the SDK.
 
 <CardGroup cols={2}>
-  <Card title="Quickstart" icon="rocket" href="/getting-started/quickstart">
-    Get started with BevorAI in under 5 minutes
+  <Card title="How Bevor works" icon="diagram-project" href="/features/overview">
+    See how code, analyses, findings, and remediations form one living system.
   </Card>
-  <Card title="Key Integrations" icon="plug" href="/getting-started/integrations">
-    Explore MCP, Dashboard, CI/CD, and API options
+  <Card title="Graph-native analysis" icon="share-nodes" href="/features/graph-native-analysis">
+    Explore how Bevor follows relationships beyond the edited lines.
+  </Card>
+  <Card title="Project Analytics" icon="chart-line" href="/features/project-analytics">
+    Measure whether surfaced risk is becoming verified remediation.
+  </Card>
+  <Card title="Integrations" icon="plug" href="/getting-started/integrations">
+    Preview Dashboard, CLI, SDK, API, CI/CD, and Bevor Skills.
   </Card>
 </CardGroup>

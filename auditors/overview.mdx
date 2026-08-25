@@ -1,76 +1,41 @@
 ---
-title: 'Overview'
-description: 'Guides for individuals and teams focused on improving contract security'
+title: 'For Security Auditors'
+description: 'Use persistent graph context to improve audit coverage, collaboration, and evidence'
 ---
-BevorAI empowers both auditing firms and solo auditors with AI-powered tools to enhance security analysis and accelerate vulnerability detection.
 
-## Auditing Firms
+<Warning>
+  Bevor is coming soon. These guides preview planned workflows for auditing firms and independent auditors.
+</Warning>
 
-Scale your team's capabilities and streamline operations with enterprise-grade security tooling.
+# Human judgment with AI leverage
 
-### Speeding up audit quotes
-- **Automated Initial Assessment**: Use the BevorAI Terminal to rapidly analyze new client contracts, estimate audit scope, and identify high-risk areas before assigning resources
-- **Smart Resource Allocation**: Get AI-powered insights to optimally distribute contracts among your audit team based on complexity and expertise
-- **Client Communication**: Generate preliminary reports to align with clients on audit scope and priorities
+Bevor gives auditors a shared graph for code understanding, analysis, findings, and remediation evidence. Frontier tools expand coverage while auditors retain responsibility for validation, impact, and reporting.
 
-### Improving process
-- **Team MCP Integration**: Equip your entire team with real-time AI analysis in their preferred IDEs
-- **Collaborative Workflow**: Share findings, annotations, and insights across your team in real-time
-- **Quality Control**: Automated cross-validation of findings between team members
-- **Standardized Reporting**: Maintain consistency across all team members with templated reporting
+## Auditing firms
 
-<CardGroup cols={2}>
-  <Card title="Dashboard for Teams" icon="desktop" href="/auditors/terminal">
-    Scale your firm's audit capabilities with our enterprise dashboard
-  </Card>
-  <Card title="MCP" icon="code" href="/auditors/mcp-integrations">
-    Real-time AI assistance for your entire audit team
-  </Card>
-</CardGroup>
+- Build faster initial risk maps when scoping an engagement.
+- Share findings, annotations, and graph context across reviewers.
+- Cross-check conclusions without duplicating discovery work.
+- Preserve validated knowledge across code changes and handoffs.
 
-## Solo Auditors
+## Independent auditors
 
-Compete with larger firms and maximize your impact with AI-powered assistance.
-
-### Win more audit competitions
-- **Rapid Analysis**: Process multiple contracts quickly to participate in more competitive audits
-- **Performance Boost**: Leverage AI insights to find complex vulnerabilities faster on platforms like Code4rena, Sherlock, and Cantina
-- **Quality Assurance**: Get AI-powered second opinions on your findings before submission
-- **Time Management**: Handle more concurrent audits without sacrificing thoroughness
-
-### Audit like a firm
-- **Platform Integration**: Specialized workflows for C4, Sherlock, and Cantina competitions
-- **Finding Validation**: Quick verification of potential vulnerabilities before submission
-- **Report Generation**: Professional audit report templates to stand out in competitions
-- **Priority Detection**: Early identification of high-value vulnerabilities to maximize rewards
+- Understand unfamiliar codebases through semantic relationships.
+- Prioritize high-impact scopes and downstream attack paths.
+- Use multiple analysis sources as independent second opinions.
+- Keep findings and evidence structured for final reporting.
 
 <CardGroup cols={2}>
-  <Card title="Dashboard" icon="desktop" href="/auditors/terminal">
-    Get a holistic view of your client or competition repos
+  <Card title="Dashboard" icon="grid-2" href="/features/dashboard">
+    Triage findings and collaborate in a visual workspace.
   </Card>
-  <Card title="MCP" icon="code" href="/auditors/mcp-integrations">
-    Real-time AI assistance as you compete
+  <Card title="CLI" icon="terminal" href="/features/cli">
+    Explore graph context and analyses from the terminal.
+  </Card>
+  <Card title="Bevor Skills" icon="sparkles" href="/features/bevor-skills">
+    Preview agent guidance for using the CLI and SDK.
+  </Card>
+  <Card title="Project Analytics" icon="chart-line" href="/features/project-analytics">
+    Measure the path from surfaced risk to verified remediation.
   </Card>
 </CardGroup>
-
-## Monitor clients post-audit
-
-Keep protecting your clients after audit completion.
-
-### Continuous Monitoring
-- **Deployment Tracking**: Automatically monitor audited contracts post-deployment
-- **Vulnerability Detection**: Get alerts for new attack vectors that could affect past clients
-- **Economic Analysis**: Monitor for suspicious transaction patterns or economic vulnerabilities
-- **Responsible Disclosure**: Streamlined process to notify clients of potential issues
-
-### Client Value-Add
-- **Extended Protection**: Offer ongoing monitoring as a premium service
-- **Proactive Security**: Catch new vulnerabilities before they can be exploited
-- **Client Dashboard**: Give clients visibility into their contract's security status
-- **Incident Response**: Quick reaction to emerging threats or suspicious activity
-
-<Card title="Post-Deployment Security" icon="radar" href="/auditors/monitor-clients-post-audit">
-  Monitor deployed contracts across major chains
-</Card>
-
-Ready to enhance your auditing capabilities? Choose your path above and start delivering more comprehensive, efficient security audits today.

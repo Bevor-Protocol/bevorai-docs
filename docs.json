@@ -1,13 +1,19 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "BevorAI Documentation",
+  "name": "Bevor Documentation",
   "colors": {
     "primary": "#3B82F6",
     "light": "#60A5FA", 
     "dark": "#1E40AF"
   },
-  "favicon": "https://raw.githubusercontent.com/Bevor-Protocol/bevorai-docs/refs/heads/main/favicon.ico",
+  "background": {
+    "color": {
+      "light": "#000000",
+      "dark": "#000000"
+    }
+  },
+  "favicon": "/images/favicon.ico",
   "navigation": {
     "tabs": [
       {
@@ -18,17 +24,29 @@
             "icon": "rocket",
             "pages": [
               "getting-started/introduction",
-              "getting-started/quickstart",
-              "getting-started/integrations"
+              "getting-started/quickstart"
             ]
           },
           {
-            "group": "Features",
+            "group": "Platform",
+            "icon": "diagram-project",
+            "pages": [
+              "features/overview",
+              "features/graph-native-analysis",
+              "features/project-analytics"
+            ]
+          },
+          {
+            "group": "Integrations",
             "icon": "plug",
             "pages": [
-              "auditors/dashboard",
-              "auditors/mcp-integrations",
-              "developers/cicd-integration"
+              "getting-started/integrations",
+              "features/dashboard",
+              "features/cli",
+              "features/sdk",
+              "features/api",
+              "features/cicd",
+              "features/bevor-skills"
             ]
           },
           {
@@ -53,8 +71,7 @@
                   "auditors/audit-like-a-firm",
                   "auditors/data-labeling"
                 ]
-              },
-              "auditors/monitor-clients-post-audit"
+              }
             ]
           },
           {
@@ -63,22 +80,7 @@
             "pages": [
               "developers/overview",
               {
-                "group": "During Development & Pre-Deployment",
-                "icon": "wrench",
-                "pages": [
-                  "developers/mcp-secure-coding"
-                ]
-              },
-              {
-                "group": "Post-Deployment",
-                "icon": "globe",
-                "pages": [
-                  "developers/mainnet-monitoring",
-                  "developers/network-monitoring"
-                ]
-              },
-              {
-                "group": "Building on BevorAI",
+                "group": "Building on Bevor",
                 "icon": "hammer",
                 "pages": [
                   "developers/custom-agents",
@@ -98,11 +100,57 @@
         ]
       },
       {
+        "tab": "CLI Reference",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "icon": "terminal",
+            "pages": [
+              "cli-reference/overview",
+              "cli-reference/root-commands"
+            ]
+          },
+          {
+            "group": "Commands",
+            "icon": "rectangle-terminal",
+            "pages": [
+              "cli-reference/sessions",
+              "cli-reference/team",
+              "cli-reference/project",
+              "cli-reference/code",
+              "cli-reference/analysis",
+              "cli-reference/finding",
+              "cli-reference/agent",
+              "cli-reference/chat"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "SDK Reference",
+        "groups": [
+          {
+            "group": "Python SDK",
+            "icon": "python",
+            "pages": [
+              "sdk-reference/python/overview",
+              "sdk-reference/python/analyses",
+              "sdk-reference/python/chats",
+              "sdk-reference/python/findings",
+              "sdk-reference/python/remediations",
+              "sdk-reference/python/summary",
+              "sdk-reference/python/versions"
+            ]
+          }
+        ]
+      },
+      {
         "tab": "API Reference",
         "groups": [
           {
             "group": "Getting Started",
             "pages": [
+              "api-reference/overview",
               "api-reference/concepts",
               "api-reference/code-versions",
               "api-reference/analyses",
@@ -117,7 +165,7 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Dashboard",
+          "anchor": "Dashboard (Coming Soon)",
           "href": "https://app.bevor.io",
           "icon": "desktop"
         },
@@ -147,7 +195,7 @@
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
+      "label": "Dashboard (Coming Soon)",
       "href": "https://app.bevor.io"
     }
   },
@@ -158,16 +206,41 @@
      "chatgpt",
      "claude",
      "perplexity",
-     "mcp",
      "cursor",
      "vscode"
    ]
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/BevorProtocol",
-      "github": "https://github.com/Bevor-Protocol",
-      "discord": "https://discord.gg/bevor"
+      "x": "https://x.com/bevor_io",
+      "github": "https://github.com/Bevor-Protocol"
     }
-  }
+  },
+  "redirects": [
+    {
+      "source": "/auditors/mcp-integrations",
+      "destination": "/features/bevor-skills",
+      "permanent": true
+    },
+    {
+      "source": "/developers/mcp-secure-coding",
+      "destination": "/features/bevor-skills",
+      "permanent": true
+    },
+    {
+      "source": "/auditors/dashboard",
+      "destination": "/features/dashboard",
+      "permanent": true
+    },
+    {
+      "source": "/developers/project-analytics",
+      "destination": "/features/project-analytics",
+      "permanent": true
+    },
+    {
+      "source": "/developers/cicd-integration",
+      "destination": "/features/cicd",
+      "permanent": true
+    }
+  ]
 }

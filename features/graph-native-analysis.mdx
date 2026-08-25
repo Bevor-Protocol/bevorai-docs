@@ -1,0 +1,40 @@
+---
+title: 'Graph-native Analysis'
+description: 'Follow semantic relationships beyond the edited lines to expose downstream security impact'
+---
+
+import { GraphBlastRadius } from '/snippets/graph-blast-radius.jsx';
+import { productGraphData } from '/snippets/product-graph-data.mdx';
+
+<Warning>
+  Graph-native analysis is coming soon. The explorer previews how it works.
+</Warning>
+
+# Catch what the diff misses
+
+A diff shows changed lines. Bevor follows semantic relationships to reveal what those changes can affect.
+
+<GraphBlastRadius data={productGraphData} />
+
+Select a small diff to reveal its downstream blast radius. Toggle **All code** for the surrounding context.
+
+## What the graph represents
+
+<CardGroup cols={2}>
+  <Card title="Nodes are code entities" icon="circle-nodes">
+    Contracts, functions, modifiers, interfaces, storage, errors, and other meaningful program elements become addressable entities.
+  </Card>
+  <Card title="Edges carry meaning" icon="arrow-right-arrow-left">
+    Calls, reads, writes, inheritance, guards, and other relationships explain how behavior moves through the codebase.
+  </Card>
+</CardGroup>
+
+Starting from changed symbols, Bevor expands across semantic edges to form the analysis scope. Relevant findings and prior decisions stay attached to that context across versions.
+
+<Info>
+  The explorer uses a small curated Solidity graph to make the relationship model legible. Production graphs can contain thousands of nodes and edges, clustered by code structure and analysis context.
+</Info>
+
+<Card title="See security posture over time" icon="chart-line" href="/features/project-analytics">
+  See how findings and remediations form a measurable trajectory.
+</Card>

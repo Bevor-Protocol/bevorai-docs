@@ -1,35 +1,36 @@
 ---
-title: 'Quickstart'
-description: 'Audit your first contracts in under 1 minute'
+title: 'Platform Preview'
+description: 'Preview the workflow Bevor will provide at launch'
 ---
 
-## Step 1: Create your account
-
-1. Visit [app.bevor.io](https://app.bevor.io)
-2. Sign up with email, GitHub, or wallet
-
-## Step 2: Run your first audit
-
-1. Open the Dashboard
-2. Upload or paste your smart contract code
-3. Run the security analysis command
-4. Review the detailed findings and recommendations
-
-## Step 3: Get your API key
-
-1. Go to Settings → API Keys in your dashboard
-2. Click "Generate New Key" to create your API key
-
 <Warning>
-Keep your API key secure and never share it publicly. Treat it like a password. If compromised, immediately rotate your key in the dashboard.
+  Bevor is coming soon. This page previews the planned workflow; account creation, installation, API keys, and analyses are not yet available for public use.
 </Warning>
 
-## Next Steps
+# From code to a living security record
 
-<Card
-  title="Explore Integrations"
-  icon="plug"
-  href="/getting-started/integrations"
->
-  Choose from MCP, Dashboard, CI/CD, and API integration options to enhance your workflow
-</Card>
+At launch, a Bevor workflow will follow four stages:
+
+<Steps>
+  <Step title="Connect a project">
+    Create a project and connect its source through the Dashboard, CLI, SDK, API, or CI/CD.
+  </Step>
+  <Step title="Build the graph">
+    Bevor turns code entities and their semantic relationships into a project graph that preserves context across versions.
+  </Step>
+  <Step title="Surface and validate findings">
+    Combine frontier AI security tools, static analyzers, specialist agents, and human review in one analysis record.
+  </Step>
+  <Step title="Remediate and verify">
+    Connect fixes to findings, re-analyze the affected graph, and track residual risk over time.
+  </Step>
+</Steps>
+
+<CardGroup cols={2}>
+  <Card title="Explore the graph" icon="share-nodes" href="/features/graph-native-analysis">
+    See why the relevant security boundary extends beyond the diff.
+  </Card>
+  <Card title="Choose a surface" icon="plug" href="/getting-started/integrations">
+    Preview how Bevor will fit into your team's workflow.
+  </Card>
+</CardGroup>

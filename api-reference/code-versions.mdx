@@ -5,7 +5,7 @@ description: 'Creating and managing code versions for security audits'
 
 # Code Versions
 
-Code versions represent specific iterations or snapshots of your codebase that can be analyzed for security vulnerabilities and gas optimization opportunities. BevorAI supports multiple ways to create code versions, from simple contract scans to complex repository integrations.
+Code versions represent specific iterations or snapshots of your codebase that can be analyzed for security vulnerabilities and gas optimization opportunities. Bevor supports multiple ways to create code versions, from simple contract scans to complex repository integrations.
 
 ## Supported Code Version Types
 
@@ -13,7 +13,7 @@ Code versions represent specific iterations or snapshots of your codebase that c
 
 Scan deployed contracts directly from blockchain explorers:
 
-- **Automatic Analysis**: BevorAI automatically analyzes the deployed contract bytecode
+- **Automatic Analysis**: Bevor automatically analyzes the deployed contract bytecode
 - **Source Code Detection**: Attempts to identify and fetch source code from verified contracts
 - **Network Support**: Works across major blockchain networks
 - **Contract Insights**: Provides detailed insights into the specific contract of interest
@@ -69,7 +69,7 @@ curl -X POST https://api.bevor.io/v1/code-versions \
 
 Connect to public GitHub repositories for continuous analysis:
 
-- **Repository Connection**: Set up via the [BevorAI Dashboard](https://app.bevor.io)
+- **Repository Connection**: Set up via the [Bevor Dashboard](https://app.bevor.io)
 - **Branch Selection**: Choose specific branches or commits to analyze
 - **Automatic Updates**: Option to automatically analyze new commits
 - **Scope Granularity**: May need to specify scope more granularly for large repositories
@@ -97,7 +97,7 @@ Secure integration with private repositories:
 - **Enterprise Support**: Full support for private and enterprise repositories
 
 <Note>
-  GitHub repository connections (both public and private) are configured through the [BevorAI Dashboard](https://app.bevor.io). Once connected, you can create code versions via the API using the repository ID.
+  GitHub repository connections (both public and private) are configured through the [Bevor Dashboard](https://app.bevor.io). Once connected, you can create code versions via the API using the repository ID.
 </Note>
 
 ## Scope Considerations
@@ -153,10 +153,10 @@ For local files, folders, and GitHub repositories, you may need to specify scope
 
 ## Upcoming Features
 
-### MCP Integration
+### Bevor Skills
 
 <Note>
-  **Coming Soon**: MCP (Model Context Protocol) support will allow you to interface with the BevorAI API directly from your IDE. This will enable seamless integration with development workflows and real-time security analysis.
+  **Coming soon:** Bevor Skills will help Claude, Codex, and compatible coding agents use the CLI and SDK to navigate code versions and graph context.
 </Note>
 
 ### Chat Integration
@@ -173,7 +173,7 @@ Chat functionality allows you to interact with your code and analysis findings t
 - **Optimization**: Get recommendations for optimizing and fixing security vulnerabilities
 
 <Note>
-  Chat functionality is available through the [BevorAI Dashboard](https://app.bevor.io) and can be initiated via the API for programmatic access.
+  Chat functionality is available through the [Bevor Dashboard](https://app.bevor.io) and can be initiated via the API for programmatic access.
 </Note>
 
 ## Integration Examples
