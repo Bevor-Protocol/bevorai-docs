@@ -4,7 +4,7 @@
   "name": "Bevor Documentation",
   "colors": {
     "primary": "#3B82F6",
-    "light": "#60A5FA", 
+    "light": "#60A5FA",
     "dark": "#1E40AF"
   },
   "background": {
@@ -50,7 +50,7 @@
             ]
           },
           {
-            "group": "For Security Auditors", 
+            "group": "For Security Auditors",
             "icon": "shield",
             "pages": [
               "auditors/overview",
@@ -157,9 +157,29 @@
               "api-reference/error-handling",
               "api-reference/error-codes"
             ]
+          },
+          {
+            "group": "Business API",
+            "openapi": {
+              "source": "./api-reference/business.json",
+              "directory": "api-reference/business"
+            }
+          },
+          {
+            "group": "Graph API",
+            "openapi": {
+              "source": "./api-reference/graph.json",
+              "directory": "api-reference/graph"
+            }
+          },
+          {
+            "group": "Security API",
+            "openapi": {
+              "source": "./api-reference/security.json",
+              "directory": "api-reference/security"
+            }
           }
-        ],
-        "openapi": "./api-reference/openapi.json"
+        ]
       }
     ],
     "global": {
