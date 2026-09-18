@@ -14,6 +14,9 @@
     }
   },
   "favicon": "/images/favicon.ico",
+  "interaction": {
+    "drilldown": false
+  },
   "navigation": {
     "tabs": [
       {
@@ -33,7 +36,10 @@
             "pages": [
               "features/overview",
               "features/graph-native-analysis",
-              "features/project-analytics"
+              "features/project-analytics",
+              "features/code-versions",
+              "features/analyses",
+              "features/chat"
             ]
           },
           {
@@ -106,22 +112,21 @@
             "group": "Getting Started",
             "icon": "terminal",
             "pages": [
-              "cli-reference/overview",
-              "cli-reference/root-commands"
+              "cli-reference/overview"
             ]
           },
           {
             "group": "Commands",
-            "icon": "rectangle-terminal",
             "pages": [
-              "cli-reference/sessions",
+              "cli-reference/root",
               "cli-reference/team",
               "cli-reference/project",
+              "cli-reference/sessions",
               "cli-reference/code",
               "cli-reference/analysis",
               "cli-reference/finding",
-              "cli-reference/agent",
-              "cli-reference/chat"
+              "cli-reference/chat",
+              "cli-reference/agent"
             ]
           }
         ]
@@ -134,12 +139,18 @@
             "icon": "python",
             "pages": [
               "sdk-reference/python/overview",
+              "sdk-reference/python/graph",
+              "sdk-reference/python/teams",
+              "sdk-reference/python/projects",
+              "sdk-reference/python/codes",
+              "sdk-reference/python/codes.files",
+              "sdk-reference/python/codes.nodes",
               "sdk-reference/python/analyses",
-              "sdk-reference/python/chats",
+              "sdk-reference/python/analyses.remediations",
+              "sdk-reference/python/analyses.summary",
+              "sdk-reference/python/analyses.versions",
               "sdk-reference/python/findings",
-              "sdk-reference/python/remediations",
-              "sdk-reference/python/summary",
-              "sdk-reference/python/versions"
+              "sdk-reference/python/chats"
             ]
           }
         ]
@@ -152,31 +163,31 @@
             "pages": [
               "api-reference/overview",
               "api-reference/concepts",
-              "api-reference/code-versions",
-              "api-reference/analyses",
-              "api-reference/error-handling",
-              "api-reference/error-codes"
+              "api-reference/error-handling"
             ]
           },
           {
             "group": "Business API",
             "openapi": {
-              "source": "./api-reference/business.json",
-              "directory": "api-reference/business"
+              "source": "http://localhost:8000/business/openapi.json"
             }
           },
           {
             "group": "Graph API",
             "openapi": {
-              "source": "./api-reference/graph.json",
-              "directory": "api-reference/graph"
+              "source": "http://localhost:8000/graph/openapi.json"
             }
           },
           {
             "group": "Security API",
             "openapi": {
-              "source": "./api-reference/security.json",
-              "directory": "api-reference/security"
+              "source": "http://localhost:8000/security/openapi.json"
+            }
+          },
+          {
+            "group": "Chat API",
+            "openapi": {
+              "source": "http://localhost:8000/chats/openapi.json"
             }
           }
         ]

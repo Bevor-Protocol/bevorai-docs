@@ -1,6 +1,7 @@
 ---
 title: 'Error Handling'
 description: 'Comprehensive guide to handling errors in the Bevor API'
+openapi-schema: ApiError
 ---
 
 The Bevor API uses conventional HTTP response codes and provides detailed error information to help you understand and resolve issues quickly.
@@ -16,15 +17,8 @@ All error responses follow a consistent JSON structure:
 }
 ```
 
-You can find the possible error codes by looking the `400` responses for each endpoint. They'll
-be consistent across each endpoint, but it's a useless frame of reference.
-
-## Error Codes
-
-<Note>
-  The complete list of error codes is defined in the [Error Codes](/api-reference/error-codes) page. They're also shown in the error response for each endpoint.
-  Do not assume all responses will be 400 responses, we just use that as a generic in the docs.
-</Note>
+You can find the possible error codes by looking the `400` responses for each endpoint or [below](./error-handling#error-codes). They'll
+be consistent across each endpoint, but it's a useful frame of reference.
 
 
 ## Request Tracking
@@ -80,8 +74,11 @@ If you encounter errors that aren't covered in this documentation:
 
 1. **Check the request ID**: Include the `bevor-request-id` in your support request
 2. **Review your request**: Ensure all required parameters are provided correctly
-4. **Contact support**: Reach out to [contact@bevor.io](mailto:contact@bevor.io) with:
+4. **Contact support**: Reach out to [support@bevor.io](mailto:support@bevor.io) with:
    - The error message and code
    - The request ID
    - Your API key (for authentication issues)
    - Steps to reproduce the error
+
+
+## Error Codes

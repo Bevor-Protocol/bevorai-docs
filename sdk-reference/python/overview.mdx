@@ -1,5 +1,5 @@
 ---
-title: 'Python SDK'
+title: 'Overview'
 description: 'Preview the coming-soon Bevor Security Python SDK'
 ---
 
@@ -7,9 +7,6 @@ description: 'Preview the coming-soon Bevor Security Python SDK'
 
 The Bevor Security SDK provides typed async and sync Python clients for security analyses, findings, remediations, and related workflows.
 
-<Warning>
-  The Bevor SDK is coming soon and is not published for installation. This reference previews the planned interface; do not run these examples yet.
-</Warning>
 
 ## Installation preview
 
@@ -22,39 +19,43 @@ The Bevor Security SDK provides typed async and sync Python clients for security
 
 <CodeGroup>
 ```python Async
-from bevor_security_sdk import SecurityClient
+from bevor_sdk import AsyncBevorClient
 
-async with SecurityClient(api_key="YOUR_API_KEY") as client:
-    analyses = await client.analyses.list()
+client = AsyncBevorClient(api_key="YOUR_API_KEY")
+
+analyses = await client.analyses.list()
 ```
 
 ```python Sync
-from bevor_security_sdk.sync_client import SecurityClient
+from bevor_sdk import BevorClient
 
-with SecurityClient(api_key="YOUR_API_KEY") as client:
-    analyses = client.analyses.list()
+client = BevorClient(api_key="YOUR_API_KEY")
+
+analyses = client.analyses.list()
 ```
 </CodeGroup>
 
-## Resources
+## Expanded Types
 
-<CardGroup cols={2}>
-<Card title="Analyses" icon="code" href="/sdk-reference/python/analyses">
-  Reference for `client.analyses`.
-</Card>
-<Card title="Chats" icon="code" href="/sdk-reference/python/chats">
-  Reference for `client.chats`.
-</Card>
-<Card title="Findings" icon="code" href="/sdk-reference/python/findings">
-  Reference for `client.findings`.
-</Card>
-<Card title="Remediations" icon="code" href="/sdk-reference/python/remediations">
-  Reference for `client.remediations`.
-</Card>
-<Card title="Summary" icon="code" href="/sdk-reference/python/summary">
-  Reference for `client.summary`.
-</Card>
-<Card title="Versions" icon="code" href="/sdk-reference/python/versions">
-  Reference for `client.versions`.
-</Card>
-</CardGroup>
+Certain resources support a `with_pagination` or `with_streaming` argument. If `True` is provided, the response extends the standard API response with added functionality, returning one of the SDK-only wrapper types below instead of the plain schema.
+
+### `PaginatedResource`
+
+<ResponseField name="results" type="list[T]">
+The current page's items, in the same shape as the underlying (non-paginated) response.
+</ResponseField>
+<ResponseField name="has_more" type="bool">
+Whether another page is available.
+</ResponseField>
+<ResponseField name="fetch_next" type="async method() -> None">
+Fetch the next page and append its results to `results`.
+</ResponseField>
+
+### `EventResource`
+
+<ResponseField name="data" type="T">
+The underlying data of the requested resource
+</ResponseField>
+<ResponseField name="stream_completion" type="async iterator">
+Method that opens an SSE connection to stream results. Events are typed and yielded. Once a success state is reached, the stream ends. As events come in, the data property is updated.
+</ResponseField>

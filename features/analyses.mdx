@@ -1,0 +1,124 @@
+---
+title: 'Analyses'
+description: 'Understanding security analyses and their findings in Bevor'
+---
+
+
+Analyses are comprehensive security assessments that analyze your smart contracts for vulnerabilities, gas optimization opportunities, and best practices. Consider an analysis to be a container of security findings that correspond to a specific version of code.
+
+## Terminology
+
+- **Analysis Version**: The specific immutable "snapshot" of an analysis. Each points to a specific code version. Analysis Versions can contain findings, and changes to this finding set can be staged and committed.
+- **Analysi**: The container of Analysis Versions, following git-like structure. Scoped to a user. Has exactly 1 HEAD pointing to an analysis version.
+
+## What Analyses Contain
+
+Analyses contain findings that have a severity
+- **Critical**: Immediate threats that could lead to loss of funds or contract compromise
+- **High**: Significant security risks that should be addressed promptly
+- **Medium**: Moderate security concerns that warrant attention
+- **Low**: Minor issues or best practice violations
+
+When findings are produced by Bevor's internal security pipeline, a finding will have a defined type. If your own security pipeline is producing findings, the "type" can be whatever you'd like.
+
+<Warning>
+  **Human Oversight Required**: While AI-powered analyses provide comprehensive analysis, they should always be complemented with human review. Security experts should validate findings, assess business logic risks, and make final decisions about remediation priorities.
+</Warning>
+
+## Retrieving an Analysis
+
+Analyses are persistent identifiers. Retrieving these will always return the HEAD analysis version along with them. See [getting an analysis](./analysis/get-analysis). If you want to retrieve a specific analysis version, backtrack, etc... then you can do so as well, see [getting an analysis version](.//analysis-version/get-analysis-version).
+
+## Creating New Versions
+
+Within an analysis, new child versions can be created allowing for versioning and backtracking if desired, as well as observing your security posture over time. There are a few ways to do this:
+
+1. Committing staged changes. Whenever you have alterations to the finding set within an analysis version, you can commit these changes.
+2. New code version. From any analysis version, you can create a child using a new code version. Bevor will implicitly borrow any findings that are tied to code segments have overlapping execution paths between code versions. The findings that are removed will be marked as `remediated`.
+3. Forking. Forking a team member's analysis will produce a new Analysis root and a corresponding analysis version for you.
+4. Merging. You can merge any analysis version into another, even if the underlying code versions differ, which will produce a new child analysis version for you into the same analysis container that you are merging into.
+
+## How to Produce Findings
+
+Findings can be produced in 3 ways: Bevor's Security Pipeline, your own security workflow or external tools, Bevor's chat interface.
+
+When findings are added, they are "staged" by default (think: git). Findings won't persist in the Bevor graph until explicitly committed.
+
+### Bevor Security Pipeline
+
+Bevor has its own security pipeline. You can trigger this in the dashboard, API, CLI, or SDK. Note that the Bevor pipeline is not triggered automatically by default. See [running the analysis pipeline](./analysis/run-analysis-pipeline).
+
+By default, Bevor's pipeline will analyze any user-defined entrypoint that has not been analyzed by Bevor before. For more fine-tuned control over this, you can pass specific scopes or rules.
+
+### Bring Your Own Security (BYOS)
+
+BYOS is what enables teams to use their own security pipelines to get findings into Bevor, so that teams can make use of our graphical interface, collaboration, borrowing behavior, chat, and security posture analytics. See [add findings](./finding/add-findings) for how to do this via the API. As long as your pipeline can produce findings and associate them to segments of code, then Bevor can ingest it.
+
+## Analysis Lifecycle
+
+1. Upload code version.
+2. Create root analysis for that code version. This creates your "Analysis" and the a "Analysis Version".
+3. Add findings.
+4. Commit changes. This produces a new Analysis Version.
+5. Make code alterations based on the findings produced. Upload this new version
+6. Create child analysis version. This will borrow all findings from the root that point to unchanged code segments.
+
+## Best Practices
+
+### Scope Selection
+Choose appropriate scope based on your needs:
+
+- **Development Phase**: Use entire codebase scope for comprehensive analysis
+- **Feature Testing**: Use specific functions scope for targeted analysis
+- **Large Projects**: Use specific contracts scope for manageable analysis
+
+### Human Review Process
+1. **Automated Analysis**: Let Bevor identify potential issues
+2. **Expert Review**: Have security experts validate findings
+3. **Business Logic**: Assess findings in context of your specific use case
+4. **Prioritization**: Focus on critical and high-severity issues first
+5. **Remediation**: Implement fixes and verify with follow-up analyses
+
+## Continuous Improvement
+
+<Note>
+  We're constantly working on improving the functionality and performance of analyses. New analysis techniques and expanded vulnerability detection are regularly added to provide more comprehensive and accurate results.
+</Note>
+
+### What We're Improving
+- **Detection Accuracy**: Enhanced AI models for better vulnerability detection
+- **Performance**: Faster analysis processing and more efficient analysis
+- **Coverage**: Expanded support for new Solidity features and patterns
+- **Integration**: Better integration with development workflows
+
+## Integration Examples
+
+### CI/CD Integration
+```yaml
+# .github/workflows/security-analysis.yml
+name: Security Analysis
+on: [push, pull_request]
+jobs:
+  analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run Bevor Analysis
+        run: |
+          curl -X POST https://api.bevor.io/v1/analyses \
+            -H "Authorization: Bearer ${{ secrets.BEVOR_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "project_id": "${{ secrets.BEVOR_PROJECT_ID }}",
+              "code_version_id": "${{ github.sha }}",
+              "scope": "entire_codebase"
+            }'
+```
+
+<Card
+  title="Start Your First Analysis"
+  icon="shield"
+  href="https://app.bevor.io"
+>
+  Create a project and run your first security analysis
+</Card>

@@ -5,10 +5,6 @@ description: 'Core concepts for building with the Bevor API'
 
 # Core Concepts
 
-<Warning>
-  The public Bevor API is coming soon. This page previews the intended resource model; do not use these examples against production systems yet.
-</Warning>
-
 Understanding the fundamental concepts of the Bevor API will help you build effective security integrations and workflows.
 
 ## Authentication & API Keys
@@ -25,7 +21,7 @@ Authorization: Bearer YOUR_API_KEY
 - **Team Scoping**: API keys are scoped to specific teams, ensuring proper access control
 - **Permission Scopes**: API keys have their own scopes, allowing you to create read-only keys for different environments
 - **Security**: Never share API keys in public repositories or client-side code
-- **User-Specific**: API keys will technically be scoped to the user that created them. This is fine for most use-cases, but you might lose granularity in billing and activities.
+- **User-Specific**: API keys will technically be scoped to the user that created them. This is fine for most use-cases, but you might lose granularity in billing and activities. *We recommend that each user generates their own API key*
 
 ### API Key Scopes
 
@@ -33,10 +29,9 @@ API keys support different permission levels to match your security requirements
 
 - **Full Access**: Complete read and write access to all team resources
 - **Read-Only**: View-only access to projects, code versions, and audit results
-- **Custom Scopes**: Granular permissions for specific operations or resources
 
 <Note>
-  Use read-only API keys in production environments or CI/CD pipelines where you only need to retrieve audit results and don't require write access to create new resources.
+  Use read-only API keys in production environments or CI/CD pipelines where you only need to retrieve analysis results and don't require write access to create new resources.
 </Note>
 
 <Card
@@ -51,9 +46,10 @@ API keys support different permission levels to match your security requirements
 
 Teams are the top-level organizational unit in Bevor:
 
+- **Billing**: Billing is managed by Stripe at the team level.
 - **Access Control**: API keys are scoped to teams, controlling which resources you can access
 - **Management**: Creating and updating teams is only accessible via the [Bevor Dashboard](https://app.bevor.io)
-- **Collaboration**: Teams enable multiple users to collaborate on security projects
+- **Collaboration**: Inviting other users to a team can help you move faster.
 
 <Note>
   Team management operations (create, update, delete) are not available through the API. Use the dashboard for team administration.
@@ -65,12 +61,12 @@ Projects are generic containers for logical separation of code and security work
 
 - **Organization**: Use projects to group related contract repositories, code iterations, or security assessments
 - **Flexibility**: Projects can represent different applications, protocols, or development phases
-- **Tracking**: All audits and scans within a project are grouped together for easy management
+- **Tracking**: All analyses and scans within a project are grouped together for easy management
 - **Github**: By default, each github repository will be its own project once linked
 
 ### Project Use Cases
 
-- **Contract Development**: Track all scans for a specific smart contract
+- **Local Development**: Keep iterations through local development logically grouped to a single project
 - **Protocol Iterations**: Monitor security across different versions of your protocol
 - **Feature Development**: Separate security assessments for different features or modules
 
@@ -81,7 +77,7 @@ Code versions represent specific iterations or snapshots of your codebase:
 - **Versioning**: Track different versions of your smart contracts or applications
 - **Analysis Tracking**: Each code version can have multiple analyses associated with it
 - **Iteration Management**: Compare security findings across different code versions
-- **Github**: With our github integration, each commit will generate a new code version, and associate it with the parent version
+- **Github**: With our github integration, each commit will generate a new code version automatically. You can manually point Bevor to specific branches/commits if you want Bevor to process it.
 
 ## Analyses
 
@@ -91,25 +87,27 @@ Analyses are security assessments performed on your code versions:
 - **Iteratives**: Each analysis can be iterated on either manually, or automatically via our chat interface for arbitration
 - **Inheritance**: If analyses are built upon prior versions, information is retained if we detect no changes in relevant segments of the underlying code
 - **AI-Powered**: Leverages advanced AI models for thorough security analysis
+- **Bring Your Own Security (BYOS)**: With Bevor, you can automate your security practices with any tool that'd you like. If your pipeline can detect findings, and associate those to segments of code, we can ingest it. This keeps your security posture consistent with your actual workflow, while helping mitigate redundancy.
 
-### Audit Best Practices
+### Security Analysis Best Practices
 
-- **Regular Scanning**: Schedule analyses at key development milestones
-- **Comparison**: Compare analysis results across different code versions to track security improvements
-- **Triage**: Triage with your team, and our internal AI-automated systems, for optimal results
+- **Iterate**: Schedule analyses at key development milestones
+- **Comparison**: Compare analysis results across different code versions to track security improvements. Evaluate your security posture over time, see how your team remediates and attests to findings
+- **Triage**: Triage with your team, our internal AI-automated systems, or your own 3rd party AI systems, for optimal results
 
 ## Workflow Example
 
-Here's a typical workflow using these concepts:
+Here's a typical workflow using the concepts above:
 
 1. **Team Setup**: Create a team in the dashboard for your organization
-2. **API Key**: Generate an API key scoped to your team
-3. **Project Creation**: Create a project for your smart contract development
-4. **Code Version**: Create a code version for each major iteration
-5. **Question Answering**: Use our chat interface to help onboard to the codebase, if it's unfamiliar to you
-6. **Analysis**: Generate your initial security analysis using our automated tooling
-7. **Triage**: Take the initial findings and triage in our chat interface to curate your findings, and produce new ones
-8. **Collaborate**: Link your findings with your team members, fork their analyses, and iterate
+2. **API Key**: Generate an API key
+3. **Github Integration**: Connect your Github, which automatically creates a new project
+4. **Code Version**: Our integration will automatically process the HEAD commit on your default branch, then any subsequent push commits pushed to remote. The code will be ready for you when you land on Bevor dashboard or access it via the API
+5. **Question Answering**: Use our chat interface to help onboard to the codebase if it's unfamiliar to you
+6. **Analysis Kickoff**: Kick off an analysis using Bevor's internal security pipeline, or upload findings using your own security workflow
+7. **Triage**: Take the initial findings and triage in our built-in chat interface to curate your findings, and produce new ones. Using your own workflow is completely valid to be able to reject findings, add new ones, or edit current ones
+8. **Iterate**: Make changes to your code. Bevor will process it, and carry over any relevant findings automatically, so that you never have to start from scratch. Only the changed segments are candidates to be re-analyzed if needed
+9. **Collaborate**: Tag your team members in findings, have them fork your work and continue where you left off, focus on different segments of the codebase, merge your analyses later to produce a final handoff
 
 <Card
   title="Interactive API Documentation"
@@ -124,6 +122,9 @@ Here's a typical workflow using these concepts:
 ### CLI and SDK
 Terminal and typed Python interfaces backed by the same API resources.
 
+### Bevor Skills
+Agent guidance for using the CLI and SDK in graph-aware coding workflows.
+
 ### CI/CD
 Continuous reporting and team insights integrated into your development pipeline.
 
@@ -132,9 +133,6 @@ Custom workflows and integrations for specialized use cases and protocol-specifi
 
 ### Dashboard
 In-depth insights and automation through the Bevor dashboard.
-
-### Bevor Skills
-Agent guidance for using the CLI and SDK in graph-aware coding workflows.
 
 ### Multi-Agent Triaging (A2A)
 Risk profiling and orchestration for complex security scenarios.

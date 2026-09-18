@@ -1,0 +1,77 @@
+---
+title: "root"
+---
+
+## `help`
+
+Show root help text (alias for --help).
+
+```bash
+bevor help [OPTIONS]
+```
+
+## `login`
+
+Log in via browser.
+
+Opens your default browser to authenticate with Bevor. Your credentials
+are stored locally and used for subsequent commands.
+
+Examples:
+
+  bevor login
+
+```bash
+bevor login [OPTIONS]
+```
+
+## `logout`
+
+Remove stored credentials.
+
+Examples:
+
+  bevor logout
+
+```bash
+bevor logout [OPTIONS]
+```
+
+## `whoami`
+
+Show the currently authenticated user.
+
+Examples:
+
+  bevor whoami
+  bevor whoami -j
+
+```bash
+bevor whoami [OPTIONS]
+```
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `--json` | boolean | No |  | JSON output |
+
+## `init`
+
+Link the current directory to a Bevor team and project.
+
+Resets/creates the .bevor/config.json.
+
+```bash
+bevor init [OPTIONS]
+```
+
+## `context`
+
+Show team, project, code, and analysis from `.bevor` (and live labels where available).
+
+```bash
+bevor context [OPTIONS]
+```
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `--json` | boolean | No |  | JSON output |

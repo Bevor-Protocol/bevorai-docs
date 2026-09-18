@@ -9,33 +9,105 @@ description: 'Python SDK reference for the chats resource'
 
 Access this resource from `client.chats`. Both async and sync clients expose the same methods.
 
-## `create`
+## `create_for_analysis`
 
-POST `/security/chats/analysis`
+POST `/chats`
 
 <CodeGroup>
 ```python Async
-result = await client.chats.create(
+result = await client.chats.create_for_analysis(
     version_id=version_id,
 )
 ```
 
 ```python Sync
-result = client.chats.create(
+result = client.chats.create_for_analysis(
     version_id=version_id,
 )
 ```
 </CodeGroup>
 
-| Parameter | Type | Required | Default |
-| --- | --- | --- | --- |
-| `version_id` | `ID` | Yes | `—` |
+<ParamField body="version_id" type="ID" required>
+</ParamField>
 
-**Returns:** `IdResponse`
+**Returns:** `ChatSchema`
+
+<Expandable title="ChatSchema">
+  <ResponseField name="id" type="string" required>
+  </ResponseField>
+  <ResponseField name="created_at" type="string" required>
+  </ResponseField>
+  <ResponseField name="team_id" type="string" required>
+  </ResponseField>
+  <ResponseField name="team_slug" type="string" required>
+  </ResponseField>
+  <ResponseField name="project_id" type="string" required>
+  </ResponseField>
+  <ResponseField name="project_slug" type="string" required>
+  </ResponseField>
+  <ResponseField name="total_messages" type="integer" required>
+  </ResponseField>
+  <ResponseField name="code_id" type="string" required>
+  </ResponseField>
+  <ResponseField name="version_id" type="Optional[string]">
+  </ResponseField>
+  <ResponseField name="title" type="Optional[string]">
+  </ResponseField>
+  <ResponseField name="chat_type" type="'code' | 'analysis'" required>
+  </ResponseField>
+</Expandable>
+
+## `create_for_code`
+
+POST `/chats`
+
+<CodeGroup>
+```python Async
+result = await client.chats.create_for_code(
+    code_id=code_id,
+)
+```
+
+```python Sync
+result = client.chats.create_for_code(
+    code_id=code_id,
+)
+```
+</CodeGroup>
+
+<ParamField body="code_id" type="ID" required>
+</ParamField>
+
+**Returns:** `ChatSchema`
+
+<Expandable title="ChatSchema">
+  <ResponseField name="id" type="string" required>
+  </ResponseField>
+  <ResponseField name="created_at" type="string" required>
+  </ResponseField>
+  <ResponseField name="team_id" type="string" required>
+  </ResponseField>
+  <ResponseField name="team_slug" type="string" required>
+  </ResponseField>
+  <ResponseField name="project_id" type="string" required>
+  </ResponseField>
+  <ResponseField name="project_slug" type="string" required>
+  </ResponseField>
+  <ResponseField name="total_messages" type="integer" required>
+  </ResponseField>
+  <ResponseField name="code_id" type="string" required>
+  </ResponseField>
+  <ResponseField name="version_id" type="Optional[string]">
+  </ResponseField>
+  <ResponseField name="title" type="Optional[string]">
+  </ResponseField>
+  <ResponseField name="chat_type" type="'code' | 'analysis'" required>
+  </ResponseField>
+</Expandable>
 
 ## `list`
 
-GET `/security/chats`
+GET `/chats`
 
 <CodeGroup>
 ```python Async
@@ -47,23 +119,76 @@ result = client.chats.list()
 ```
 </CodeGroup>
 
-| Parameter | Type | Required | Default |
-| --- | --- | --- | --- |
-| `page` | `int \| None` | No | `None` |
-| `page_size` | `int \| None` | No | `None` |
-| `project_id` | `ID \| None` | No | `None` |
-| `project_slug` | `str \| None` | No | `None` |
-| `code_version_id` | `ID \| None` | No | `None` |
-| `analysis_id` | `ID \| None` | No | `None` |
-| `chat_type` | `ChatType \| None` | No | `None` |
-| `order_by` | `Literal['created_at', 'updated_at'] \| None` | No | `None` |
-| `order` | `Literal['desc', 'asc'] \| None` | No | `None` |
+<ParamField body="options" type="ChatsQueryParams | None" default="None">
+<Expandable title="ChatsQueryParams">
+  <ParamField body="page" type="Optional[integer]">
+  </ParamField>
+  <ParamField body="page_size" type="Optional[integer]">
+  </ParamField>
+  <ParamField body="order_by" type="Optional['created_at' | 'updated_at']">
+  </ParamField>
+  <ParamField body="order" type="Optional['desc' | 'asc']">
+  </ParamField>
+  <ParamField body="project_id" type="Optional[string]">
+  </ParamField>
+  <ParamField body="project_slug" type="Optional[string]">
+  </ParamField>
+  <ParamField body="code_id" type="Optional[string]">
+  </ParamField>
+  <ParamField body="version_id" type="Optional[string]">
+  </ParamField>
+</Expandable>
+</ParamField>
+<ParamField body="with_pagination" type="bool" default="False">
+</ParamField>
 
-**Returns:** `Pagination[SecurityChatSchema]`
+**Return type by call:**
+
+- `with_pagination=True` → `PaginatedResource[ChatSchema]`
+- `with_pagination=False` → `Pagination[ChatSchema]`
+
+<Expandable title="Pagination[ChatSchema]">
+  <ResponseField name="results" type="array of ChatSchema">
+  <Expandable title="ChatSchema">
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="created_at" type="string" required>
+    </ResponseField>
+    <ResponseField name="team_id" type="string" required>
+    </ResponseField>
+    <ResponseField name="team_slug" type="string" required>
+    </ResponseField>
+    <ResponseField name="project_id" type="string" required>
+    </ResponseField>
+    <ResponseField name="project_slug" type="string" required>
+    </ResponseField>
+    <ResponseField name="total_messages" type="integer" required>
+    </ResponseField>
+    <ResponseField name="code_id" type="string" required>
+    </ResponseField>
+    <ResponseField name="version_id" type="Optional[string]">
+    </ResponseField>
+    <ResponseField name="title" type="Optional[string]">
+    </ResponseField>
+    <ResponseField name="chat_type" type="'code' | 'analysis'" required>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="page" type="integer" required>
+  </ResponseField>
+  <ResponseField name="page_size" type="integer" required>
+  </ResponseField>
+  <ResponseField name="more" type="boolean" required>
+  </ResponseField>
+  <ResponseField name="total_observations" type="integer" required>
+  </ResponseField>
+  <ResponseField name="total_pages" type="integer" required>
+  </ResponseField>
+</Expandable>
 
 ## `get`
 
-GET `/security/chats/{chat_id}`
+GET `/chats/{chat_id}`
 
 <CodeGroup>
 ```python Async
@@ -79,40 +204,39 @@ result = client.chats.get(
 ```
 </CodeGroup>
 
-| Parameter | Type | Required | Default |
-| --- | --- | --- | --- |
-| `chat_id` | `ID` | Yes | `—` |
+<ParamField body="chat_id" type="ID" required>
+</ParamField>
 
-**Returns:** `SecurityChatSchema`
+**Returns:** `ChatSchema`
 
-## `update`
-
-PATCH `/security/chats/{chat_id}`
-
-<CodeGroup>
-```python Async
-result = await client.chats.update(
-    chat_id=chat_id,
-)
-```
-
-```python Sync
-result = client.chats.update(
-    chat_id=chat_id,
-)
-```
-</CodeGroup>
-
-| Parameter | Type | Required | Default |
-| --- | --- | --- | --- |
-| `chat_id` | `ID` | Yes | `—` |
-| `analysis_id` | `ID \| None` | No | `None` |
-
-**Returns:** `BooleanResponse`
+<Expandable title="ChatSchema">
+  <ResponseField name="id" type="string" required>
+  </ResponseField>
+  <ResponseField name="created_at" type="string" required>
+  </ResponseField>
+  <ResponseField name="team_id" type="string" required>
+  </ResponseField>
+  <ResponseField name="team_slug" type="string" required>
+  </ResponseField>
+  <ResponseField name="project_id" type="string" required>
+  </ResponseField>
+  <ResponseField name="project_slug" type="string" required>
+  </ResponseField>
+  <ResponseField name="total_messages" type="integer" required>
+  </ResponseField>
+  <ResponseField name="code_id" type="string" required>
+  </ResponseField>
+  <ResponseField name="version_id" type="Optional[string]">
+  </ResponseField>
+  <ResponseField name="title" type="Optional[string]">
+  </ResponseField>
+  <ResponseField name="chat_type" type="'code' | 'analysis'" required>
+  </ResponseField>
+</Expandable>
 
 ## `messages`
 
-GET `/security/chats/{chat_id}/messages`
+GET `/chats/{chat_id}/messages`
 
 <CodeGroup>
 ```python Async
@@ -128,97 +252,152 @@ result = client.chats.messages(
 ```
 </CodeGroup>
 
-| Parameter | Type | Required | Default |
-| --- | --- | --- | --- |
-| `chat_id` | `ID` | Yes | `—` |
+<ParamField body="chat_id" type="ID" required>
+</ParamField>
 
 **Returns:** `ResultsResponse[ChatMessageSchema]`
 
+<Expandable title="ResultsResponse[ChatMessageSchema]">
+  <ResponseField name="results" type="array of ChatMessageSchema">
+  <Expandable title="ChatMessageSchema">
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="created_at" type="string" required>
+    </ResponseField>
+    <ResponseField name="chat_id" type="string" required>
+    </ResponseField>
+    <ResponseField name="chat_role" type="'user' | 'system' | 'assistant'" required>
+    </ResponseField>
+    <ResponseField name="message" type="string" required>
+    </ResponseField>
+    <ResponseField name="refs" type="array of InlineRef">
+    <Expandable title="InlineRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="type" type="string" required>
+      </ResponseField>
+      <ResponseField name="source" type="string" required>
+      </ResponseField>
+      <ResponseField name="ref_ind" type="integer">
+      </ResponseField>
+      <ResponseField name="name" type="Optional[string]">
+      </ResponseField>
+      <ResponseField name="is_stale" type="boolean">
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="has_proposal" type="boolean">
+    </ResponseField>
+    <ResponseField name="proposal_status" type="Optional[string]">
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+
 ## `sync`
 
-POST `/security/chats/{chat_id}/sync`
+POST `/chats/{chat_id}/sync`
 
 <CodeGroup>
 ```python Async
 result = await client.chats.sync(
     chat_id=chat_id,
-    message=message,
+    body=body,
 )
 ```
 
 ```python Sync
 result = client.chats.sync(
     chat_id=chat_id,
-    message=message,
+    body=body,
 )
 ```
 </CodeGroup>
 
-| Parameter | Type | Required | Default |
-| --- | --- | --- | --- |
-| `chat_id` | `ID` | Yes | `—` |
-| `message` | `str` | Yes | `—` |
-| `is_retry` | `bool` | No | `False` |
-| `attributes` | `List[Dict[str, Any]] \| None` | No | `None` |
-| `approval_id` | `str \| None` | No | `None` |
-| `is_approved` | `bool \| None` | No | `False` |
+<ParamField body="chat_id" type="ID" required>
+</ParamField>
+<ParamField body="body" type="ChatMessageBodyDict" required>
+<Expandable title="ChatMessageBodyDict">
+  <ParamField body="message" type="string" required>
+  </ParamField>
+  <ParamField body="is_retry" type="Optional[boolean]">
+  </ParamField>
+  <ParamField body="approval_id" type="Optional[string]">
+  </ParamField>
+  <ParamField body="is_approved" type="Optional[boolean]">
+  </ParamField>
+</Expandable>
+</ParamField>
 
 **Returns:** `ChatResponseSchema`
 
-## `generate_key`
+<Expandable title="ChatResponseSchema">
+  <ResponseField name="message" type="string" required>
+  </ResponseField>
+  <ResponseField name="has_pending_approval" type="boolean" required>
+  </ResponseField>
+</Expandable>
 
-POST `/security/chats/{chat_id}/stream-key`
+## `session_token`
+
+
 
 <CodeGroup>
 ```python Async
-result = await client.chats.generate_key(
+result = await client.chats.session_token(
     chat_id=chat_id,
 )
 ```
 
 ```python Sync
-result = client.chats.generate_key(
+result = client.chats.session_token(
     chat_id=chat_id,
 )
 ```
 </CodeGroup>
 
-| Parameter | Type | Required | Default |
-| --- | --- | --- | --- |
-| `chat_id` | `ID` | Yes | `—` |
+<ParamField body="chat_id" type="ID" required>
+</ParamField>
 
 **Returns:** `str`
 
 ## `stream`
 
-POST `/security/chats/{chat_id}/stream`
+POST `/chats/{chat_id}/stream`
 
 <CodeGroup>
 ```python Async
 result = await client.chats.stream(
     chat_id=chat_id,
-    stream_key=stream_key,
-    message=message,
+    session_token=session_token,
+    body=body,
 )
 ```
 
 ```python Sync
 result = client.chats.stream(
     chat_id=chat_id,
-    stream_key=stream_key,
-    message=message,
+    session_token=session_token,
+    body=body,
 )
 ```
 </CodeGroup>
 
-| Parameter | Type | Required | Default |
-| --- | --- | --- | --- |
-| `chat_id` | `str` | Yes | `—` |
-| `stream_key` | `str` | Yes | `—` |
-| `message` | `str` | Yes | `—` |
-| `is_retry` | `bool` | No | `False` |
-| `attributes` | `List[Dict[str, Any]] \| None` | No | `None` |
-| `approval_id` | `str \| None` | No | `None` |
-| `is_approved` | `bool \| None` | No | `False` |
+<ParamField body="chat_id" type="ID" required>
+</ParamField>
+<ParamField body="session_token" type="str" required>
+</ParamField>
+<ParamField body="body" type="ChatMessageBodyDict" required>
+<Expandable title="ChatMessageBodyDict">
+  <ParamField body="message" type="string" required>
+  </ParamField>
+  <ParamField body="is_retry" type="Optional[boolean]">
+  </ParamField>
+  <ParamField body="approval_id" type="Optional[string]">
+  </ParamField>
+  <ParamField body="is_approved" type="Optional[boolean]">
+  </ParamField>
+</Expandable>
+</ParamField>
 
-**Returns:** `Any`
+**Returns:** `AsyncGenerator[StreamedMessageType]`

@@ -1,0 +1,130 @@
+---
+title: 'Code Versions'
+description: 'Creating and managing code versions for security analyses'
+---
+
+# Code Versions
+
+Code versions represent specific iterations or snapshots of your codebase that can be analyzed for security vulnerabilities and gas optimization opportunities. Bevor supports multiple ways to create code versions, from simple contract scans to complex repository integrations.
+
+## Supported Code Version Types
+
+### Contract Scans via Explorer
+
+Scan deployed contracts directly from blockchain explorers:
+
+- **Automatic Analysis**: Bevor automatically analyzes the deployed contract bytecode
+- **Source Code Detection**: Attempts to identify and fetch source code from verified contracts
+- **Network Support**: Works across major blockchain networks
+- **Contract Insights**: Provides detailed insights into the specific contract of interest
+
+See [creating code via scan](./code/create-via-scan)
+
+
+### Local File Upload
+
+Upload individual smart contract files for analysis:
+
+- **Direct Upload**: Upload `.sol` files directly through the API
+- **Quick Analysis**: Fast analysis for single contract files
+- **Version Control**: Track changes to individual contracts
+
+See [creating code via file upload](./code/create-via-file)
+
+### Local Folder Upload
+
+Upload entire project directories for comprehensive analysis:
+
+- **Project Structure**: Maintains folder structure and dependencies
+- **Multi-Contract Analysis**: Analyzes all contracts in the project
+- **Dependency Resolution**: Handles import statements and dependencies
+- **Scope Specification**: May require more granular scope specification for large projects
+
+See [creating code via folder upload](./code/create-via-upload)
+
+
+### Public GitHub Repository
+
+Point Bevor to a public Github repository:
+
+- **Branch Selection**: Choose specific branches or commits to analyze
+- **Scope Granularity**: May need to specify scope more granularly for large repositories
+
+See [creating code via public repo](./code/create-via-public-repo)
+
+### Private GitHub Repository
+
+Secure integration with private repositories:
+
+- **Secure Access**: OAuth integration for secure repository access
+- **Permission Management**: Granular permissions for repository access
+- **Dashboard Setup**: Repository connection configured through the dashboard
+- **Selective**: Provide specific conditions of when Bevor should process code on push events
+- **Automated Processing**: Bevor will automatically process new code so that it's ready for you to analyze
+- **Enterprise Support**: Full support for private and enterprise repositories
+
+<Note>
+  GitHub repository connections (both public and private) are configured through the [Bevor Dashboard](https://app.bevor.io). Once connected, you can create code versions via the API using the repository ID. Push events are processed according to the conditions you apply. Bevor does not automatically analyze your code by default, it only processes the code itself, but it can be configured to do so. 
+</Note>
+
+## Code Version Lifecycle
+
+### 1. Creation
+- Choose the appropriate code version type
+- Upload or connect your code source
+- Specify project and any required parameters
+
+### 2. Processing
+- Code is analyzed and indexed
+- Dependencies are resolved
+- Analysis-ready structure is prepared
+
+
+### 3. Version Management
+- Track changes across different code versions
+- Maintain version history for your projects
+- Assess common or differing execution paths across code versions
+
+
+## Bevor Skills / CLI
+
+The Bevor CLI can be used to help Bevor efficiently ingest code, and also can be used to navigate the resulting Bevor Graph.
+
+<Note>
+  Bevor Skills will help Claude, Codex, and compatible coding agents use the CLI and SDK to navigate code versions and graph context.
+</Note>
+
+
+## Integration Examples
+
+### CI/CD Pipeline Integration
+```yaml
+# .github/workflows/security-analysis.yml
+name: Security Analysis
+on: [push, pull_request]
+jobs:
+  security-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Create Code Version
+        run: |
+          curl -X POST https://api.bevor.io/v1/code-versions \
+            -H "Authorization: Bearer ${{ secrets.BEVOR_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "project_id": "${{ secrets.BEVOR_PROJECT_ID }}",
+              "type": "github_repository",
+              "repository_id": "${{ secrets.BEVOR_REPO_ID }}",
+              "branch": "${{ github.ref_name }}",
+              "commit_sha": "${{ github.sha }}"
+            }'
+```
+
+<Card
+  title="Connect Your Repository"
+  icon="github"
+  href="https://app.bevor.io"
+>
+  Set up GitHub repository connections in the dashboard
+</Card>

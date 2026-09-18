@@ -23,52 +23,128 @@ result = client.findings.list()
 ```
 </CodeGroup>
 
-| Parameter | Type | Required | Default |
-| --- | --- | --- | --- |
-| `page` | `int \| None` | No | `None` |
-| `page_size` | `int \| None` | No | `None` |
-| `project_id` | `ID \| None` | No | `None` |
-| `project_slug` | `str \| None` | No | `None` |
-| `user_id` | `ID \| None` | No | `None` |
-| `code_version_id` | `ID \| None` | No | `None` |
-| `analysis_id` | `ID \| None` | No | `None` |
-| `created_by_user_id` | `ID \| None` | No | `None` |
-| `finding_type` | `FindingType \| None` | No | `None` |
-| `level` | `FindingLevel \| None` | No | `None` |
-| `is_acknowledged` | `bool \| None` | No | `None` |
-| `leaf_only` | `bool \| None` | No | `None` |
-| `operation` | `FindingDraftOperation \| UNSET \| None` | No | `None` |
-| `order_by` | `Literal['created_at', 'updated_at', 'level'] \| None` | No | `None` |
-| `order` | `Literal['desc', 'asc'] \| None` | No | `None` |
+<ParamField body="options" type="FindingsQueryParams | None" default="None">
+<Expandable title="FindingsQueryParams">
+  <ParamField body="page" type="Optional[integer]">
+  </ParamField>
+  <ParamField body="page_size" type="Optional[integer]">
+  </ParamField>
+  <ParamField body="order_by" type="Optional['created_at' | 'updated_at' | 'level']">
+  </ParamField>
+  <ParamField body="order" type="Optional['desc' | 'asc']">
+  </ParamField>
+  <ParamField body="project_id" type="Optional[string]">
+  </ParamField>
+  <ParamField body="project_slug" type="Optional[string]">
+  </ParamField>
+  <ParamField body="user_id" type="Optional[string]">
+  </ParamField>
+  <ParamField body="code_id" type="Optional[string]">
+  </ParamField>
+  <ParamField body="analysis_ids" type="Optional[array of string]">
+  </ParamField>
+  <ParamField body="type" type="Optional[string]">
+  </ParamField>
+  <ParamField body="level" type="Optional['critical' | 'high' | 'medium' | 'low']">
+  </ParamField>
+  <ParamField body="is_acknowledged" type="Optional[boolean]">
+  </ParamField>
+  <ParamField body="created_by_user_id" type="Optional[string]">
+  </ParamField>
+  <ParamField body="operation" type="Optional['add' | 'update' | 'delete' | string]">
+  </ParamField>
+</Expandable>
+</ParamField>
+<ParamField body="with_pagination" type="bool" default="False">
+</ParamField>
 
-**Returns:** `PaginatedResource[FindingSchema]`
+**Return type by call:**
 
-## `add`
+- `with_pagination=True` → `PaginatedResource[FindingSchema]`
+- `with_pagination=False` → `Pagination[FindingSchema]`
 
-POST `/security/findings`
-
-<CodeGroup>
-```python Async
-result = await client.findings.add(
-    version_id=version_id,
-    findings=findings,
-)
-```
-
-```python Sync
-result = client.findings.add(
-    version_id=version_id,
-    findings=findings,
-)
-```
-</CodeGroup>
-
-| Parameter | Type | Required | Default |
-| --- | --- | --- | --- |
-| `version_id` | `ID` | Yes | `—` |
-| `findings` | `List[FindingBodyDict]` | Yes | `—` |
-
-**Returns:** `ResultsResponse[FindingSchema]`
+<Expandable title="Pagination[FindingSchema]">
+  <ResponseField name="results" type="array of FindingSchema">
+  <Expandable title="FindingSchema">
+    <ResponseField name="version" type="AnalysisVersionRef" required>
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="created_at" type="string" required>
+    </ResponseField>
+    <ResponseField name="origin_finding_id" type="string" required>
+    </ResponseField>
+    <ResponseField name="is_acknowledged" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="type" type="string" required>
+    </ResponseField>
+    <ResponseField name="level" type="'critical' | 'high' | 'medium' | 'low'" required>
+    </ResponseField>
+    <ResponseField name="name" type="string" required>
+    </ResponseField>
+    <ResponseField name="explanation" type="string" required>
+    </ResponseField>
+    <ResponseField name="recommendation" type="Optional[string]">
+    </ResponseField>
+    <ResponseField name="reference" type="Optional[string]">
+    </ResponseField>
+    <ResponseField name="source" type="string" required>
+    </ResponseField>
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="node_id" type="string" required>
+    </ResponseField>
+    <ResponseField name="is_borrowed" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="location_id" type="Optional[string]">
+    </ResponseField>
+    <ResponseField name="created_by_user" type="UserSchema" required>
+    <Expandable title="UserSchema">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="is_self" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="created_at" type="string" required>
+      </ResponseField>
+      <ResponseField name="username" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="project_id" type="string" required>
+    </ResponseField>
+    <ResponseField name="project_slug" type="string" required>
+    </ResponseField>
+    <ResponseField name="code_id" type="string" required>
+    </ResponseField>
+    <ResponseField name="operation" type="Optional['add' | 'update' | 'delete']">
+    </ResponseField>
+    <ResponseField name="actions" type="FindingActions" required>
+    <Expandable title="FindingActions">
+      <ResponseField name="can_edit" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_revert" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_delete" type="boolean" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="page" type="integer" required>
+  </ResponseField>
+  <ResponseField name="page_size" type="integer" required>
+  </ResponseField>
+  <ResponseField name="more" type="boolean" required>
+  </ResponseField>
+  <ResponseField name="total_observations" type="integer" required>
+  </ResponseField>
+  <ResponseField name="total_pages" type="integer" required>
+  </ResponseField>
+</Expandable>
 
 ## `get`
 
@@ -88,11 +164,79 @@ result = client.findings.get(
 ```
 </CodeGroup>
 
-| Parameter | Type | Required | Default |
-| --- | --- | --- | --- |
-| `finding_id` | `ID` | Yes | `—` |
+<ParamField body="finding_id" type="ID" required>
+</ParamField>
 
 **Returns:** `FindingSchema`
+
+<Expandable title="FindingSchema">
+  <ResponseField name="version" type="AnalysisVersionRef" required>
+  <Expandable title="AnalysisVersionRef">
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="analysis_id" type="string" required>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="created_at" type="string" required>
+  </ResponseField>
+  <ResponseField name="origin_finding_id" type="string" required>
+  </ResponseField>
+  <ResponseField name="is_acknowledged" type="boolean" required>
+  </ResponseField>
+  <ResponseField name="type" type="string" required>
+  </ResponseField>
+  <ResponseField name="level" type="'critical' | 'high' | 'medium' | 'low'" required>
+  </ResponseField>
+  <ResponseField name="name" type="string" required>
+  </ResponseField>
+  <ResponseField name="explanation" type="string" required>
+  </ResponseField>
+  <ResponseField name="recommendation" type="Optional[string]">
+  </ResponseField>
+  <ResponseField name="reference" type="Optional[string]">
+  </ResponseField>
+  <ResponseField name="source" type="string" required>
+  </ResponseField>
+  <ResponseField name="id" type="string" required>
+  </ResponseField>
+  <ResponseField name="node_id" type="string" required>
+  </ResponseField>
+  <ResponseField name="is_borrowed" type="boolean" required>
+  </ResponseField>
+  <ResponseField name="location_id" type="Optional[string]">
+  </ResponseField>
+  <ResponseField name="created_by_user" type="UserSchema" required>
+  <Expandable title="UserSchema">
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="is_self" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="created_at" type="string" required>
+    </ResponseField>
+    <ResponseField name="username" type="string" required>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="project_id" type="string" required>
+  </ResponseField>
+  <ResponseField name="project_slug" type="string" required>
+  </ResponseField>
+  <ResponseField name="code_id" type="string" required>
+  </ResponseField>
+  <ResponseField name="operation" type="Optional['add' | 'update' | 'delete']">
+  </ResponseField>
+  <ResponseField name="actions" type="FindingActions" required>
+  <Expandable title="FindingActions">
+    <ResponseField name="can_edit" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="can_revert" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="can_delete" type="boolean" required>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
 
 ## `edit_metadata`
 
@@ -102,27 +246,109 @@ PATCH `/security/findings/{finding_id}`
 ```python Async
 result = await client.findings.edit_metadata(
     finding_id=finding_id,
+    body=body,
 )
 ```
 
 ```python Sync
 result = client.findings.edit_metadata(
     finding_id=finding_id,
+    body=body,
 )
 ```
 </CodeGroup>
 
-| Parameter | Type | Required | Default |
-| --- | --- | --- | --- |
-| `finding_id` | `ID` | Yes | `—` |
-| `type` | `FindingType \| None` | No | `None` |
-| `level` | `FindingLevel \| None` | No | `None` |
-| `name` | `str \| None` | No | `None` |
-| `explanation` | `str \| None` | No | `None` |
-| `recommendation` | `str \| None \| UNSET` | No | `None` |
-| `reference` | `str \| None \| UNSET` | No | `None` |
+<ParamField body="finding_id" type="ID" required>
+</ParamField>
+<ParamField body="body" type="EditFindingBodyDict" required>
+<Expandable title="EditFindingBodyDict">
+  <ParamField body="type" type="Optional[string]">
+  </ParamField>
+  <ParamField body="level" type="Optional['critical' | 'high' | 'medium' | 'low']">
+  </ParamField>
+  <ParamField body="name" type="Optional[string]">
+  </ParamField>
+  <ParamField body="explanation" type="Optional[string]">
+  </ParamField>
+  <ParamField body="recommendation" type="Optional[string]">
+  </ParamField>
+  <ParamField body="reference" type="Optional[string]">
+  </ParamField>
+  <ParamField body="source" type="Optional[string]">
+  </ParamField>
+</Expandable>
+</ParamField>
 
-**Returns:** `BooleanResponse`
+**Returns:** `FindingSchema`
+
+<Expandable title="FindingSchema">
+  <ResponseField name="version" type="AnalysisVersionRef" required>
+  <Expandable title="AnalysisVersionRef">
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="analysis_id" type="string" required>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="created_at" type="string" required>
+  </ResponseField>
+  <ResponseField name="origin_finding_id" type="string" required>
+  </ResponseField>
+  <ResponseField name="is_acknowledged" type="boolean" required>
+  </ResponseField>
+  <ResponseField name="type" type="string" required>
+  </ResponseField>
+  <ResponseField name="level" type="'critical' | 'high' | 'medium' | 'low'" required>
+  </ResponseField>
+  <ResponseField name="name" type="string" required>
+  </ResponseField>
+  <ResponseField name="explanation" type="string" required>
+  </ResponseField>
+  <ResponseField name="recommendation" type="Optional[string]">
+  </ResponseField>
+  <ResponseField name="reference" type="Optional[string]">
+  </ResponseField>
+  <ResponseField name="source" type="string" required>
+  </ResponseField>
+  <ResponseField name="id" type="string" required>
+  </ResponseField>
+  <ResponseField name="node_id" type="string" required>
+  </ResponseField>
+  <ResponseField name="is_borrowed" type="boolean" required>
+  </ResponseField>
+  <ResponseField name="location_id" type="Optional[string]">
+  </ResponseField>
+  <ResponseField name="created_by_user" type="UserSchema" required>
+  <Expandable title="UserSchema">
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="is_self" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="created_at" type="string" required>
+    </ResponseField>
+    <ResponseField name="username" type="string" required>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="project_id" type="string" required>
+  </ResponseField>
+  <ResponseField name="project_slug" type="string" required>
+  </ResponseField>
+  <ResponseField name="code_id" type="string" required>
+  </ResponseField>
+  <ResponseField name="operation" type="Optional['add' | 'update' | 'delete']">
+  </ResponseField>
+  <ResponseField name="actions" type="FindingActions" required>
+  <Expandable title="FindingActions">
+    <ResponseField name="can_edit" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="can_revert" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="can_delete" type="boolean" required>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
 
 ## `delete`
 
@@ -142,11 +368,79 @@ result = client.findings.delete(
 ```
 </CodeGroup>
 
-| Parameter | Type | Required | Default |
-| --- | --- | --- | --- |
-| `finding_id` | `ID` | Yes | `—` |
+<ParamField body="finding_id" type="ID" required>
+</ParamField>
 
-**Returns:** `BooleanResponse`
+**Returns:** `FindingSchema`
+
+<Expandable title="FindingSchema">
+  <ResponseField name="version" type="AnalysisVersionRef" required>
+  <Expandable title="AnalysisVersionRef">
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="analysis_id" type="string" required>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="created_at" type="string" required>
+  </ResponseField>
+  <ResponseField name="origin_finding_id" type="string" required>
+  </ResponseField>
+  <ResponseField name="is_acknowledged" type="boolean" required>
+  </ResponseField>
+  <ResponseField name="type" type="string" required>
+  </ResponseField>
+  <ResponseField name="level" type="'critical' | 'high' | 'medium' | 'low'" required>
+  </ResponseField>
+  <ResponseField name="name" type="string" required>
+  </ResponseField>
+  <ResponseField name="explanation" type="string" required>
+  </ResponseField>
+  <ResponseField name="recommendation" type="Optional[string]">
+  </ResponseField>
+  <ResponseField name="reference" type="Optional[string]">
+  </ResponseField>
+  <ResponseField name="source" type="string" required>
+  </ResponseField>
+  <ResponseField name="id" type="string" required>
+  </ResponseField>
+  <ResponseField name="node_id" type="string" required>
+  </ResponseField>
+  <ResponseField name="is_borrowed" type="boolean" required>
+  </ResponseField>
+  <ResponseField name="location_id" type="Optional[string]">
+  </ResponseField>
+  <ResponseField name="created_by_user" type="UserSchema" required>
+  <Expandable title="UserSchema">
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="is_self" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="created_at" type="string" required>
+    </ResponseField>
+    <ResponseField name="username" type="string" required>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="project_id" type="string" required>
+  </ResponseField>
+  <ResponseField name="project_slug" type="string" required>
+  </ResponseField>
+  <ResponseField name="code_id" type="string" required>
+  </ResponseField>
+  <ResponseField name="operation" type="Optional['add' | 'update' | 'delete']">
+  </ResponseField>
+  <ResponseField name="actions" type="FindingActions" required>
+  <Expandable title="FindingActions">
+    <ResponseField name="can_edit" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="can_revert" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="can_delete" type="boolean" required>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
 
 ## `revert`
 
@@ -166,11 +460,85 @@ result = client.findings.revert(
 ```
 </CodeGroup>
 
-| Parameter | Type | Required | Default |
-| --- | --- | --- | --- |
-| `finding_id` | `ID` | Yes | `—` |
+<ParamField body="finding_id" type="ID" required>
+</ParamField>
 
-**Returns:** `BooleanResponse`
+**Returns:** `ExistsResponse[FindingSchema]`
+
+<Expandable title="ExistsResponse[FindingSchema]">
+  <ResponseField name="exists" type="boolean" required>
+  </ResponseField>
+  <ResponseField name="data" type="Optional[FindingSchema]">
+  <Expandable title="FindingSchema">
+    <ResponseField name="version" type="AnalysisVersionRef" required>
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="created_at" type="string" required>
+    </ResponseField>
+    <ResponseField name="origin_finding_id" type="string" required>
+    </ResponseField>
+    <ResponseField name="is_acknowledged" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="type" type="string" required>
+    </ResponseField>
+    <ResponseField name="level" type="'critical' | 'high' | 'medium' | 'low'" required>
+    </ResponseField>
+    <ResponseField name="name" type="string" required>
+    </ResponseField>
+    <ResponseField name="explanation" type="string" required>
+    </ResponseField>
+    <ResponseField name="recommendation" type="Optional[string]">
+    </ResponseField>
+    <ResponseField name="reference" type="Optional[string]">
+    </ResponseField>
+    <ResponseField name="source" type="string" required>
+    </ResponseField>
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="node_id" type="string" required>
+    </ResponseField>
+    <ResponseField name="is_borrowed" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="location_id" type="Optional[string]">
+    </ResponseField>
+    <ResponseField name="created_by_user" type="UserSchema" required>
+    <Expandable title="UserSchema">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="is_self" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="created_at" type="string" required>
+      </ResponseField>
+      <ResponseField name="username" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="project_id" type="string" required>
+    </ResponseField>
+    <ResponseField name="project_slug" type="string" required>
+    </ResponseField>
+    <ResponseField name="code_id" type="string" required>
+    </ResponseField>
+    <ResponseField name="operation" type="Optional['add' | 'update' | 'delete']">
+    </ResponseField>
+    <ResponseField name="actions" type="FindingActions" required>
+    <Expandable title="FindingActions">
+      <ResponseField name="can_edit" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_revert" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_delete" type="boolean" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
 
 ## `toggle_acknowledgement`
 
@@ -190,11 +558,79 @@ result = client.findings.toggle_acknowledgement(
 ```
 </CodeGroup>
 
-| Parameter | Type | Required | Default |
-| --- | --- | --- | --- |
-| `finding_id` | `ID` | Yes | `—` |
+<ParamField body="finding_id" type="ID" required>
+</ParamField>
 
-**Returns:** `BooleanResponse`
+**Returns:** `FindingSchema`
+
+<Expandable title="FindingSchema">
+  <ResponseField name="version" type="AnalysisVersionRef" required>
+  <Expandable title="AnalysisVersionRef">
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="analysis_id" type="string" required>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="created_at" type="string" required>
+  </ResponseField>
+  <ResponseField name="origin_finding_id" type="string" required>
+  </ResponseField>
+  <ResponseField name="is_acknowledged" type="boolean" required>
+  </ResponseField>
+  <ResponseField name="type" type="string" required>
+  </ResponseField>
+  <ResponseField name="level" type="'critical' | 'high' | 'medium' | 'low'" required>
+  </ResponseField>
+  <ResponseField name="name" type="string" required>
+  </ResponseField>
+  <ResponseField name="explanation" type="string" required>
+  </ResponseField>
+  <ResponseField name="recommendation" type="Optional[string]">
+  </ResponseField>
+  <ResponseField name="reference" type="Optional[string]">
+  </ResponseField>
+  <ResponseField name="source" type="string" required>
+  </ResponseField>
+  <ResponseField name="id" type="string" required>
+  </ResponseField>
+  <ResponseField name="node_id" type="string" required>
+  </ResponseField>
+  <ResponseField name="is_borrowed" type="boolean" required>
+  </ResponseField>
+  <ResponseField name="location_id" type="Optional[string]">
+  </ResponseField>
+  <ResponseField name="created_by_user" type="UserSchema" required>
+  <Expandable title="UserSchema">
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="is_self" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="created_at" type="string" required>
+    </ResponseField>
+    <ResponseField name="username" type="string" required>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="project_id" type="string" required>
+  </ResponseField>
+  <ResponseField name="project_slug" type="string" required>
+  </ResponseField>
+  <ResponseField name="code_id" type="string" required>
+  </ResponseField>
+  <ResponseField name="operation" type="Optional['add' | 'update' | 'delete']">
+  </ResponseField>
+  <ResponseField name="actions" type="FindingActions" required>
+  <Expandable title="FindingActions">
+    <ResponseField name="can_edit" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="can_revert" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="can_delete" type="boolean" required>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
 
 ## `comments`
 
@@ -214,11 +650,51 @@ result = client.findings.comments(
 ```
 </CodeGroup>
 
-| Parameter | Type | Required | Default |
-| --- | --- | --- | --- |
-| `finding_id` | `ID` | Yes | `—` |
+<ParamField body="finding_id" type="ID" required>
+</ParamField>
 
 **Returns:** `ResultsResponse[FindingCommentSchema]`
+
+<Expandable title="ResultsResponse[FindingCommentSchema]">
+  <ResponseField name="results" type="array of FindingCommentSchema">
+  <Expandable title="FindingCommentSchema">
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="created_at" type="string" required>
+    </ResponseField>
+    <ResponseField name="message" type="string" required>
+    </ResponseField>
+    <ResponseField name="refs" type="array of InlineRef">
+    <Expandable title="InlineRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="type" type="string" required>
+      </ResponseField>
+      <ResponseField name="source" type="string" required>
+      </ResponseField>
+      <ResponseField name="ref_ind" type="integer">
+      </ResponseField>
+      <ResponseField name="name" type="Optional[string]">
+      </ResponseField>
+      <ResponseField name="is_stale" type="boolean">
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="user" type="UserSchema" required>
+    <Expandable title="UserSchema">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="is_self" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="created_at" type="string" required>
+      </ResponseField>
+      <ResponseField name="username" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
 
 ## `comment`
 
@@ -240,9 +716,46 @@ result = client.findings.comment(
 ```
 </CodeGroup>
 
-| Parameter | Type | Required | Default |
-| --- | --- | --- | --- |
-| `finding_id` | `ID` | Yes | `—` |
-| `message` | `str` | Yes | `—` |
+<ParamField body="finding_id" type="ID" required>
+</ParamField>
+<ParamField body="message" type="str" required>
+</ParamField>
 
 **Returns:** `FindingCommentSchema`
+
+<Expandable title="FindingCommentSchema">
+  <ResponseField name="id" type="string" required>
+  </ResponseField>
+  <ResponseField name="created_at" type="string" required>
+  </ResponseField>
+  <ResponseField name="message" type="string" required>
+  </ResponseField>
+  <ResponseField name="refs" type="array of InlineRef">
+  <Expandable title="InlineRef">
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="type" type="string" required>
+    </ResponseField>
+    <ResponseField name="source" type="string" required>
+    </ResponseField>
+    <ResponseField name="ref_ind" type="integer">
+    </ResponseField>
+    <ResponseField name="name" type="Optional[string]">
+    </ResponseField>
+    <ResponseField name="is_stale" type="boolean">
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="user" type="UserSchema" required>
+  <Expandable title="UserSchema">
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="is_self" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="created_at" type="string" required>
+    </ResponseField>
+    <ResponseField name="username" type="string" required>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>

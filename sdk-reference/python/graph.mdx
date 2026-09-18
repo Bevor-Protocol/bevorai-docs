@@ -1,0 +1,101 @@
+---
+title: 'Graph'
+description: 'Traverse the code graph for a single code version'
+---
+
+{/* Hardcoded by hand in scripts/sdk_docs.py (GRAPH_REFERENCE_PAGE) — not generated from source. */}
+
+`Graph` gives you a traversable view of a single code version — its functions, contracts,
+and declarations as nodes, and the relationships between them (calls, references,
+containment) as edges — plus lazy access to the underlying file contents and source
+segments. Construct it, call `build()` once to fetch everything over HTTP, then query and
+traverse it as much as you like without any further network calls.
+
+```python
+from bevor_sdk import AsyncBevorClient, AsyncGraph
+
+client = AsyncBevorClient(api_key="YOUR_API_KEY")
+graph = AsyncGraph(client, code_id)
+await graph.build()
+```
+
+If you've already fetched the nodes, edges, and files another way — an offline snapshot,
+say — skip the HTTP round trip with `AsyncGraph.from_snapshot(client, code_id, nodes, edges, files)`
+instead of `build()`.
+
+## Looking up nodes and files
+
+Once built, `get_node(node_id)` and `get_file(file_id)` are plain dictionary-style lookups,
+and `get_all_nodes()` / `get_all_files()` give you everything. `get_root_nodes()` narrows
+that to nodes with no incoming edges — useful as traversal starting points. Nodes have both
+a full id and a shorter display id; `get_short_from_id`/`get_id_from_short` convert between
+them, and `exists`/`exists_short_id` check either form without raising.
+
+```python
+contract = next(n for n in graph.get_root_nodes() if n.node_type == "contract_declaration")
+print(graph.get_short_from_id(contract.id))
+
+for func_id in graph.get_nodes_in_file(contract.file_id):
+    func = graph.get_node(func_id)
+    ...
+```
+
+`languages` (a property) tells you which languages are actually present in the snapshot —
+handy for a monorepo mixing, say, Solidity and Rust — and `get_node_language(node_id)` gives
+you a single node's language.
+
+## Traversing edges
+
+`get_edges_for_node(node_id, direction="out"/"in", edge_type=...)` is the main traversal
+primitive — omit `direction` for both, or `edge_type` for all edge kinds. `get_edges(...)`
+does the same without a starting node, when you just want every edge of a given type.
+
+```python
+callers = graph.get_edges_for_node(func.id, direction="in", edge_type="calls")
+callees = graph.get_edges_for_node(func.id, direction="out", edge_type="calls")
+```
+
+A few higher-level traversals are built on top of that: `get_distance(a, b)` is shortest
+path length treating the graph as undirected (`-1` if disconnected); `is_descendant(child,
+parent)` walks incoming `calls` edges to check reachability; `get_call_chain(node_id)`
+returns the full call chain as a `CallNode` tree; `traverse_up_to_node_type(node_id, type)`
+walks incoming edges until it finds a node of that type (e.g. "which contract is this
+function defined in?"); and `get_descendant_by_merkle(node_id, merkle_hash)` walks outgoing
+edges looking for a descendant matching a content hash. `get_edge_by_id(edge_id)` resolves
+a specific edge by its row id when you already have one (e.g. from `invoked_by_id`).
+
+## Reconstructing source
+
+Reading a node's actual source code is lazy and cached: `get_file_content(file_id)` fetches
+(and caches) a file's full text the first time it's needed. `reconstruct_chunk(node_id,
+with_docstring=False)` slices out just that node's segment — and if `with_docstring=True`,
+prefixes it with the node's docstring, resolving an `@inheritdoc`-style reference to the
+referenced node's own docstring where needed.
+
+```python
+snippet = await graph.reconstruct_chunk(func.id, with_docstring=True)
+```
+
+`Graph.reconstruct(node, source, docstring_use=None)` is the lower-level static primitive
+`reconstruct_chunk` is built on, for when you already have the raw file bytes in hand — it
+slices by byte offset and sanitizes the result (long hex literals and large string literals
+get redacted rather than dumped in full).
+
+## Language-specific type sets
+
+`get_callable_types`, `get_declaration_types`, `get_exclude_types`, and
+`get_container_types` each take a `Language` and return the set of AST node-type strings
+that classify as that category — functions/modifiers/constructors, enums/structs/events,
+statements that aren't treated as their own nodes, and contracts/libraries/interfaces,
+respectively. These are mostly used internally during traversal; currently defined for
+Solidity, with other languages returning an empty set.
+
+## Call Chains
+
+`get_call_chain(node_id)` returns a `CallNode` — a tree rooted at that node, with each level holding its own children for every call it makes.Each node carries its own identity plus a `children` list of the same shape, so the structure mirrors the actual call graph rather than a flattened list — walking into `children` at any depth traces one full execution path from the root down.
+
+```python
+call_chain = graph.get_call_chain(func.id)
+
+print(call_chain.to_text())      # flat, indented text representation for machines.
+data = call_chain.to_dict()   # nested dict/JSON — data["children"] for one level down

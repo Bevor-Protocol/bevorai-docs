@@ -9,32 +9,6 @@ description: 'Python SDK reference for the analyses resource'
 
 Access this resource from `client.analyses`. Both async and sync clients expose the same methods.
 
-## `create_root`
-
-POST `/security/analyses`
-
-<CodeGroup>
-```python Async
-result = await client.analyses.create_root(
-    code_version_id=code_version_id,
-)
-```
-
-```python Sync
-result = client.analyses.create_root(
-    code_version_id=code_version_id,
-)
-```
-</CodeGroup>
-
-| Parameter | Type | Required | Default |
-| --- | --- | --- | --- |
-| `code_version_id` | `ID` | Yes | `—` |
-| `name` | `str \| None` | No | `None` |
-| `check_existing` | `bool \| None` | No | `None` |
-
-**Returns:** `AnalysisCreateSchema`
-
 ## `list`
 
 GET `/security/analyses`
@@ -49,19 +23,220 @@ result = client.analyses.list()
 ```
 </CodeGroup>
 
-| Parameter | Type | Required | Default |
-| --- | --- | --- | --- |
-| `page` | `int \| None` | No | `None` |
-| `page_size` | `int \| None` | No | `None` |
-| `analysis_id` | `ID \| None` | No | `None` |
-| `project_id` | `ID \| None` | No | `None` |
-| `project_slug` | `str \| None` | No | `None` |
-| `user_id` | `ID \| None` | No | `None` |
-| `is_owner` | `bool \| None` | No | `None` |
-| `order_by` | `Literal['created_at', 'updated_at'] \| None` | No | `None` |
-| `order` | `Literal['desc', 'asc'] \| None` | No | `None` |
+<ParamField body="options" type="AnalysesQueryParams | None" default="None">
+<Expandable title="AnalysesQueryParams">
+  <ParamField body="page" type="Optional[integer]">
+  </ParamField>
+  <ParamField body="page_size" type="Optional[integer]">
+  </ParamField>
+  <ParamField body="order_by" type="Optional['created_at' | 'updated_at']">
+  </ParamField>
+  <ParamField body="order" type="Optional['desc' | 'asc']">
+  </ParamField>
+  <ParamField body="project_id" type="Optional[string]">
+  </ParamField>
+  <ParamField body="project_slug" type="Optional[string]">
+  </ParamField>
+  <ParamField body="user_id" type="Optional[string]">
+  </ParamField>
+  <ParamField body="is_owner" type="Optional[boolean]">
+  </ParamField>
+</Expandable>
+</ParamField>
+<ParamField body="with_pagination" type="bool" default="False">
+</ParamField>
 
-**Returns:** `PaginatedResource[AnalysisSchema]`
+**Return type by call:**
+
+- `with_pagination=True` → `PaginatedResource[AnalysisSchema]`
+- `with_pagination=False` → `Pagination[AnalysisSchema]`
+
+<Expandable title="Pagination[AnalysisSchema]">
+  <ResponseField name="results" type="array of AnalysisSchema">
+  <Expandable title="AnalysisSchema">
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="name" type="string" required>
+    </ResponseField>
+    <ResponseField name="created_at" type="string" required>
+    </ResponseField>
+    <ResponseField name="user" type="UserSchema" required>
+    <Expandable title="UserSchema">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="is_self" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="created_at" type="string" required>
+      </ResponseField>
+      <ResponseField name="username" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="project_id" type="string" required>
+    </ResponseField>
+    <ResponseField name="project_name" type="string" required>
+    </ResponseField>
+    <ResponseField name="project_slug" type="string" required>
+    </ResponseField>
+    <ResponseField name="is_owner" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="version" type="AnalysisVersionSchema" required>
+    <Expandable title="AnalysisVersionSchema">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="created_at" type="string" required>
+      </ResponseField>
+      <ResponseField name="trigger" type="'create' | 'commit' | 'fork' | 'merge' | 'push'" required>
+      </ResponseField>
+      <ResponseField name="n_findings" type="integer" required>
+      </ResponseField>
+      <ResponseField name="n_remediations" type="integer" required>
+      </ResponseField>
+      <ResponseField name="is_head" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="has_pipeline_processing" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="has_pipeline_failed" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="code_version" type="CodeVersionSchema" required>
+      <Expandable title="CodeVersionSchema">
+        <ResponseField name="id" type="string" required>
+        </ResponseField>
+        <ResponseField name="network" type="Optional['eth' | 'bsc' | 'polygon' | 'base' | 'avax' | 'mode' | 'arb' | 'eth_sepolia' | 'bsc_test' | 'polygon_amoy' | 'base_sepolia' | 'avax_fuji' | 'mode_testnet' | 'arb_sepolia']">
+        </ResponseField>
+        <ResponseField name="version_method" type="'tag' | 'commit' | 'hash' | 'address'" required>
+        </ResponseField>
+        <ResponseField name="version_fingerprint" type="string" required>
+        </ResponseField>
+        <ResponseField name="status" type="'queued' | 'processing' | 'failed' | 'success'" required>
+        </ResponseField>
+        <ResponseField name="name" type="Optional[string]">
+        </ResponseField>
+        <ResponseField name="branch" type="Optional[string]">
+        </ResponseField>
+        <ResponseField name="commit" type="Optional[GithubCommitSchema]">
+        <Expandable title="GithubCommitSchema">
+          <ResponseField name="sha" type="string" required>
+          </ResponseField>
+          <ResponseField name="author" type="string" required>
+          </ResponseField>
+          <ResponseField name="message" type="string" required>
+          </ResponseField>
+          <ResponseField name="timestamp" type="string" required>
+          </ResponseField>
+        </Expandable>
+        </ResponseField>
+        <ResponseField name="repository" type="Optional[GithubRepositorySchema]">
+        <Expandable title="GithubRepositorySchema">
+          <ResponseField name="id" type="integer" required>
+          </ResponseField>
+          <ResponseField name="name" type="string" required>
+          </ResponseField>
+          <ResponseField name="is_private" type="boolean" required>
+          </ResponseField>
+          <ResponseField name="account" type="GithubAccountSchema" required>
+          <Expandable title="GithubAccountSchema">
+            <ResponseField name="id" type="integer" required>
+            </ResponseField>
+            <ResponseField name="login" type="string" required>
+            </ResponseField>
+            <ResponseField name="type" type="string" required>
+            </ResponseField>
+            <ResponseField name="avatar_url" type="string" required>
+            </ResponseField>
+          </Expandable>
+          </ResponseField>
+        </Expandable>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="merged_from_version" type="Optional[AnalysisVersionRef]">
+      <Expandable title="AnalysisVersionRef">
+        <ResponseField name="id" type="string" required>
+        </ResponseField>
+        <ResponseField name="analysis_id" type="string" required>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="forked_from_version" type="Optional[AnalysisVersionRef]">
+      <Expandable title="AnalysisVersionRef">
+        <ResponseField name="id" type="string" required>
+        </ResponseField>
+        <ResponseField name="analysis_id" type="string" required>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="parent_version" type="Optional[AnalysisVersionRef]">
+      <Expandable title="AnalysisVersionRef">
+        <ResponseField name="id" type="string" required>
+        </ResponseField>
+        <ResponseField name="analysis_id" type="string" required>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="child_versions" type="array of AnalysisVersionRef">
+      <Expandable title="AnalysisVersionRef">
+        <ResponseField name="id" type="string" required>
+        </ResponseField>
+        <ResponseField name="analysis_id" type="string" required>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="merged_versions" type="array of AnalysisVersionRef">
+      <Expandable title="AnalysisVersionRef">
+        <ResponseField name="id" type="string" required>
+        </ResponseField>
+        <ResponseField name="analysis_id" type="string" required>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="forked_versions" type="array of AnalysisVersionRef">
+      <Expandable title="AnalysisVersionRef">
+        <ResponseField name="id" type="string" required>
+        </ResponseField>
+        <ResponseField name="analysis_id" type="string" required>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="actions" type="AnalysisActions" required>
+      <Expandable title="AnalysisActions">
+        <ResponseField name="can_fork" type="boolean" required>
+        </ResponseField>
+        <ResponseField name="can_create_child" type="boolean" required>
+        </ResponseField>
+        <ResponseField name="can_commit_changes" type="boolean" required>
+        </ResponseField>
+        <ResponseField name="can_delete" type="boolean" required>
+        </ResponseField>
+        <ResponseField name="can_run_pipeline" type="boolean" required>
+        </ResponseField>
+        <ResponseField name="can_retry_pipeline" type="boolean" required>
+        </ResponseField>
+        <ResponseField name="can_merge_to" type="boolean" required>
+        </ResponseField>
+        <ResponseField name="can_merge_from" type="boolean" required>
+        </ResponseField>
+        <ResponseField name="can_stage_changes" type="boolean" required>
+        </ResponseField>
+        <ResponseField name="can_set_as_head" type="boolean" required>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="page" type="integer" required>
+  </ResponseField>
+  <ResponseField name="page_size" type="integer" required>
+  </ResponseField>
+  <ResponseField name="more" type="boolean" required>
+  </ResponseField>
+  <ResponseField name="total_observations" type="integer" required>
+  </ResponseField>
+  <ResponseField name="total_pages" type="integer" required>
+  </ResponseField>
+</Expandable>
 
 ## `get`
 
@@ -81,12 +256,189 @@ result = client.analyses.get(
 ```
 </CodeGroup>
 
-| Parameter | Type | Required | Default |
-| --- | --- | --- | --- |
-| `analysis_id` | `ID` | Yes | `—` |
-| `env` | `str \| None` | No | `None` |
+<ParamField body="analysis_id" type="ID" required>
+</ParamField>
+<ParamField body="options" type="VersionQueryParams | None" default="None">
+<Expandable title="VersionQueryParams">
+  <ParamField body="version_id" type="Optional[string]">
+  </ParamField>
+</Expandable>
+</ParamField>
 
 **Returns:** `AnalysisSchema`
+
+<Expandable title="AnalysisSchema">
+  <ResponseField name="id" type="string" required>
+  </ResponseField>
+  <ResponseField name="name" type="string" required>
+  </ResponseField>
+  <ResponseField name="created_at" type="string" required>
+  </ResponseField>
+  <ResponseField name="user" type="UserSchema" required>
+  <Expandable title="UserSchema">
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="is_self" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="created_at" type="string" required>
+    </ResponseField>
+    <ResponseField name="username" type="string" required>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="project_id" type="string" required>
+  </ResponseField>
+  <ResponseField name="project_name" type="string" required>
+  </ResponseField>
+  <ResponseField name="project_slug" type="string" required>
+  </ResponseField>
+  <ResponseField name="is_owner" type="boolean" required>
+  </ResponseField>
+  <ResponseField name="version" type="AnalysisVersionSchema" required>
+  <Expandable title="AnalysisVersionSchema">
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="created_at" type="string" required>
+    </ResponseField>
+    <ResponseField name="trigger" type="'create' | 'commit' | 'fork' | 'merge' | 'push'" required>
+    </ResponseField>
+    <ResponseField name="n_findings" type="integer" required>
+    </ResponseField>
+    <ResponseField name="n_remediations" type="integer" required>
+    </ResponseField>
+    <ResponseField name="is_head" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="has_pipeline_processing" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="has_pipeline_failed" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="code_version" type="CodeVersionSchema" required>
+    <Expandable title="CodeVersionSchema">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="network" type="Optional['eth' | 'bsc' | 'polygon' | 'base' | 'avax' | 'mode' | 'arb' | 'eth_sepolia' | 'bsc_test' | 'polygon_amoy' | 'base_sepolia' | 'avax_fuji' | 'mode_testnet' | 'arb_sepolia']">
+      </ResponseField>
+      <ResponseField name="version_method" type="'tag' | 'commit' | 'hash' | 'address'" required>
+      </ResponseField>
+      <ResponseField name="version_fingerprint" type="string" required>
+      </ResponseField>
+      <ResponseField name="status" type="'queued' | 'processing' | 'failed' | 'success'" required>
+      </ResponseField>
+      <ResponseField name="name" type="Optional[string]">
+      </ResponseField>
+      <ResponseField name="branch" type="Optional[string]">
+      </ResponseField>
+      <ResponseField name="commit" type="Optional[GithubCommitSchema]">
+      <Expandable title="GithubCommitSchema">
+        <ResponseField name="sha" type="string" required>
+        </ResponseField>
+        <ResponseField name="author" type="string" required>
+        </ResponseField>
+        <ResponseField name="message" type="string" required>
+        </ResponseField>
+        <ResponseField name="timestamp" type="string" required>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="repository" type="Optional[GithubRepositorySchema]">
+      <Expandable title="GithubRepositorySchema">
+        <ResponseField name="id" type="integer" required>
+        </ResponseField>
+        <ResponseField name="name" type="string" required>
+        </ResponseField>
+        <ResponseField name="is_private" type="boolean" required>
+        </ResponseField>
+        <ResponseField name="account" type="GithubAccountSchema" required>
+        <Expandable title="GithubAccountSchema">
+          <ResponseField name="id" type="integer" required>
+          </ResponseField>
+          <ResponseField name="login" type="string" required>
+          </ResponseField>
+          <ResponseField name="type" type="string" required>
+          </ResponseField>
+          <ResponseField name="avatar_url" type="string" required>
+          </ResponseField>
+        </Expandable>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="merged_from_version" type="Optional[AnalysisVersionRef]">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="forked_from_version" type="Optional[AnalysisVersionRef]">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="parent_version" type="Optional[AnalysisVersionRef]">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="child_versions" type="array of AnalysisVersionRef">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="merged_versions" type="array of AnalysisVersionRef">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="forked_versions" type="array of AnalysisVersionRef">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="actions" type="AnalysisActions" required>
+    <Expandable title="AnalysisActions">
+      <ResponseField name="can_fork" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_create_child" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_commit_changes" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_delete" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_run_pipeline" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_retry_pipeline" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_merge_to" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_merge_from" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_stage_changes" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_set_as_head" type="boolean" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
 
 ## `recent`
 
@@ -102,12 +454,265 @@ result = client.analyses.recent()
 ```
 </CodeGroup>
 
-| Parameter | Type | Required | Default |
-| --- | --- | --- | --- |
-| `project_id` | `ID \| None` | No | `None` |
-| `is_github_connection` | `bool \| None` | No | `None` |
+<ParamField body="options" type="LatestQueryParams | None" default="None">
+<Expandable title="LatestQueryParams">
+  <ParamField body="project_id" type="Optional[string]">
+  </ParamField>
+  <ParamField body="project_slug" type="Optional[string]">
+  </ParamField>
+</Expandable>
+</ParamField>
 
 **Returns:** `ExistsResponse[AnalysisExpandedSchema]`
+
+<Expandable title="ExistsResponse[AnalysisExpandedSchema]">
+  <ResponseField name="exists" type="boolean" required>
+  </ResponseField>
+  <ResponseField name="data" type="Optional[AnalysisExpandedSchema]">
+  <Expandable title="AnalysisExpandedSchema">
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="name" type="string" required>
+    </ResponseField>
+    <ResponseField name="created_at" type="string" required>
+    </ResponseField>
+    <ResponseField name="user" type="UserSchema" required>
+    <Expandable title="UserSchema">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="is_self" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="created_at" type="string" required>
+      </ResponseField>
+      <ResponseField name="username" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="project_id" type="string" required>
+    </ResponseField>
+    <ResponseField name="project_name" type="string" required>
+    </ResponseField>
+    <ResponseField name="project_slug" type="string" required>
+    </ResponseField>
+    <ResponseField name="is_owner" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="version" type="AnalysisVersionSchema" required>
+    <Expandable title="AnalysisVersionSchema">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="created_at" type="string" required>
+      </ResponseField>
+      <ResponseField name="trigger" type="'create' | 'commit' | 'fork' | 'merge' | 'push'" required>
+      </ResponseField>
+      <ResponseField name="n_findings" type="integer" required>
+      </ResponseField>
+      <ResponseField name="n_remediations" type="integer" required>
+      </ResponseField>
+      <ResponseField name="is_head" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="has_pipeline_processing" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="has_pipeline_failed" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="code_version" type="CodeVersionSchema" required>
+      <Expandable title="CodeVersionSchema">
+        <ResponseField name="id" type="string" required>
+        </ResponseField>
+        <ResponseField name="network" type="Optional['eth' | 'bsc' | 'polygon' | 'base' | 'avax' | 'mode' | 'arb' | 'eth_sepolia' | 'bsc_test' | 'polygon_amoy' | 'base_sepolia' | 'avax_fuji' | 'mode_testnet' | 'arb_sepolia']">
+        </ResponseField>
+        <ResponseField name="version_method" type="'tag' | 'commit' | 'hash' | 'address'" required>
+        </ResponseField>
+        <ResponseField name="version_fingerprint" type="string" required>
+        </ResponseField>
+        <ResponseField name="status" type="'queued' | 'processing' | 'failed' | 'success'" required>
+        </ResponseField>
+        <ResponseField name="name" type="Optional[string]">
+        </ResponseField>
+        <ResponseField name="branch" type="Optional[string]">
+        </ResponseField>
+        <ResponseField name="commit" type="Optional[GithubCommitSchema]">
+        <Expandable title="GithubCommitSchema">
+          <ResponseField name="sha" type="string" required>
+          </ResponseField>
+          <ResponseField name="author" type="string" required>
+          </ResponseField>
+          <ResponseField name="message" type="string" required>
+          </ResponseField>
+          <ResponseField name="timestamp" type="string" required>
+          </ResponseField>
+        </Expandable>
+        </ResponseField>
+        <ResponseField name="repository" type="Optional[GithubRepositorySchema]">
+        <Expandable title="GithubRepositorySchema">
+          <ResponseField name="id" type="integer" required>
+          </ResponseField>
+          <ResponseField name="name" type="string" required>
+          </ResponseField>
+          <ResponseField name="is_private" type="boolean" required>
+          </ResponseField>
+          <ResponseField name="account" type="GithubAccountSchema" required>
+          <Expandable title="GithubAccountSchema">
+            <ResponseField name="id" type="integer" required>
+            </ResponseField>
+            <ResponseField name="login" type="string" required>
+            </ResponseField>
+            <ResponseField name="type" type="string" required>
+            </ResponseField>
+            <ResponseField name="avatar_url" type="string" required>
+            </ResponseField>
+          </Expandable>
+          </ResponseField>
+        </Expandable>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="merged_from_version" type="Optional[AnalysisVersionRef]">
+      <Expandable title="AnalysisVersionRef">
+        <ResponseField name="id" type="string" required>
+        </ResponseField>
+        <ResponseField name="analysis_id" type="string" required>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="forked_from_version" type="Optional[AnalysisVersionRef]">
+      <Expandable title="AnalysisVersionRef">
+        <ResponseField name="id" type="string" required>
+        </ResponseField>
+        <ResponseField name="analysis_id" type="string" required>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="parent_version" type="Optional[AnalysisVersionRef]">
+      <Expandable title="AnalysisVersionRef">
+        <ResponseField name="id" type="string" required>
+        </ResponseField>
+        <ResponseField name="analysis_id" type="string" required>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="child_versions" type="array of AnalysisVersionRef">
+      <Expandable title="AnalysisVersionRef">
+        <ResponseField name="id" type="string" required>
+        </ResponseField>
+        <ResponseField name="analysis_id" type="string" required>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="merged_versions" type="array of AnalysisVersionRef">
+      <Expandable title="AnalysisVersionRef">
+        <ResponseField name="id" type="string" required>
+        </ResponseField>
+        <ResponseField name="analysis_id" type="string" required>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="forked_versions" type="array of AnalysisVersionRef">
+      <Expandable title="AnalysisVersionRef">
+        <ResponseField name="id" type="string" required>
+        </ResponseField>
+        <ResponseField name="analysis_id" type="string" required>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="actions" type="AnalysisActions" required>
+      <Expandable title="AnalysisActions">
+        <ResponseField name="can_fork" type="boolean" required>
+        </ResponseField>
+        <ResponseField name="can_create_child" type="boolean" required>
+        </ResponseField>
+        <ResponseField name="can_commit_changes" type="boolean" required>
+        </ResponseField>
+        <ResponseField name="can_delete" type="boolean" required>
+        </ResponseField>
+        <ResponseField name="can_run_pipeline" type="boolean" required>
+        </ResponseField>
+        <ResponseField name="can_retry_pipeline" type="boolean" required>
+        </ResponseField>
+        <ResponseField name="can_merge_to" type="boolean" required>
+        </ResponseField>
+        <ResponseField name="can_merge_from" type="boolean" required>
+        </ResponseField>
+        <ResponseField name="can_stage_changes" type="boolean" required>
+        </ResponseField>
+        <ResponseField name="can_set_as_head" type="boolean" required>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="findings" type="array of FindingSchema">
+    <Expandable title="FindingSchema">
+      <ResponseField name="version" type="AnalysisVersionRef" required>
+      <Expandable title="AnalysisVersionRef">
+        <ResponseField name="id" type="string" required>
+        </ResponseField>
+        <ResponseField name="analysis_id" type="string" required>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="created_at" type="string" required>
+      </ResponseField>
+      <ResponseField name="origin_finding_id" type="string" required>
+      </ResponseField>
+      <ResponseField name="is_acknowledged" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="type" type="string" required>
+      </ResponseField>
+      <ResponseField name="level" type="'critical' | 'high' | 'medium' | 'low'" required>
+      </ResponseField>
+      <ResponseField name="name" type="string" required>
+      </ResponseField>
+      <ResponseField name="explanation" type="string" required>
+      </ResponseField>
+      <ResponseField name="recommendation" type="Optional[string]">
+      </ResponseField>
+      <ResponseField name="reference" type="Optional[string]">
+      </ResponseField>
+      <ResponseField name="source" type="string" required>
+      </ResponseField>
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="node_id" type="string" required>
+      </ResponseField>
+      <ResponseField name="is_borrowed" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="location_id" type="Optional[string]">
+      </ResponseField>
+      <ResponseField name="created_by_user" type="UserSchema" required>
+      <Expandable title="UserSchema">
+        <ResponseField name="id" type="string" required>
+        </ResponseField>
+        <ResponseField name="is_self" type="boolean" required>
+        </ResponseField>
+        <ResponseField name="created_at" type="string" required>
+        </ResponseField>
+        <ResponseField name="username" type="string" required>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="project_id" type="string" required>
+      </ResponseField>
+      <ResponseField name="project_slug" type="string" required>
+      </ResponseField>
+      <ResponseField name="code_id" type="string" required>
+      </ResponseField>
+      <ResponseField name="operation" type="Optional['add' | 'update' | 'delete']">
+      </ResponseField>
+      <ResponseField name="actions" type="FindingActions" required>
+      <Expandable title="FindingActions">
+        <ResponseField name="can_edit" type="boolean" required>
+        </ResponseField>
+        <ResponseField name="can_revert" type="boolean" required>
+        </ResponseField>
+        <ResponseField name="can_delete" type="boolean" required>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
 
 ## `update`
 
@@ -129,84 +734,2078 @@ result = client.analyses.update(
 ```
 </CodeGroup>
 
-| Parameter | Type | Required | Default |
-| --- | --- | --- | --- |
-| `analysis_id` | `ID` | Yes | `—` |
-| `name` | `str` | Yes | `—` |
+<ParamField body="analysis_id" type="ID" required>
+</ParamField>
+<ParamField body="name" type="str" required>
+</ParamField>
 
-**Returns:** `BooleanResponse`
+**Returns:** `AnalysisSchema`
 
-## `delete_container`
+<Expandable title="AnalysisSchema">
+  <ResponseField name="id" type="string" required>
+  </ResponseField>
+  <ResponseField name="name" type="string" required>
+  </ResponseField>
+  <ResponseField name="created_at" type="string" required>
+  </ResponseField>
+  <ResponseField name="user" type="UserSchema" required>
+  <Expandable title="UserSchema">
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="is_self" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="created_at" type="string" required>
+    </ResponseField>
+    <ResponseField name="username" type="string" required>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="project_id" type="string" required>
+  </ResponseField>
+  <ResponseField name="project_name" type="string" required>
+  </ResponseField>
+  <ResponseField name="project_slug" type="string" required>
+  </ResponseField>
+  <ResponseField name="is_owner" type="boolean" required>
+  </ResponseField>
+  <ResponseField name="version" type="AnalysisVersionSchema" required>
+  <Expandable title="AnalysisVersionSchema">
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="created_at" type="string" required>
+    </ResponseField>
+    <ResponseField name="trigger" type="'create' | 'commit' | 'fork' | 'merge' | 'push'" required>
+    </ResponseField>
+    <ResponseField name="n_findings" type="integer" required>
+    </ResponseField>
+    <ResponseField name="n_remediations" type="integer" required>
+    </ResponseField>
+    <ResponseField name="is_head" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="has_pipeline_processing" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="has_pipeline_failed" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="code_version" type="CodeVersionSchema" required>
+    <Expandable title="CodeVersionSchema">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="network" type="Optional['eth' | 'bsc' | 'polygon' | 'base' | 'avax' | 'mode' | 'arb' | 'eth_sepolia' | 'bsc_test' | 'polygon_amoy' | 'base_sepolia' | 'avax_fuji' | 'mode_testnet' | 'arb_sepolia']">
+      </ResponseField>
+      <ResponseField name="version_method" type="'tag' | 'commit' | 'hash' | 'address'" required>
+      </ResponseField>
+      <ResponseField name="version_fingerprint" type="string" required>
+      </ResponseField>
+      <ResponseField name="status" type="'queued' | 'processing' | 'failed' | 'success'" required>
+      </ResponseField>
+      <ResponseField name="name" type="Optional[string]">
+      </ResponseField>
+      <ResponseField name="branch" type="Optional[string]">
+      </ResponseField>
+      <ResponseField name="commit" type="Optional[GithubCommitSchema]">
+      <Expandable title="GithubCommitSchema">
+        <ResponseField name="sha" type="string" required>
+        </ResponseField>
+        <ResponseField name="author" type="string" required>
+        </ResponseField>
+        <ResponseField name="message" type="string" required>
+        </ResponseField>
+        <ResponseField name="timestamp" type="string" required>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="repository" type="Optional[GithubRepositorySchema]">
+      <Expandable title="GithubRepositorySchema">
+        <ResponseField name="id" type="integer" required>
+        </ResponseField>
+        <ResponseField name="name" type="string" required>
+        </ResponseField>
+        <ResponseField name="is_private" type="boolean" required>
+        </ResponseField>
+        <ResponseField name="account" type="GithubAccountSchema" required>
+        <Expandable title="GithubAccountSchema">
+          <ResponseField name="id" type="integer" required>
+          </ResponseField>
+          <ResponseField name="login" type="string" required>
+          </ResponseField>
+          <ResponseField name="type" type="string" required>
+          </ResponseField>
+          <ResponseField name="avatar_url" type="string" required>
+          </ResponseField>
+        </Expandable>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="merged_from_version" type="Optional[AnalysisVersionRef]">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="forked_from_version" type="Optional[AnalysisVersionRef]">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="parent_version" type="Optional[AnalysisVersionRef]">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="child_versions" type="array of AnalysisVersionRef">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="merged_versions" type="array of AnalysisVersionRef">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="forked_versions" type="array of AnalysisVersionRef">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="actions" type="AnalysisActions" required>
+    <Expandable title="AnalysisActions">
+      <ResponseField name="can_fork" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_create_child" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_commit_changes" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_delete" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_run_pipeline" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_retry_pipeline" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_merge_to" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_merge_from" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_stage_changes" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_set_as_head" type="boolean" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+
+## `delete`
 
 DELETE `/security/analyses/{analysis_id}`
 
 <CodeGroup>
 ```python Async
-result = await client.analyses.delete_container(
+result = await client.analyses.delete(
     analysis_id=analysis_id,
 )
 ```
 
 ```python Sync
-result = client.analyses.delete_container(
+result = client.analyses.delete(
     analysis_id=analysis_id,
 )
 ```
 </CodeGroup>
 
-| Parameter | Type | Required | Default |
-| --- | --- | --- | --- |
-| `analysis_id` | `ID` | Yes | `—` |
+<ParamField body="analysis_id" type="ID" required>
+</ParamField>
 
 **Returns:** `BooleanResponse`
 
-## `list_refs`
+<Expandable title="BooleanResponse">
+  <ResponseField name="success" type="boolean" required>
+  </ResponseField>
+</Expandable>
 
-GET `/security/analyses/{analysis_id}/refs`
+## `create_root`
+
+POST `/security/analyses`
 
 <CodeGroup>
 ```python Async
-result = await client.analyses.list_refs(
+result = await client.analyses.create_root(
+    body=body,
+)
+```
+
+```python Sync
+result = client.analyses.create_root(
+    body=body,
+)
+```
+</CodeGroup>
+
+<ParamField body="body" type="CreateAnalysisRootBodyDict" required>
+<Expandable title="CreateAnalysisRootBodyDict">
+  <ParamField body="code_id" type="string" required>
+  </ParamField>
+  <ParamField body="on_collision" type="Optional['surface' | 'force' | 'merge']">
+  </ParamField>
+  <ParamField body="name" type="Optional[string]">
+  </ParamField>
+</Expandable>
+</ParamField>
+
+**Returns:** `AnalysisCreateSchema`
+
+## `create_child`
+
+POST `/security/analyses/{analysis_id}/child`
+
+<CodeGroup>
+```python Async
+result = await client.analyses.create_child(
+    analysis_id=analysis_id,
+    body=body,
+)
+```
+
+```python Sync
+result = client.analyses.create_child(
+    analysis_id=analysis_id,
+    body=body,
+)
+```
+</CodeGroup>
+
+<ParamField body="analysis_id" type="ID" required>
+</ParamField>
+<ParamField body="body" type="CreateAnalysisChildBodyDict" required>
+<Expandable title="CreateAnalysisChildBodyDict">
+  <ParamField body="code_id" type="string" required>
+  </ParamField>
+  <ParamField body="on_collision" type="Optional['surface' | 'force' | 'merge']">
+  </ParamField>
+  <ParamField body="version_id" type="Optional[string]">
+  </ParamField>
+</Expandable>
+</ParamField>
+
+**Returns:** `AnalysisCreateSchema`
+
+## `fork`
+
+POST `/security/analyses/{analysis_id}/fork`
+
+<CodeGroup>
+```python Async
+result = await client.analyses.fork(
     analysis_id=analysis_id,
 )
 ```
 
 ```python Sync
-result = client.analyses.list_refs(
+result = client.analyses.fork(
     analysis_id=analysis_id,
 )
 ```
 </CodeGroup>
 
-| Parameter | Type | Required | Default |
-| --- | --- | --- | --- |
-| `analysis_id` | `ID` | Yes | `—` |
+<ParamField body="analysis_id" type="ID" required>
+</ParamField>
+<ParamField body="body" type="VersionBodyDict | None" default="None">
+<Expandable title="VersionBodyDict">
+  <ParamField body="version_id" type="Optional[string]">
+  </ParamField>
+</Expandable>
+</ParamField>
 
-**Returns:** `ResultsResponse[AnalysisRefSchema]`
+**Returns:** `AnalysisSchema`
 
-## `delete_ref`
+<Expandable title="AnalysisSchema">
+  <ResponseField name="id" type="string" required>
+  </ResponseField>
+  <ResponseField name="name" type="string" required>
+  </ResponseField>
+  <ResponseField name="created_at" type="string" required>
+  </ResponseField>
+  <ResponseField name="user" type="UserSchema" required>
+  <Expandable title="UserSchema">
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="is_self" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="created_at" type="string" required>
+    </ResponseField>
+    <ResponseField name="username" type="string" required>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="project_id" type="string" required>
+  </ResponseField>
+  <ResponseField name="project_name" type="string" required>
+  </ResponseField>
+  <ResponseField name="project_slug" type="string" required>
+  </ResponseField>
+  <ResponseField name="is_owner" type="boolean" required>
+  </ResponseField>
+  <ResponseField name="version" type="AnalysisVersionSchema" required>
+  <Expandable title="AnalysisVersionSchema">
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="created_at" type="string" required>
+    </ResponseField>
+    <ResponseField name="trigger" type="'create' | 'commit' | 'fork' | 'merge' | 'push'" required>
+    </ResponseField>
+    <ResponseField name="n_findings" type="integer" required>
+    </ResponseField>
+    <ResponseField name="n_remediations" type="integer" required>
+    </ResponseField>
+    <ResponseField name="is_head" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="has_pipeline_processing" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="has_pipeline_failed" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="code_version" type="CodeVersionSchema" required>
+    <Expandable title="CodeVersionSchema">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="network" type="Optional['eth' | 'bsc' | 'polygon' | 'base' | 'avax' | 'mode' | 'arb' | 'eth_sepolia' | 'bsc_test' | 'polygon_amoy' | 'base_sepolia' | 'avax_fuji' | 'mode_testnet' | 'arb_sepolia']">
+      </ResponseField>
+      <ResponseField name="version_method" type="'tag' | 'commit' | 'hash' | 'address'" required>
+      </ResponseField>
+      <ResponseField name="version_fingerprint" type="string" required>
+      </ResponseField>
+      <ResponseField name="status" type="'queued' | 'processing' | 'failed' | 'success'" required>
+      </ResponseField>
+      <ResponseField name="name" type="Optional[string]">
+      </ResponseField>
+      <ResponseField name="branch" type="Optional[string]">
+      </ResponseField>
+      <ResponseField name="commit" type="Optional[GithubCommitSchema]">
+      <Expandable title="GithubCommitSchema">
+        <ResponseField name="sha" type="string" required>
+        </ResponseField>
+        <ResponseField name="author" type="string" required>
+        </ResponseField>
+        <ResponseField name="message" type="string" required>
+        </ResponseField>
+        <ResponseField name="timestamp" type="string" required>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="repository" type="Optional[GithubRepositorySchema]">
+      <Expandable title="GithubRepositorySchema">
+        <ResponseField name="id" type="integer" required>
+        </ResponseField>
+        <ResponseField name="name" type="string" required>
+        </ResponseField>
+        <ResponseField name="is_private" type="boolean" required>
+        </ResponseField>
+        <ResponseField name="account" type="GithubAccountSchema" required>
+        <Expandable title="GithubAccountSchema">
+          <ResponseField name="id" type="integer" required>
+          </ResponseField>
+          <ResponseField name="login" type="string" required>
+          </ResponseField>
+          <ResponseField name="type" type="string" required>
+          </ResponseField>
+          <ResponseField name="avatar_url" type="string" required>
+          </ResponseField>
+        </Expandable>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="merged_from_version" type="Optional[AnalysisVersionRef]">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="forked_from_version" type="Optional[AnalysisVersionRef]">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="parent_version" type="Optional[AnalysisVersionRef]">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="child_versions" type="array of AnalysisVersionRef">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="merged_versions" type="array of AnalysisVersionRef">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="forked_versions" type="array of AnalysisVersionRef">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="actions" type="AnalysisActions" required>
+    <Expandable title="AnalysisActions">
+      <ResponseField name="can_fork" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_create_child" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_commit_changes" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_delete" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_run_pipeline" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_retry_pipeline" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_merge_to" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_merge_from" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_stage_changes" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_set_as_head" type="boolean" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
 
-DELETE `/security/analyses/{analysis_id}/refs/{env}`
+## `merge`
+
+POST `/security/merge`
 
 <CodeGroup>
 ```python Async
-result = await client.analyses.delete_ref(
-    analysis_id=analysis_id,
-    env=env,
+result = await client.analyses.merge(
+    body=body,
 )
 ```
 
 ```python Sync
-result = client.analyses.delete_ref(
-    analysis_id=analysis_id,
-    env=env,
+result = client.analyses.merge(
+    body=body,
 )
 ```
 </CodeGroup>
 
-| Parameter | Type | Required | Default |
-| --- | --- | --- | --- |
-| `analysis_id` | `ID` | Yes | `—` |
-| `env` | `str` | Yes | `—` |
+<ParamField body="body" type="MergeAnalysisBodyDict" required>
+<Expandable title="MergeAnalysisBodyDict">
+  <ParamField body="from_version_id" type="string" required>
+  </ParamField>
+  <ParamField body="to_version_id" type="string" required>
+  </ParamField>
+</Expandable>
+</ParamField>
 
-**Returns:** `ResultsResponse[AnalysisRefSchema]`
+**Returns:** `AnalysisSchema`
+
+<Expandable title="AnalysisSchema">
+  <ResponseField name="id" type="string" required>
+  </ResponseField>
+  <ResponseField name="name" type="string" required>
+  </ResponseField>
+  <ResponseField name="created_at" type="string" required>
+  </ResponseField>
+  <ResponseField name="user" type="UserSchema" required>
+  <Expandable title="UserSchema">
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="is_self" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="created_at" type="string" required>
+    </ResponseField>
+    <ResponseField name="username" type="string" required>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="project_id" type="string" required>
+  </ResponseField>
+  <ResponseField name="project_name" type="string" required>
+  </ResponseField>
+  <ResponseField name="project_slug" type="string" required>
+  </ResponseField>
+  <ResponseField name="is_owner" type="boolean" required>
+  </ResponseField>
+  <ResponseField name="version" type="AnalysisVersionSchema" required>
+  <Expandable title="AnalysisVersionSchema">
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="created_at" type="string" required>
+    </ResponseField>
+    <ResponseField name="trigger" type="'create' | 'commit' | 'fork' | 'merge' | 'push'" required>
+    </ResponseField>
+    <ResponseField name="n_findings" type="integer" required>
+    </ResponseField>
+    <ResponseField name="n_remediations" type="integer" required>
+    </ResponseField>
+    <ResponseField name="is_head" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="has_pipeline_processing" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="has_pipeline_failed" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="code_version" type="CodeVersionSchema" required>
+    <Expandable title="CodeVersionSchema">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="network" type="Optional['eth' | 'bsc' | 'polygon' | 'base' | 'avax' | 'mode' | 'arb' | 'eth_sepolia' | 'bsc_test' | 'polygon_amoy' | 'base_sepolia' | 'avax_fuji' | 'mode_testnet' | 'arb_sepolia']">
+      </ResponseField>
+      <ResponseField name="version_method" type="'tag' | 'commit' | 'hash' | 'address'" required>
+      </ResponseField>
+      <ResponseField name="version_fingerprint" type="string" required>
+      </ResponseField>
+      <ResponseField name="status" type="'queued' | 'processing' | 'failed' | 'success'" required>
+      </ResponseField>
+      <ResponseField name="name" type="Optional[string]">
+      </ResponseField>
+      <ResponseField name="branch" type="Optional[string]">
+      </ResponseField>
+      <ResponseField name="commit" type="Optional[GithubCommitSchema]">
+      <Expandable title="GithubCommitSchema">
+        <ResponseField name="sha" type="string" required>
+        </ResponseField>
+        <ResponseField name="author" type="string" required>
+        </ResponseField>
+        <ResponseField name="message" type="string" required>
+        </ResponseField>
+        <ResponseField name="timestamp" type="string" required>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="repository" type="Optional[GithubRepositorySchema]">
+      <Expandable title="GithubRepositorySchema">
+        <ResponseField name="id" type="integer" required>
+        </ResponseField>
+        <ResponseField name="name" type="string" required>
+        </ResponseField>
+        <ResponseField name="is_private" type="boolean" required>
+        </ResponseField>
+        <ResponseField name="account" type="GithubAccountSchema" required>
+        <Expandable title="GithubAccountSchema">
+          <ResponseField name="id" type="integer" required>
+          </ResponseField>
+          <ResponseField name="login" type="string" required>
+          </ResponseField>
+          <ResponseField name="type" type="string" required>
+          </ResponseField>
+          <ResponseField name="avatar_url" type="string" required>
+          </ResponseField>
+        </Expandable>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="merged_from_version" type="Optional[AnalysisVersionRef]">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="forked_from_version" type="Optional[AnalysisVersionRef]">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="parent_version" type="Optional[AnalysisVersionRef]">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="child_versions" type="array of AnalysisVersionRef">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="merged_versions" type="array of AnalysisVersionRef">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="forked_versions" type="array of AnalysisVersionRef">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="actions" type="AnalysisActions" required>
+    <Expandable title="AnalysisActions">
+      <ResponseField name="can_fork" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_create_child" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_commit_changes" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_delete" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_run_pipeline" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_retry_pipeline" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_merge_to" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_merge_from" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_stage_changes" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_set_as_head" type="boolean" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+
+## `commit`
+
+POST `/security/analyses/{analysis_id}/commit`
+
+<CodeGroup>
+```python Async
+result = await client.analyses.commit(
+    analysis_id=analysis_id,
+)
+```
+
+```python Sync
+result = client.analyses.commit(
+    analysis_id=analysis_id,
+)
+```
+</CodeGroup>
+
+<ParamField body="analysis_id" type="ID" required>
+</ParamField>
+<ParamField body="body" type="VersionBodyDict | None" default="None">
+<Expandable title="VersionBodyDict">
+  <ParamField body="version_id" type="Optional[string]">
+  </ParamField>
+</Expandable>
+</ParamField>
+
+**Returns:** `AnalysisSchema`
+
+<Expandable title="AnalysisSchema">
+  <ResponseField name="id" type="string" required>
+  </ResponseField>
+  <ResponseField name="name" type="string" required>
+  </ResponseField>
+  <ResponseField name="created_at" type="string" required>
+  </ResponseField>
+  <ResponseField name="user" type="UserSchema" required>
+  <Expandable title="UserSchema">
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="is_self" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="created_at" type="string" required>
+    </ResponseField>
+    <ResponseField name="username" type="string" required>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="project_id" type="string" required>
+  </ResponseField>
+  <ResponseField name="project_name" type="string" required>
+  </ResponseField>
+  <ResponseField name="project_slug" type="string" required>
+  </ResponseField>
+  <ResponseField name="is_owner" type="boolean" required>
+  </ResponseField>
+  <ResponseField name="version" type="AnalysisVersionSchema" required>
+  <Expandable title="AnalysisVersionSchema">
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="created_at" type="string" required>
+    </ResponseField>
+    <ResponseField name="trigger" type="'create' | 'commit' | 'fork' | 'merge' | 'push'" required>
+    </ResponseField>
+    <ResponseField name="n_findings" type="integer" required>
+    </ResponseField>
+    <ResponseField name="n_remediations" type="integer" required>
+    </ResponseField>
+    <ResponseField name="is_head" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="has_pipeline_processing" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="has_pipeline_failed" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="code_version" type="CodeVersionSchema" required>
+    <Expandable title="CodeVersionSchema">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="network" type="Optional['eth' | 'bsc' | 'polygon' | 'base' | 'avax' | 'mode' | 'arb' | 'eth_sepolia' | 'bsc_test' | 'polygon_amoy' | 'base_sepolia' | 'avax_fuji' | 'mode_testnet' | 'arb_sepolia']">
+      </ResponseField>
+      <ResponseField name="version_method" type="'tag' | 'commit' | 'hash' | 'address'" required>
+      </ResponseField>
+      <ResponseField name="version_fingerprint" type="string" required>
+      </ResponseField>
+      <ResponseField name="status" type="'queued' | 'processing' | 'failed' | 'success'" required>
+      </ResponseField>
+      <ResponseField name="name" type="Optional[string]">
+      </ResponseField>
+      <ResponseField name="branch" type="Optional[string]">
+      </ResponseField>
+      <ResponseField name="commit" type="Optional[GithubCommitSchema]">
+      <Expandable title="GithubCommitSchema">
+        <ResponseField name="sha" type="string" required>
+        </ResponseField>
+        <ResponseField name="author" type="string" required>
+        </ResponseField>
+        <ResponseField name="message" type="string" required>
+        </ResponseField>
+        <ResponseField name="timestamp" type="string" required>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="repository" type="Optional[GithubRepositorySchema]">
+      <Expandable title="GithubRepositorySchema">
+        <ResponseField name="id" type="integer" required>
+        </ResponseField>
+        <ResponseField name="name" type="string" required>
+        </ResponseField>
+        <ResponseField name="is_private" type="boolean" required>
+        </ResponseField>
+        <ResponseField name="account" type="GithubAccountSchema" required>
+        <Expandable title="GithubAccountSchema">
+          <ResponseField name="id" type="integer" required>
+          </ResponseField>
+          <ResponseField name="login" type="string" required>
+          </ResponseField>
+          <ResponseField name="type" type="string" required>
+          </ResponseField>
+          <ResponseField name="avatar_url" type="string" required>
+          </ResponseField>
+        </Expandable>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="merged_from_version" type="Optional[AnalysisVersionRef]">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="forked_from_version" type="Optional[AnalysisVersionRef]">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="parent_version" type="Optional[AnalysisVersionRef]">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="child_versions" type="array of AnalysisVersionRef">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="merged_versions" type="array of AnalysisVersionRef">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="forked_versions" type="array of AnalysisVersionRef">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="actions" type="AnalysisActions" required>
+    <Expandable title="AnalysisActions">
+      <ResponseField name="can_fork" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_create_child" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_commit_changes" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_delete" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_run_pipeline" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_retry_pipeline" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_merge_to" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_merge_from" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_stage_changes" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_set_as_head" type="boolean" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+
+## `set_head`
+
+POST `/security/analyses/{version_id}/head`
+
+<CodeGroup>
+```python Async
+result = await client.analyses.set_head(
+    analysis_id=analysis_id,
+    body=body,
+)
+```
+
+```python Sync
+result = client.analyses.set_head(
+    analysis_id=analysis_id,
+    body=body,
+)
+```
+</CodeGroup>
+
+<ParamField body="analysis_id" type="ID" required>
+</ParamField>
+<ParamField body="body" type="SetHeadBodyDict" required>
+<Expandable title="SetHeadBodyDict">
+  <ParamField body="version_id" type="string" required>
+  </ParamField>
+</Expandable>
+</ParamField>
+
+**Returns:** `AnalysisSchema`
+
+<Expandable title="AnalysisSchema">
+  <ResponseField name="id" type="string" required>
+  </ResponseField>
+  <ResponseField name="name" type="string" required>
+  </ResponseField>
+  <ResponseField name="created_at" type="string" required>
+  </ResponseField>
+  <ResponseField name="user" type="UserSchema" required>
+  <Expandable title="UserSchema">
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="is_self" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="created_at" type="string" required>
+    </ResponseField>
+    <ResponseField name="username" type="string" required>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="project_id" type="string" required>
+  </ResponseField>
+  <ResponseField name="project_name" type="string" required>
+  </ResponseField>
+  <ResponseField name="project_slug" type="string" required>
+  </ResponseField>
+  <ResponseField name="is_owner" type="boolean" required>
+  </ResponseField>
+  <ResponseField name="version" type="AnalysisVersionSchema" required>
+  <Expandable title="AnalysisVersionSchema">
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="created_at" type="string" required>
+    </ResponseField>
+    <ResponseField name="trigger" type="'create' | 'commit' | 'fork' | 'merge' | 'push'" required>
+    </ResponseField>
+    <ResponseField name="n_findings" type="integer" required>
+    </ResponseField>
+    <ResponseField name="n_remediations" type="integer" required>
+    </ResponseField>
+    <ResponseField name="is_head" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="has_pipeline_processing" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="has_pipeline_failed" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="code_version" type="CodeVersionSchema" required>
+    <Expandable title="CodeVersionSchema">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="network" type="Optional['eth' | 'bsc' | 'polygon' | 'base' | 'avax' | 'mode' | 'arb' | 'eth_sepolia' | 'bsc_test' | 'polygon_amoy' | 'base_sepolia' | 'avax_fuji' | 'mode_testnet' | 'arb_sepolia']">
+      </ResponseField>
+      <ResponseField name="version_method" type="'tag' | 'commit' | 'hash' | 'address'" required>
+      </ResponseField>
+      <ResponseField name="version_fingerprint" type="string" required>
+      </ResponseField>
+      <ResponseField name="status" type="'queued' | 'processing' | 'failed' | 'success'" required>
+      </ResponseField>
+      <ResponseField name="name" type="Optional[string]">
+      </ResponseField>
+      <ResponseField name="branch" type="Optional[string]">
+      </ResponseField>
+      <ResponseField name="commit" type="Optional[GithubCommitSchema]">
+      <Expandable title="GithubCommitSchema">
+        <ResponseField name="sha" type="string" required>
+        </ResponseField>
+        <ResponseField name="author" type="string" required>
+        </ResponseField>
+        <ResponseField name="message" type="string" required>
+        </ResponseField>
+        <ResponseField name="timestamp" type="string" required>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="repository" type="Optional[GithubRepositorySchema]">
+      <Expandable title="GithubRepositorySchema">
+        <ResponseField name="id" type="integer" required>
+        </ResponseField>
+        <ResponseField name="name" type="string" required>
+        </ResponseField>
+        <ResponseField name="is_private" type="boolean" required>
+        </ResponseField>
+        <ResponseField name="account" type="GithubAccountSchema" required>
+        <Expandable title="GithubAccountSchema">
+          <ResponseField name="id" type="integer" required>
+          </ResponseField>
+          <ResponseField name="login" type="string" required>
+          </ResponseField>
+          <ResponseField name="type" type="string" required>
+          </ResponseField>
+          <ResponseField name="avatar_url" type="string" required>
+          </ResponseField>
+        </Expandable>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="merged_from_version" type="Optional[AnalysisVersionRef]">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="forked_from_version" type="Optional[AnalysisVersionRef]">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="parent_version" type="Optional[AnalysisVersionRef]">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="child_versions" type="array of AnalysisVersionRef">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="merged_versions" type="array of AnalysisVersionRef">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="forked_versions" type="array of AnalysisVersionRef">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="actions" type="AnalysisActions" required>
+    <Expandable title="AnalysisActions">
+      <ResponseField name="can_fork" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_create_child" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_commit_changes" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_delete" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_run_pipeline" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_retry_pipeline" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_merge_to" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_merge_from" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_stage_changes" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_set_as_head" type="boolean" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+
+## `entrypoints`
+
+GET `/security/analyses/{analysis_id}/entrypoints`
+
+<CodeGroup>
+```python Async
+result = await client.analyses.entrypoints(
+    analysis_id=analysis_id,
+)
+```
+
+```python Sync
+result = client.analyses.entrypoints(
+    analysis_id=analysis_id,
+)
+```
+</CodeGroup>
+
+<ParamField body="analysis_id" type="ID" required>
+</ParamField>
+<ParamField body="options" type="VersionQueryParams | None" default="None">
+<Expandable title="VersionQueryParams">
+  <ParamField body="version_id" type="Optional[string]">
+  </ParamField>
+</Expandable>
+</ParamField>
+
+**Returns:** `ResultsResponse[EntryPointSchema]`
+
+<Expandable title="ResultsResponse[EntryPointSchema]">
+  <ResponseField name="results" type="array of EntryPointSchema">
+  <Expandable title="EntryPointSchema">
+    <ResponseField name="node" type="GraphSnapshotNode" required>
+    <Expandable title="GraphSnapshotNode">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="file_id" type="string" required>
+      </ResponseField>
+      <ResponseField name="file_path" type="string" required>
+      </ResponseField>
+      <ResponseField name="short_id" type="string" required>
+      </ResponseField>
+      <ResponseField name="node_type" type="string" required>
+      </ResponseField>
+      <ResponseField name="sub_type" type="Optional[string]">
+      </ResponseField>
+      <ResponseField name="src_start_pos" type="integer" required>
+      </ResponseField>
+      <ResponseField name="src_end_pos" type="integer" required>
+      </ResponseField>
+      <ResponseField name="path" type="string" required>
+      </ResponseField>
+      <ResponseField name="docstring" type="Optional[string]">
+      </ResponseField>
+      <ResponseField name="name" type="string" required>
+      </ResponseField>
+      <ResponseField name="merkle_hash" type="string" required>
+      </ResponseField>
+      <ResponseField name="visibility" type="Optional['external' | 'public' | 'internal' | 'private']">
+      </ResponseField>
+      <ResponseField name="mutability" type="Optional[string]">
+      </ResponseField>
+      <ResponseField name="is_virtual" type="boolean">
+      </ResponseField>
+      <ResponseField name="is_implemented" type="boolean">
+      </ResponseField>
+      <ResponseField name="signature" type="Optional[string]">
+      </ResponseField>
+      <ResponseField name="is_callable" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="is_declaration" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="is_container" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="is_entrypoint" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="fields" type="array of FieldMetadataItem">
+      <Expandable title="FieldMetadataItem">
+        <ResponseField name="name" type="string" required>
+        </ResponseField>
+        <ResponseField name="type" type="Optional[string]">
+        </ResponseField>
+        <ResponseField name="value" type="Optional[string]">
+        </ResponseField>
+        <ResponseField name="mutability" type="Optional[string]">
+        </ResponseField>
+        <ResponseField name="discriminant" type="Optional[integer]">
+        </ResponseField>
+        <ResponseField name="constraints" type="array of ConstraintItem">
+        <Expandable title="ConstraintItem">
+          <ResponseField name="name" type="string" required>
+          </ResponseField>
+          <ResponseField name="value" type="Optional[array of string]">
+          </ResponseField>
+        </Expandable>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="parameters" type="array of ParameterStorageMetadata">
+      <Expandable title="ParameterStorageMetadata">
+        <ResponseField name="param_index" type="integer" required>
+        </ResponseField>
+        <ResponseField name="start_byte" type="integer" required>
+        </ResponseField>
+        <ResponseField name="is_read" type="boolean">
+        </ResponseField>
+        <ResponseField name="is_written" type="boolean">
+        </ResponseField>
+        <ResponseField name="field" type="Optional[string]">
+        </ResponseField>
+        <ResponseField name="param_name" type="Optional[string]">
+        </ResponseField>
+        <ResponseField name="type_name" type="Optional[string]">
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="is_analyzed" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="is_inherited" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="is_analyzed_in_current" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="pipeline_status" type="'not_run' | 'queued' | 'processing' | 'success' | 'failed'" required>
+    </ResponseField>
+    <ResponseField name="n_findings" type="integer">
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+
+## `list_findings`
+
+GET `/security/analyses/{analysis_id}/findings`
+
+<CodeGroup>
+```python Async
+result = await client.analyses.list_findings(
+    analysis_id=analysis_id,
+)
+```
+
+```python Sync
+result = client.analyses.list_findings(
+    analysis_id=analysis_id,
+)
+```
+</CodeGroup>
+
+<ParamField body="analysis_id" type="ID" required>
+</ParamField>
+<ParamField body="options" type="VersionQueryParams | None" default="None">
+<Expandable title="VersionQueryParams">
+  <ParamField body="version_id" type="Optional[string]">
+  </ParamField>
+</Expandable>
+</ParamField>
+
+**Returns:** `ResultsResponse[FindingSchema]`
+
+<Expandable title="ResultsResponse[FindingSchema]">
+  <ResponseField name="results" type="array of FindingSchema">
+  <Expandable title="FindingSchema">
+    <ResponseField name="version" type="AnalysisVersionRef" required>
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="created_at" type="string" required>
+    </ResponseField>
+    <ResponseField name="origin_finding_id" type="string" required>
+    </ResponseField>
+    <ResponseField name="is_acknowledged" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="type" type="string" required>
+    </ResponseField>
+    <ResponseField name="level" type="'critical' | 'high' | 'medium' | 'low'" required>
+    </ResponseField>
+    <ResponseField name="name" type="string" required>
+    </ResponseField>
+    <ResponseField name="explanation" type="string" required>
+    </ResponseField>
+    <ResponseField name="recommendation" type="Optional[string]">
+    </ResponseField>
+    <ResponseField name="reference" type="Optional[string]">
+    </ResponseField>
+    <ResponseField name="source" type="string" required>
+    </ResponseField>
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="node_id" type="string" required>
+    </ResponseField>
+    <ResponseField name="is_borrowed" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="location_id" type="Optional[string]">
+    </ResponseField>
+    <ResponseField name="created_by_user" type="UserSchema" required>
+    <Expandable title="UserSchema">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="is_self" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="created_at" type="string" required>
+      </ResponseField>
+      <ResponseField name="username" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="project_id" type="string" required>
+    </ResponseField>
+    <ResponseField name="project_slug" type="string" required>
+    </ResponseField>
+    <ResponseField name="code_id" type="string" required>
+    </ResponseField>
+    <ResponseField name="operation" type="Optional['add' | 'update' | 'delete']">
+    </ResponseField>
+    <ResponseField name="actions" type="FindingActions" required>
+    <Expandable title="FindingActions">
+      <ResponseField name="can_edit" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_revert" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_delete" type="boolean" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+
+## `add_findings`
+
+POST `/security/analyses/{analysis_id}/findings`
+
+<CodeGroup>
+```python Async
+result = await client.analyses.add_findings(
+    analysis_id=analysis_id,
+    body=body,
+)
+```
+
+```python Sync
+result = client.analyses.add_findings(
+    analysis_id=analysis_id,
+    body=body,
+)
+```
+</CodeGroup>
+
+<ParamField body="analysis_id" type="ID" required>
+</ParamField>
+<ParamField body="body" type="AddFindingBodyDict" required>
+<Expandable title="AddFindingBodyDict">
+  <ParamField body="version_id" type="Optional[string]">
+  </ParamField>
+  <ParamField body="findings" type="array of FindingBodyDict" required>
+  <Expandable title="FindingBodyDict">
+    <ParamField body="source" type="Optional[string]">
+    </ParamField>
+    <ParamField body="metadata" type="Optional[FindingMetadataDict]">
+    <Expandable title="FindingMetadataDict">
+      <ParamField body="type" type="string" required>
+      </ParamField>
+      <ParamField body="level" type="'critical' | 'high' | 'medium' | 'low'" required>
+      </ParamField>
+      <ParamField body="name" type="string" required>
+      </ParamField>
+      <ParamField body="explanation" type="string" required>
+      </ParamField>
+      <ParamField body="recommendation" type="Optional[string]">
+      </ParamField>
+      <ParamField body="reference" type="Optional[string]">
+      </ParamField>
+    </Expandable>
+    </ParamField>
+    <ParamField body="location" type="FindingLocationNodeIdDict | FindingLocationPhysicalDict | FindingLocationLogicalDict" required>
+    </ParamField>
+  </Expandable>
+  </ParamField>
+</Expandable>
+</ParamField>
+
+**Returns:** `ResultsResponse[FindingSchema]`
+
+<Expandable title="ResultsResponse[FindingSchema]">
+  <ResponseField name="results" type="array of FindingSchema">
+  <Expandable title="FindingSchema">
+    <ResponseField name="version" type="AnalysisVersionRef" required>
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="created_at" type="string" required>
+    </ResponseField>
+    <ResponseField name="origin_finding_id" type="string" required>
+    </ResponseField>
+    <ResponseField name="is_acknowledged" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="type" type="string" required>
+    </ResponseField>
+    <ResponseField name="level" type="'critical' | 'high' | 'medium' | 'low'" required>
+    </ResponseField>
+    <ResponseField name="name" type="string" required>
+    </ResponseField>
+    <ResponseField name="explanation" type="string" required>
+    </ResponseField>
+    <ResponseField name="recommendation" type="Optional[string]">
+    </ResponseField>
+    <ResponseField name="reference" type="Optional[string]">
+    </ResponseField>
+    <ResponseField name="source" type="string" required>
+    </ResponseField>
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="node_id" type="string" required>
+    </ResponseField>
+    <ResponseField name="is_borrowed" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="location_id" type="Optional[string]">
+    </ResponseField>
+    <ResponseField name="created_by_user" type="UserSchema" required>
+    <Expandable title="UserSchema">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="is_self" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="created_at" type="string" required>
+      </ResponseField>
+      <ResponseField name="username" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="project_id" type="string" required>
+    </ResponseField>
+    <ResponseField name="project_slug" type="string" required>
+    </ResponseField>
+    <ResponseField name="code_id" type="string" required>
+    </ResponseField>
+    <ResponseField name="operation" type="Optional['add' | 'update' | 'delete']">
+    </ResponseField>
+    <ResponseField name="actions" type="FindingActions" required>
+    <Expandable title="FindingActions">
+      <ResponseField name="can_edit" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_revert" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_delete" type="boolean" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+
+## `diff_staged`
+
+GET `/security/analyses/{analysis_id}/diff/staged`
+
+<CodeGroup>
+```python Async
+result = await client.analyses.diff_staged(
+    analysis_id=analysis_id,
+)
+```
+
+```python Sync
+result = client.analyses.diff_staged(
+    analysis_id=analysis_id,
+)
+```
+</CodeGroup>
+
+<ParamField body="analysis_id" type="ID" required>
+</ParamField>
+<ParamField body="options" type="VersionQueryParams | None" default="None">
+<Expandable title="VersionQueryParams">
+  <ParamField body="version_id" type="Optional[string]">
+  </ParamField>
+</Expandable>
+</ParamField>
+
+**Returns:** `ResultsResponse[FindingDiffItem]`
+
+<Expandable title="ResultsResponse[FindingDiffItem]">
+  <ResponseField name="results" type="array of FindingDiffItem">
+  <Expandable title="FindingDiffItem">
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="operation" type="'add' | 'update' | 'delete'" required>
+    </ResponseField>
+    <ResponseField name="reason" type="'edit' | 'code'" required>
+    </ResponseField>
+    <ResponseField name="previous" type="Optional[FindingBareSchema]">
+    <Expandable title="FindingBareSchema">
+      <ResponseField name="version" type="AnalysisVersionRef" required>
+      <Expandable title="AnalysisVersionRef">
+        <ResponseField name="id" type="string" required>
+        </ResponseField>
+        <ResponseField name="analysis_id" type="string" required>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="created_at" type="string" required>
+      </ResponseField>
+      <ResponseField name="origin_finding_id" type="string" required>
+      </ResponseField>
+      <ResponseField name="is_acknowledged" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="type" type="string" required>
+      </ResponseField>
+      <ResponseField name="level" type="'critical' | 'high' | 'medium' | 'low'" required>
+      </ResponseField>
+      <ResponseField name="name" type="string" required>
+      </ResponseField>
+      <ResponseField name="explanation" type="string" required>
+      </ResponseField>
+      <ResponseField name="recommendation" type="Optional[string]">
+      </ResponseField>
+      <ResponseField name="reference" type="Optional[string]">
+      </ResponseField>
+      <ResponseField name="source" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="current" type="Optional[FindingBareSchema]">
+    <Expandable title="FindingBareSchema">
+      <ResponseField name="version" type="AnalysisVersionRef" required>
+      <Expandable title="AnalysisVersionRef">
+        <ResponseField name="id" type="string" required>
+        </ResponseField>
+        <ResponseField name="analysis_id" type="string" required>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="created_at" type="string" required>
+      </ResponseField>
+      <ResponseField name="origin_finding_id" type="string" required>
+      </ResponseField>
+      <ResponseField name="is_acknowledged" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="type" type="string" required>
+      </ResponseField>
+      <ResponseField name="level" type="'critical' | 'high' | 'medium' | 'low'" required>
+      </ResponseField>
+      <ResponseField name="name" type="string" required>
+      </ResponseField>
+      <ResponseField name="explanation" type="string" required>
+      </ResponseField>
+      <ResponseField name="recommendation" type="Optional[string]">
+      </ResponseField>
+      <ResponseField name="reference" type="Optional[string]">
+      </ResponseField>
+      <ResponseField name="source" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="changed_fields" type="array of string">
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+
+## `diff_version`
+
+GET `/security/analyses/{analysis_id}/diff/version`
+
+<CodeGroup>
+```python Async
+result = await client.analyses.diff_version(
+    analysis_id=analysis_id,
+)
+```
+
+```python Sync
+result = client.analyses.diff_version(
+    analysis_id=analysis_id,
+)
+```
+</CodeGroup>
+
+<ParamField body="analysis_id" type="ID" required>
+</ParamField>
+<ParamField body="options" type="VersionQueryParams | None" default="None">
+<Expandable title="VersionQueryParams">
+  <ParamField body="version_id" type="Optional[string]">
+  </ParamField>
+</Expandable>
+</ParamField>
+
+**Returns:** `ResultsResponse[FindingDiffItem]`
+
+<Expandable title="ResultsResponse[FindingDiffItem]">
+  <ResponseField name="results" type="array of FindingDiffItem">
+  <Expandable title="FindingDiffItem">
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="operation" type="'add' | 'update' | 'delete'" required>
+    </ResponseField>
+    <ResponseField name="reason" type="'edit' | 'code'" required>
+    </ResponseField>
+    <ResponseField name="previous" type="Optional[FindingBareSchema]">
+    <Expandable title="FindingBareSchema">
+      <ResponseField name="version" type="AnalysisVersionRef" required>
+      <Expandable title="AnalysisVersionRef">
+        <ResponseField name="id" type="string" required>
+        </ResponseField>
+        <ResponseField name="analysis_id" type="string" required>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="created_at" type="string" required>
+      </ResponseField>
+      <ResponseField name="origin_finding_id" type="string" required>
+      </ResponseField>
+      <ResponseField name="is_acknowledged" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="type" type="string" required>
+      </ResponseField>
+      <ResponseField name="level" type="'critical' | 'high' | 'medium' | 'low'" required>
+      </ResponseField>
+      <ResponseField name="name" type="string" required>
+      </ResponseField>
+      <ResponseField name="explanation" type="string" required>
+      </ResponseField>
+      <ResponseField name="recommendation" type="Optional[string]">
+      </ResponseField>
+      <ResponseField name="reference" type="Optional[string]">
+      </ResponseField>
+      <ResponseField name="source" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="current" type="Optional[FindingBareSchema]">
+    <Expandable title="FindingBareSchema">
+      <ResponseField name="version" type="AnalysisVersionRef" required>
+      <Expandable title="AnalysisVersionRef">
+        <ResponseField name="id" type="string" required>
+        </ResponseField>
+        <ResponseField name="analysis_id" type="string" required>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="created_at" type="string" required>
+      </ResponseField>
+      <ResponseField name="origin_finding_id" type="string" required>
+      </ResponseField>
+      <ResponseField name="is_acknowledged" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="type" type="string" required>
+      </ResponseField>
+      <ResponseField name="level" type="'critical' | 'high' | 'medium' | 'low'" required>
+      </ResponseField>
+      <ResponseField name="name" type="string" required>
+      </ResponseField>
+      <ResponseField name="explanation" type="string" required>
+      </ResponseField>
+      <ResponseField name="recommendation" type="Optional[string]">
+      </ResponseField>
+      <ResponseField name="reference" type="Optional[string]">
+      </ResponseField>
+      <ResponseField name="source" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="changed_fields" type="array of string">
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+
+## `run`
+
+POST `/security/analyses/{analysis_id}/run`
+
+<CodeGroup>
+```python Async
+result = await client.analyses.run(
+    analysis_id=analysis_id,
+)
+```
+
+```python Sync
+result = client.analyses.run(
+    analysis_id=analysis_id,
+)
+```
+</CodeGroup>
+
+<ParamField body="analysis_id" type="ID" required>
+</ParamField>
+<ParamField body="body" type="RunAnalysisBodyDict | None" default="None">
+</ParamField>
+<ParamField body="with_streaming" type="bool" default="False">
+</ParamField>
+
+**Return type by call:**
+
+- `with_streaming=True` → `EventResource[AnalysisSchema, AnalysisRunStatusEventData]`
+- `with_streaming=False` → `AnalysisSchema`
+
+<Expandable title="AnalysisSchema">
+  <ResponseField name="id" type="string" required>
+  </ResponseField>
+  <ResponseField name="name" type="string" required>
+  </ResponseField>
+  <ResponseField name="created_at" type="string" required>
+  </ResponseField>
+  <ResponseField name="user" type="UserSchema" required>
+  <Expandable title="UserSchema">
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="is_self" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="created_at" type="string" required>
+    </ResponseField>
+    <ResponseField name="username" type="string" required>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="project_id" type="string" required>
+  </ResponseField>
+  <ResponseField name="project_name" type="string" required>
+  </ResponseField>
+  <ResponseField name="project_slug" type="string" required>
+  </ResponseField>
+  <ResponseField name="is_owner" type="boolean" required>
+  </ResponseField>
+  <ResponseField name="version" type="AnalysisVersionSchema" required>
+  <Expandable title="AnalysisVersionSchema">
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="created_at" type="string" required>
+    </ResponseField>
+    <ResponseField name="trigger" type="'create' | 'commit' | 'fork' | 'merge' | 'push'" required>
+    </ResponseField>
+    <ResponseField name="n_findings" type="integer" required>
+    </ResponseField>
+    <ResponseField name="n_remediations" type="integer" required>
+    </ResponseField>
+    <ResponseField name="is_head" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="has_pipeline_processing" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="has_pipeline_failed" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="code_version" type="CodeVersionSchema" required>
+    <Expandable title="CodeVersionSchema">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="network" type="Optional['eth' | 'bsc' | 'polygon' | 'base' | 'avax' | 'mode' | 'arb' | 'eth_sepolia' | 'bsc_test' | 'polygon_amoy' | 'base_sepolia' | 'avax_fuji' | 'mode_testnet' | 'arb_sepolia']">
+      </ResponseField>
+      <ResponseField name="version_method" type="'tag' | 'commit' | 'hash' | 'address'" required>
+      </ResponseField>
+      <ResponseField name="version_fingerprint" type="string" required>
+      </ResponseField>
+      <ResponseField name="status" type="'queued' | 'processing' | 'failed' | 'success'" required>
+      </ResponseField>
+      <ResponseField name="name" type="Optional[string]">
+      </ResponseField>
+      <ResponseField name="branch" type="Optional[string]">
+      </ResponseField>
+      <ResponseField name="commit" type="Optional[GithubCommitSchema]">
+      <Expandable title="GithubCommitSchema">
+        <ResponseField name="sha" type="string" required>
+        </ResponseField>
+        <ResponseField name="author" type="string" required>
+        </ResponseField>
+        <ResponseField name="message" type="string" required>
+        </ResponseField>
+        <ResponseField name="timestamp" type="string" required>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="repository" type="Optional[GithubRepositorySchema]">
+      <Expandable title="GithubRepositorySchema">
+        <ResponseField name="id" type="integer" required>
+        </ResponseField>
+        <ResponseField name="name" type="string" required>
+        </ResponseField>
+        <ResponseField name="is_private" type="boolean" required>
+        </ResponseField>
+        <ResponseField name="account" type="GithubAccountSchema" required>
+        <Expandable title="GithubAccountSchema">
+          <ResponseField name="id" type="integer" required>
+          </ResponseField>
+          <ResponseField name="login" type="string" required>
+          </ResponseField>
+          <ResponseField name="type" type="string" required>
+          </ResponseField>
+          <ResponseField name="avatar_url" type="string" required>
+          </ResponseField>
+        </Expandable>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="merged_from_version" type="Optional[AnalysisVersionRef]">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="forked_from_version" type="Optional[AnalysisVersionRef]">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="parent_version" type="Optional[AnalysisVersionRef]">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="child_versions" type="array of AnalysisVersionRef">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="merged_versions" type="array of AnalysisVersionRef">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="forked_versions" type="array of AnalysisVersionRef">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="actions" type="AnalysisActions" required>
+    <Expandable title="AnalysisActions">
+      <ResponseField name="can_fork" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_create_child" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_commit_changes" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_delete" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_run_pipeline" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_retry_pipeline" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_merge_to" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_merge_from" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_stage_changes" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_set_as_head" type="boolean" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+
+## `retry`
+
+POST `/security/analyses/{analysis_id}/retry`
+
+<CodeGroup>
+```python Async
+result = await client.analyses.retry(
+    analysis_id=analysis_id,
+)
+```
+
+```python Sync
+result = client.analyses.retry(
+    analysis_id=analysis_id,
+)
+```
+</CodeGroup>
+
+<ParamField body="analysis_id" type="ID" required>
+</ParamField>
+<ParamField body="body" type="VersionBodyDict | None" default="None">
+<Expandable title="VersionBodyDict">
+  <ParamField body="version_id" type="Optional[string]">
+  </ParamField>
+</Expandable>
+</ParamField>
+<ParamField body="with_streaming" type="bool" default="False">
+</ParamField>
+
+**Return type by call:**
+
+- `with_streaming=True` → `EventResource[AnalysisSchema, AnalysisRunStatusEventData]`
+- `with_streaming=False` → `AnalysisSchema`
+
+<Expandable title="AnalysisSchema">
+  <ResponseField name="id" type="string" required>
+  </ResponseField>
+  <ResponseField name="name" type="string" required>
+  </ResponseField>
+  <ResponseField name="created_at" type="string" required>
+  </ResponseField>
+  <ResponseField name="user" type="UserSchema" required>
+  <Expandable title="UserSchema">
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="is_self" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="created_at" type="string" required>
+    </ResponseField>
+    <ResponseField name="username" type="string" required>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="project_id" type="string" required>
+  </ResponseField>
+  <ResponseField name="project_name" type="string" required>
+  </ResponseField>
+  <ResponseField name="project_slug" type="string" required>
+  </ResponseField>
+  <ResponseField name="is_owner" type="boolean" required>
+  </ResponseField>
+  <ResponseField name="version" type="AnalysisVersionSchema" required>
+  <Expandable title="AnalysisVersionSchema">
+    <ResponseField name="id" type="string" required>
+    </ResponseField>
+    <ResponseField name="created_at" type="string" required>
+    </ResponseField>
+    <ResponseField name="trigger" type="'create' | 'commit' | 'fork' | 'merge' | 'push'" required>
+    </ResponseField>
+    <ResponseField name="n_findings" type="integer" required>
+    </ResponseField>
+    <ResponseField name="n_remediations" type="integer" required>
+    </ResponseField>
+    <ResponseField name="is_head" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="has_pipeline_processing" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="has_pipeline_failed" type="boolean" required>
+    </ResponseField>
+    <ResponseField name="code_version" type="CodeVersionSchema" required>
+    <Expandable title="CodeVersionSchema">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="network" type="Optional['eth' | 'bsc' | 'polygon' | 'base' | 'avax' | 'mode' | 'arb' | 'eth_sepolia' | 'bsc_test' | 'polygon_amoy' | 'base_sepolia' | 'avax_fuji' | 'mode_testnet' | 'arb_sepolia']">
+      </ResponseField>
+      <ResponseField name="version_method" type="'tag' | 'commit' | 'hash' | 'address'" required>
+      </ResponseField>
+      <ResponseField name="version_fingerprint" type="string" required>
+      </ResponseField>
+      <ResponseField name="status" type="'queued' | 'processing' | 'failed' | 'success'" required>
+      </ResponseField>
+      <ResponseField name="name" type="Optional[string]">
+      </ResponseField>
+      <ResponseField name="branch" type="Optional[string]">
+      </ResponseField>
+      <ResponseField name="commit" type="Optional[GithubCommitSchema]">
+      <Expandable title="GithubCommitSchema">
+        <ResponseField name="sha" type="string" required>
+        </ResponseField>
+        <ResponseField name="author" type="string" required>
+        </ResponseField>
+        <ResponseField name="message" type="string" required>
+        </ResponseField>
+        <ResponseField name="timestamp" type="string" required>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="repository" type="Optional[GithubRepositorySchema]">
+      <Expandable title="GithubRepositorySchema">
+        <ResponseField name="id" type="integer" required>
+        </ResponseField>
+        <ResponseField name="name" type="string" required>
+        </ResponseField>
+        <ResponseField name="is_private" type="boolean" required>
+        </ResponseField>
+        <ResponseField name="account" type="GithubAccountSchema" required>
+        <Expandable title="GithubAccountSchema">
+          <ResponseField name="id" type="integer" required>
+          </ResponseField>
+          <ResponseField name="login" type="string" required>
+          </ResponseField>
+          <ResponseField name="type" type="string" required>
+          </ResponseField>
+          <ResponseField name="avatar_url" type="string" required>
+          </ResponseField>
+        </Expandable>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="merged_from_version" type="Optional[AnalysisVersionRef]">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="forked_from_version" type="Optional[AnalysisVersionRef]">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="parent_version" type="Optional[AnalysisVersionRef]">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="child_versions" type="array of AnalysisVersionRef">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="merged_versions" type="array of AnalysisVersionRef">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="forked_versions" type="array of AnalysisVersionRef">
+    <Expandable title="AnalysisVersionRef">
+      <ResponseField name="id" type="string" required>
+      </ResponseField>
+      <ResponseField name="analysis_id" type="string" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="actions" type="AnalysisActions" required>
+    <Expandable title="AnalysisActions">
+      <ResponseField name="can_fork" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_create_child" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_commit_changes" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_delete" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_run_pipeline" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_retry_pipeline" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_merge_to" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_merge_from" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_stage_changes" type="boolean" required>
+      </ResponseField>
+      <ResponseField name="can_set_as_head" type="boolean" required>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+
+## Scoped access
+
+Calling `client.analyses(analysis_id)` returns a resource scoped to that analysis, exposing the same nested resources listed here (`.remediations`, `.versions`, `.summary`) pre-bound to it.
