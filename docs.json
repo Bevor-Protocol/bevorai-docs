@@ -39,6 +39,7 @@
               "features/project-analytics",
               "features/code-versions",
               "features/analyses",
+              "features/findings",
               "features/chat"
             ]
           },
@@ -112,13 +113,13 @@
             "group": "Getting Started",
             "icon": "terminal",
             "pages": [
-              "cli-reference/overview"
+              "cli-reference/overview",
+              "cli-reference/setup"
             ]
           },
           {
             "group": "Commands",
             "pages": [
-              "cli-reference/root",
               "cli-reference/team",
               "cli-reference/project",
               "cli-reference/sessions",

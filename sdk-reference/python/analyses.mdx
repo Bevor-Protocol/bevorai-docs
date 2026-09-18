@@ -2099,6 +2099,42 @@ result = client.analyses.add_findings(
     </Expandable>
     </ParamField>
     <ParamField body="location" type="FindingLocationNodeIdDict | FindingLocationPhysicalDict | FindingLocationLogicalDict" required>
+    <Expandable title="FindingLocationNodeIdDict">
+      <ParamField body="strategy" type="string" required>
+      </ParamField>
+      <ParamField body="node_id" type="Optional[string]">
+      </ParamField>
+      <ParamField body="location_id" type="Optional[string]">
+      </ParamField>
+    </Expandable>
+    <Expandable title="FindingLocationPhysicalDict">
+      <ParamField body="strategy" type="string" required>
+      </ParamField>
+      <ParamField body="uri" type="string" required>
+      </ParamField>
+      <ParamField body="startLine" type="Optional[integer]">
+      </ParamField>
+      <ParamField body="startColumn" type="Optional[integer]">
+      </ParamField>
+      <ParamField body="endLine" type="Optional[integer]">
+      </ParamField>
+      <ParamField body="endColumn" type="Optional[integer]">
+      </ParamField>
+      <ParamField body="charOffset" type="Optional[integer]">
+      </ParamField>
+      <ParamField body="charLength" type="Optional[integer]">
+      </ParamField>
+      <ParamField body="byteOffset" type="Optional[integer]">
+      </ParamField>
+      <ParamField body="byteLength" type="Optional[integer]">
+      </ParamField>
+    </Expandable>
+    <Expandable title="FindingLocationLogicalDict">
+      <ParamField body="strategy" type="string" required>
+      </ParamField>
+      <ParamField body="fully_qualified_name" type="string" required>
+      </ParamField>
+    </Expandable>
     </ParamField>
   </Expandable>
   </ParamField>

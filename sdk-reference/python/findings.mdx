@@ -39,6 +39,8 @@ result = client.findings.list()
   </ParamField>
   <ParamField body="user_id" type="Optional[string]">
   </ParamField>
+  <ParamField body="is_self" type="Optional[boolean]">
+  </ParamField>
   <ParamField body="code_id" type="Optional[string]">
   </ParamField>
   <ParamField body="analysis_ids" type="Optional[array of string]">
@@ -48,6 +50,8 @@ result = client.findings.list()
   <ParamField body="level" type="Optional['critical' | 'high' | 'medium' | 'low']">
   </ParamField>
   <ParamField body="is_acknowledged" type="Optional[boolean]">
+  </ParamField>
+  <ParamField body="created_by_self" type="Optional[boolean]">
   </ParamField>
   <ParamField body="created_by_user_id" type="Optional[string]">
   </ParamField>

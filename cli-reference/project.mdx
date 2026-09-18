@@ -6,7 +6,7 @@ Manage projects.
 
 ## `select`
 
-Interactively pick a project and save it as the active project.
+Interactively pick a project and configure it as the active project.
 
 ```bash
 bevor project select [OPTIONS]
@@ -14,16 +14,18 @@ bevor project select [OPTIONS]
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `--project, -p` | text | No |  | Project id to select directly (skips interactive picker). |
+| `--project` | text | No |  | Project id to select directly (skips interactive picker). |
 | `--page` | integer | No |  | Page number to use for resource that supports pagination |
 | `--page-size` | integer | No |  | Page size to use for resource that supports pagination |
 | `--order` | choice | No |  | How to order results when a resource supports pagination |
 | `--order-by` | choice | No |  | What field to order results by when a resource supports pagination |
-| `--all, -a` | boolean | No |  | Select from projects across all teams |
+| `--name` | text | No |  | Filter by name. |
+| `--tag` | text | No |  | Filter by tag. |
+| `--all` | boolean | No |  | Select from projects across all teams |
 
 ## `list`
 
-List projects in a team.
+List projects in a team. Use --all to show projects across all of your teams.
 
 ```bash
 bevor project list [OPTIONS]
@@ -36,12 +38,13 @@ bevor project list [OPTIONS]
 | `--order` | choice | No |  | How to order results when a resource supports pagination |
 | `--order-by` | choice | No |  | What field to order results by when a resource supports pagination |
 | `--name` | text | No |  | Filter by name. |
-| `--all, -a` | boolean | No |  | All projects across all teams |
+| `--tag` | text | No |  | Filter by tag. |
+| `--all` | boolean | No |  | All projects across all teams |
 | `--json` | boolean | No |  | JSON output |
 
 ## `create`
 
-
+Create a project. Can pass arguments, or do so interactively.
 
 ```bash
 bevor project create [OPTIONS]
@@ -49,14 +52,14 @@ bevor project create [OPTIONS]
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `--name, -n` | text | No |  | project name |
-| `--description, -d` | text | No |  | project description |
+| `--name` | text | No |  | project name |
+| `--description` | text | No |  | project description |
 | `--tags` | text | No |  | project tags, comma separated |
-| `--yes, -y` | boolean | No |  | Skip confirmation. |
+| `--yes` | boolean | No |  | Skip confirmation of action. |
 
 ## `get`
 
-Print details for the project selected in ``.bevor`` config.
+Print details for the configured project.
 
 ```bash
 bevor project get [OPTIONS]

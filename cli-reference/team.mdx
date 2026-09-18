@@ -6,14 +6,7 @@ Manage team context.
 
 ## `select`
 
-Set the active team.
-
-Changing team clears project, code, and analysis in ``.bevor``.
-
-Examples:
-
-  bevor teams select
-  bevor teams select --team acme_team_id
+Set the active team. Uses the --team argument, or will prompt you to select from a list.
 
 ```bash
 bevor team select [OPTIONS]
@@ -21,16 +14,11 @@ bevor team select [OPTIONS]
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `--team, -t` | text | No |  | Team id to select directly. |
+| `--team` | text | No |  | Team id to select directly. |
 
 ## `list`
 
 List teams you belong to.
-
-Examples:
-
-  bevor teams list
-  bevor teams list -j | jq '.[].slug'
 
 ```bash
 bevor team list [OPTIONS]

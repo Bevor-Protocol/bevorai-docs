@@ -6,7 +6,8 @@ Findings for the configured analysis.
 
 ## `list`
 
-Search findings across the team.
+Search findings across the currently configured project, or the --project, or search across the entire
+team by using --all.
 
 ```bash
 bevor finding list [OPTIONS]
@@ -18,17 +19,23 @@ bevor finding list [OPTIONS]
 | `--page-size` | integer | No |  | Page size to use for resource that supports pagination |
 | `--order` | choice | No |  | How to order results when a resource supports pagination |
 | `--order-by` | choice | No |  | What field to order results by when a resource supports pagination |
+| `--project` | text | No |  | Project id to filter by. |
+| `--self` | boolean | No |  | Filter by findings in analyses the caller owns. |
+| `--user` | text | No |  | Filter by user id (user who owns the analysis the finding is in) |
+| `--code` | text | No |  | Code Id to filter by. |
+| `--analyses` | text | No |  | Analysis ids to filter by (comma separated) |
 | `--type` | choice | No |  | Finding type. |
 | `--level` | choice | No |  | Finding level. |
 | `--acknowledged` | boolean | No |  | Filter by acknowledgement status. |
 | `--operation` | choice | No |  | Staged draft operation. |
-| `--created-by` | text | No |  | Created-by user id. |
-| `--node` | text | No |  | Only findings tied to this graph node id. |
+| `--created-by-self` | boolean | No |  | Filter by findings the caller is original creator of |
+| `--created-by` | text | No |  | Filter by original creator of a finding. |
+| `--all` | boolean | No |  | Show findings across all projects |
 | `--json` | boolean | No |  | JSON output |
 
 ## `get`
 
-
+Get the finding details.
 
 ```bash
 bevor finding get [OPTIONS]
@@ -41,7 +48,26 @@ bevor finding get [OPTIONS]
 
 ## `add`
 
-Stage a new finding. ``--file`` is YAML; otherwise prompts interactively.
+Stage a new finding to your currently configured analysis, or to the --version.
+
+Provide input one of three ways:
+
+- ``--file``: a YAML file with exactly one finding mapping.
+- ``--interactive``: prompts for each field.
+- Flags directly, as described below.
+
+When passing flags, specify a location, which specifies the code node that the finding is associated with, using exactly one of:
+
+- ``--node`` and/or ``--location`` (a Bevor node id; ``--location`` alone
+  fans the finding out to every entrypoint that reaches it)
+- ``--uri`` plus one full pair of ``--start-line``/``--end-line``,
+  ``--char-offset``/``--char-length``, or ``--byte-offset``/``--byte-length``
+- ``--fqn``
+
+Metadata (``--type``, ``--level``, ``--name``, ``--explanation``) is all or
+nothing: provide all four to record a finding, or omit all four to mark the
+location as analyzed with no finding. ``--recommendation``, ``--reference``,
+and ``--source`` are always optional.
 
 ```bash
 bevor finding add [OPTIONS]
@@ -50,8 +76,8 @@ bevor finding add [OPTIONS]
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `--version` | text | No |  | Version id to stage against (default: configured analysis head). |
-| `--file, -f` | path | No |  | YAML file containing exactly one finding mapping. |
-| `--interactive, -i` | boolean | No |  | Force interactive prompts. |
+| `--file` | path | No |  | YAML file containing exactly one finding mapping. |
+| `--interactive` | boolean | No |  | Force interactive prompts. |
 | `--type` | text | No |  |  |
 | `--level` | choice | No |  |  |
 | `--name` | text | No |  |  |
@@ -74,7 +100,14 @@ bevor finding add [OPTIONS]
 
 ## `bulk`
 
+Import many findings at once to the configured analysis head, or ``--version`` if given
 
+``source`` is dispatched by type:
+
+- a directory: every ``.yaml``/``.yml`` file in it is parsed, each of which
+  may itself contain multiple findings (``---``-separated documents).
+- a ``.yaml``/``.yml`` file: parsed the same way, as a single source.
+- a ``.sarif`` file: converted from SARIF into Bevor findings.
 
 ```bash
 bevor finding bulk [OPTIONS]
@@ -87,7 +120,7 @@ bevor finding bulk [OPTIONS]
 
 ## `edit`
 
-Stage an edit (`--file` YAML or interactive matching current metadata).
+Stage an edit to a finding (`--file` YAML or interactive matching current metadata).
 
 ```bash
 bevor finding edit [OPTIONS]
@@ -124,7 +157,7 @@ bevor finding revert [OPTIONS]
 
 ## `acknowledge`
 
-Toggle validation status for a finding.
+Toggle acknowledgement status for a finding.
 
 ```bash
 bevor finding acknowledge [OPTIONS]

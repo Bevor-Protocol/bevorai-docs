@@ -1,6 +1,19 @@
 ---
-title: "root"
+title: "Setup"
+description: "Configuring the Bevor CLI"
 ---
+
+Bevor CLI is scoped on a repository-basis. Configure it to a working directory. It'll create a `.bevor` folder in your
+working directory to store local configuration. Also, Bevor CLI creates a `~/.bevor` global configuration folder.
+
+While the CLI authenticates the user, most actions will require you to `link` a team and project to act on.
+
+## Steps
+
+1. `bevor login` will direct you to the [bevor dashboard](https://app.bevor.io) to authorize your account
+2. `bevor whoami` will let you see your authenticated user information
+3. `bevor init` in your working directory will initialize the Bevor CLI's configuration and allow you to link a team and project
+4. `bevor context` will show you your current team and project configuration (as well as code + analysis once configured)
 
 ## `help`
 
@@ -17,10 +30,6 @@ Log in via browser.
 Opens your default browser to authenticate with Bevor. Your credentials
 are stored locally and used for subsequent commands.
 
-Examples:
-
-  bevor login
-
 ```bash
 bevor login [OPTIONS]
 ```
@@ -29,10 +38,6 @@ bevor login [OPTIONS]
 
 Remove stored credentials.
 
-Examples:
-
-  bevor logout
-
 ```bash
 bevor logout [OPTIONS]
 ```
@@ -40,11 +45,6 @@ bevor logout [OPTIONS]
 ## `whoami`
 
 Show the currently authenticated user.
-
-Examples:
-
-  bevor whoami
-  bevor whoami -j
 
 ```bash
 bevor whoami [OPTIONS]

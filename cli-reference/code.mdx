@@ -6,7 +6,7 @@ List, inspect, and upload code versions for the active project.
 
 ## `use`
 
-Point `.bevor` at a code version.
+Update your currently configured code version.
 
 ```bash
 bevor code use [OPTIONS]
@@ -18,12 +18,7 @@ bevor code use [OPTIONS]
 
 ## `list`
 
-List code versions for the active project.
-
-Examples:
-
-  bevor code list
-  bevor code list -j | jq '.[].id'
+List code versions for the active project, the passed --project, or use --all to list code versions across the entire team.
 
 ```bash
 bevor code list [OPTIONS]
@@ -41,11 +36,11 @@ bevor code list [OPTIONS]
 | `--identifier` | text | No |  | Identifier (commit, hash, address) to filter by |
 | `--status` | choice | No |  | Code status to filter by |
 | `--json` | boolean | No |  | JSON output |
-| `--all, -a` | boolean | No |  | List code versions for all projects in current team |
+| `--all` | boolean | No |  | List code versions for all projects in current team |
 
 ## `get`
 
-Print details for the code version selected in ``.bevor`` config.
+Print details for the configured code version.
 
 ```bash
 bevor code get [OPTIONS]
@@ -57,7 +52,7 @@ bevor code get [OPTIONS]
 
 ## `push`
 
-Upload a directory as a new code version. Updates local state to be the current code version.
+Upload your current working directory to produce a new code version. Automatically updates your configured code version.
 
 ```bash
 bevor code push [OPTIONS]
@@ -67,7 +62,7 @@ bevor code push [OPTIONS]
 | --- | --- | --- | --- | --- |
 | `--path` | path | No |  | Source tree root (default: cwd). |
 | `--no-wait` | boolean | No |  | Return immediately without waiting for the event stream to complete. |
-| `--yes, -y` | boolean | No |  | Skip confirmation of action. |
+| `--yes` | boolean | No |  | Skip confirmation of action. |
 
 ## `node`
 
@@ -75,7 +70,7 @@ Inspect the code graph.
 
 ### `list`
 
-
+List all nodes. Uses the currently configured code version, or you can pass --code.
 
 ```bash
 bevor code node list [OPTIONS]
@@ -83,6 +78,7 @@ bevor code node list [OPTIONS]
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
+| `--code` | text | No |  | Code id to list for (defaults to current configuration) |
 | `--entrypoints` | boolean | No |  | Only show auditable entry-point functions. |
 | `--file` | text | No |  | Filter to nodes in this file. |
 | `--no-deps` | boolean | No |  | Filter to nodes under this directory prefix. |
@@ -92,7 +88,7 @@ bevor code node list [OPTIONS]
 
 ### `get`
 
-
+Get the details of a node. Uses the currently configured code version, or you can pass --code.
 
 ```bash
 bevor code node get [OPTIONS]
@@ -101,15 +97,12 @@ bevor code node get [OPTIONS]
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `node_id` | text | Yes |  | Node short id (or full wire id). |
+| `--code` | text | No |  | Code id to list for (defaults to current configuration) |
 | `--json` | boolean | No |  | JSON output |
 
 ### `content`
 
-Show the source code for a node.
-
-Examples:
-
-  bevor code node content 00
+Show the source code of a node. Uses the currently configured code version, or you can pass --code.
 
 ```bash
 bevor code node content [OPTIONS]
@@ -118,10 +111,11 @@ bevor code node content [OPTIONS]
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `node_id` | text | Yes |  | Node short id (or full wire id). |
+| `--code` | text | No |  | Code id to list for (defaults to current configuration) |
 
 ### `edges`
 
-
+List the edges for a given node. Uses the currently configured code version, or you can pass --code.
 
 ```bash
 bevor code node edges [OPTIONS]
@@ -130,13 +124,14 @@ bevor code node edges [OPTIONS]
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `node_id` | text | Yes |  | Node short id or full wire id. |
+| `--code` | text | No |  | Code id to list for  (defaults to current configuration) |
 | `--direction` | choice | No |  | Edge direction filter: in, out. |
 | `--type` | choice | No |  | Edge type (e.g. calls, defines). |
 | `--json` | boolean | No |  | JSON output |
 
 ### `call-chain`
 
-
+Get the call chain for a given node. Uses the currently configured code version, or you can pass --code.
 
 ```bash
 bevor code node call-chain [OPTIONS]
@@ -145,14 +140,13 @@ bevor code node call-chain [OPTIONS]
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `node_id` | text | Yes |  | Node id |
+| `--code` | text | No |  | Code id to list for  (defaults to current configuration) |
 | `--json` | boolean | No |  | JSON output |
 
 ### `interactive`
 
 Explore the graph from a node: get, source, optional call-chain (callable nodes only), and edges.
-
-Forward jumps (from call-chain or edges) push the current node onto a stack; **Back** pops to
-the previous node. get and source keep you on the current node.
+Uses the currently configured code version, or you can pass --code.
 
 ```bash
 bevor code node interactive [OPTIONS]
@@ -161,3 +155,4 @@ bevor code node interactive [OPTIONS]
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `node_id` | text | Yes |  | Node to start from (short id or full id). |
+| `--code` | text | No |  | Code id to list for  (defaults to current configuration) |

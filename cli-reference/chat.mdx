@@ -6,7 +6,7 @@ Manage analysis chats.
 
 ## `list`
 
-
+List chats. Uses the currently configured project, or --project
 
 ```bash
 bevor chat list [OPTIONS]
@@ -14,12 +14,16 @@ bevor chat list [OPTIONS]
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `--page-size, -n` | integer | No | 20 | Results per page. |
+| `--page` | integer | Yes |  | Page number to use for resource that supports pagination |
+| `--page-size` | integer | Yes |  | Page size to use for resource that supports pagination |
+| `--order` | choice | Yes |  | How to order results when a resource supports pagination |
+| `--order-by` | choice | Yes |  | What field to order results by when a resource supports pagination |
+| `--project` | text | Yes |  | project to list chats for |
 | `--json` | boolean | No |  | JSON output |
 
 ## `get`
 
-
+Get the details of a chat.
 
 ```bash
 bevor chat get [OPTIONS]
@@ -32,7 +36,7 @@ bevor chat get [OPTIONS]
 
 ## `messages`
 
-
+Get chat messages for a chat.
 
 ```bash
 bevor chat messages [OPTIONS]
@@ -41,12 +45,12 @@ bevor chat messages [OPTIONS]
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `chat_id` | text | Yes |  | Chat ID. |
-| `--page-size, -n` | integer | No | 50 | Messages per page. |
 | `--json` | boolean | No |  | JSON output |
 
 ## `new`
 
-Create a chat thread and open the streaming terminal session.
+Create a chat thread and open the streaming terminal session. The mode determines if you want
+to chat with just code, or with analysis + code. Either use your current configuration.
 
 ```bash
 bevor chat new [OPTIONS]
@@ -54,7 +58,7 @@ bevor chat new [OPTIONS]
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `--version` | text | No |  | Analysis version id (default: head of the configured analysis). |
+| `mode` | choice | Yes |  | whether to create a chat with analysis or code |
 
 ## `resume`
 
