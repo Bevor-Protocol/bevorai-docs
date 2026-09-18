@@ -170,25 +170,25 @@
           {
             "group": "Business API",
             "openapi": {
-              "source": "http://localhost:8000/business/openapi.json"
+              "source": "https://staging.api.bevor.io/business/openapi.json"
             }
           },
           {
             "group": "Graph API",
             "openapi": {
-              "source": "http://localhost:8000/graph/openapi.json"
+              "source": "https://staging.api.bevor.io/graph/openapi.json"
             }
           },
           {
             "group": "Security API",
             "openapi": {
-              "source": "http://localhost:8000/security/openapi.json"
+              "source": "https://staging.api.bevor.io/security/openapi.json"
             }
           },
           {
             "group": "Chat API",
             "openapi": {
-              "source": "http://localhost:8000/chats/openapi.json"
+              "source": "https://staging.api.bevor.io/chats/openapi.json"
             }
           }
         ]
