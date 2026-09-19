@@ -1,0 +1,16 @@
+{
+  "title": "API Reference",
+  "icon": "webhook",
+  "root": true,
+  "pages": [
+    "---[book]Getting Started---",
+    "overview",
+    "concepts",
+    "error-handling",
+    "---[webhook]Endpoints---",
+    "manage",
+    "graph",
+    "security",
+    "chat"
+  ]
+}

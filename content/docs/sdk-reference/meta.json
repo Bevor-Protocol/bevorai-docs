@@ -1,0 +1,7 @@
+{
+  "title": "SDK Reference",
+  "icon": "code",
+  "root": true,
+  "pagesIndex": "index",
+  "pages": ["python"]
+}

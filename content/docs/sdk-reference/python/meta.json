@@ -1,0 +1,19 @@
+{
+  "title": "Python SDK",
+  "icon": "python",
+  "pages": [
+    "overview",
+    "graph",
+    "teams",
+    "projects",
+    "codes",
+    "codes.files",
+    "codes.nodes",
+    "analyses",
+    "analyses.remediations",
+    "analyses.summary",
+    "analyses.versions",
+    "findings",
+    "chats"
+  ]
+}

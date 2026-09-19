@@ -1,0 +1,25 @@
+---
+title: 'SDK Reference'
+description: 'Preview the typed SDK clients planned for the Bevor platform'
+---
+
+<Warning>
+  The Bevor SDKs are coming soon. This reference documents a planned interface and should not be used against production systems yet.
+</Warning>
+
+# Typed clients for one security graph
+
+The SDKs wrap the same projects, code versions, analyses, and findings exposed by the API, with typed resources and pagination handled for you. Reach for an SDK when you are embedding Bevor into internal tooling or custom agents, and the API when you need control at the HTTP boundary.
+
+Python is the first supported language. Additional languages will be documented here as they ship.
+
+<CardGroup cols={2}>
+  <Card title="Python SDK" icon="python" href="/docs/sdk-reference/python/overview">
+    Async and sync clients for analyses, findings, remediations, and related workflows.
+  </Card>
+  <Card title="API Reference" icon="webhook" href="/docs/api-reference/overview">
+    Work directly against the HTTP endpoints the SDKs are built on.
+  </Card>
+</CardGroup>
+
+For a higher-level product view, see the [SDK integration guide](/docs/features/sdk).

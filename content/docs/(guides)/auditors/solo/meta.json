@@ -1,0 +1,9 @@
+{
+  "title": "Solo Auditors",
+  "icon": "user",
+  "pages": [
+    "../win-more-audit-competitions",
+    "../audit-like-a-firm",
+    "../data-labeling"
+  ]
+}

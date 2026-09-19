@@ -1,0 +1,19 @@
+{
+  "title": "CLI Reference",
+  "icon": "terminal",
+  "root": true,
+  "pages": [
+    "---[terminal]Getting Started---",
+    "overview",
+    "setup",
+    "---Commands---",
+    "team",
+    "project",
+    "sessions",
+    "code",
+    "analysis",
+    "finding",
+    "chat",
+    "agent"
+  ]
+}

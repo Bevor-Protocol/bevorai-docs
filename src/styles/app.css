@@ -1,0 +1,18 @@
+@import 'tailwindcss';
+@import '@fumadocs/base-ui/css/black.css';
+@import '@fumadocs/base-ui/css/preset.css';
+@import 'fumadocs-openapi/css/preset.css';
+
+:root {
+  --color-fd-primary: hsl(214.19, 100%, 83.14%);
+}
+
+.dark {
+  --color-fd-background: hsl(0 0% 0%);
+  --color-fd-card: hsl(0 0% 0%);
+  --color-fd-popover: hsl(0 0% 4%);
+  --color-fd-muted: hsl(0 0% 9%);
+  --color-fd-secondary: hsl(0 0% 9%);
+  --color-fd-accent: hsl(0 0% 14%);
+  --color-fd-border: hsl(0 0% 100% / 0.12);
+}
