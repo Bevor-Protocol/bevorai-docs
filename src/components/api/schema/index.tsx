@@ -1,14 +1,19 @@
-"use client";
 import { fromTranslations, useTranslations } from "@fuma-translate/react";
 import type { ParsedSchema } from "@fumadocs/api-docs/schema";
 import { dereferenceShallow } from "@fumadocs/api-docs/schema/dereference";
 import { mergeAllOf } from "@fumadocs/api-docs/schema/merge";
 import { FormatFlags, schemaToString } from "@fumadocs/api-docs/schema/to-string";
-import { type ReactNode, useMemo } from "react";
+import { Fragment, type ReactNode, useMemo } from "react";
 import { BlockTag, InlineTag, SchemaUI, type SchemaUIProps } from "./client";
 
 interface InfoTag {
   node: ReactNode;
+  block?: boolean;
+}
+
+interface DiscriminatorObject {
+  propertyName: string;
+  mapping?: Record<string, string>;
 }
 
 export interface FieldBase {
@@ -47,14 +52,18 @@ export type SchemaData = FieldBase &
         items: {
           name: string;
           $type: string;
+          itemId?: string;
         }[];
+        discriminator?: DiscriminatorObject;
       }
     | {
         type: "and";
         items: {
           name: string;
           $type: string;
+          itemId?: string;
         }[];
+        discriminator?: DiscriminatorObject;
       }
   );
 
@@ -194,19 +203,20 @@ export function generateSchemaUI({
       );
 
       blocks.push({
+        block: true,
         node: (
-          <BlockTag label={t("Value in")}>
-            <ul>
+          <div className="w-full flex flex-row items-start gap-3 pt-3">
+            <p className="not-prose whitespace-nowrap">Value in:</p>
+            <div className="flex items-center gap-2 flex-wrap">
               {members.map((m: string, i: number) => (
-                <li
-                  key={i}
-                  className="font-mono list-disc list-inside ps-1 marker:text-fd-muted-foreground"
-                >
-                  {m}
-                </li>
+                <Fragment key={i}>
+                  <span className="font-mono text-xs">
+                    {m + (i < members.length - 1 ? "," : "")}
+                  </span>
+                </Fragment>
               ))}
-            </ul>
-          </BlockTag>
+            </div>
+          </div>
         ),
       });
     }
@@ -215,15 +225,22 @@ export function generateSchemaUI({
       const defaultCode = JSON.stringify(schema.default, null, 2);
       if (defaultCode.includes("\n")) {
         blocks.push({
+          block: true,
           node: (
-            <BlockTag label={t("Default")}>
+            <div className="flex flex-col w-full gap-2 border-t pt-3 not-prose">
+              <p className="font-medium text-xs text-fd-muted-foreground">{t("Default")}</p>
               {renderCodeblock({ lang: "json", code: defaultCode })}
-            </BlockTag>
+            </div>
           ),
         });
       } else {
         inlines.push({
-          node: <InlineTag label={t("Default")}>{defaultCode}</InlineTag>,
+          node: (
+            <span className="inline-flex items-center gap-1 rounded-md border bg-fd-secondary px-1.5 py-0.5 font-mono text-[11px] text-fd-muted-foreground">
+              <span className="font-medium text-fd-foreground">{t("Default")}</span>
+              {defaultCode}
+            </span>
+          ),
         });
       }
     }
@@ -351,6 +368,7 @@ export function generateSchemaUI({
       const out: SchemaData = {
         type: "or",
         items: [],
+        discriminator: schema.discriminator,
         ...base(raw),
       };
       refs[id] = out;
@@ -374,6 +392,7 @@ export function generateSchemaUI({
         });
         out.items.push({
           $type: key,
+          itemId,
           name: refs[itemId]?.aliasName ?? schemaToString(rawItem, FormatFlags.UseAlias),
         });
       }

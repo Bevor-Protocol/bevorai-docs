@@ -1,5 +1,5 @@
-import { TreeContextProvider, useTabsGroups, useTreePath } from "@fumadocs/base-ui/contexts/tree";
-import { useIsScrollTop } from "@fumadocs/base-ui/utils/use-is-scroll-top";
+import { TreeContextProvider, useTabsGroups, useTreePath } from "@/contexts/tree";
+import { useIsScrollTop } from "@/hooks/use-is-scroll-top";
 import { usePathname } from "fumadocs-core/framework";
 import Link from "fumadocs-core/link";
 import { type ComponentProps, createContext, type FC, use, useMemo } from "react";

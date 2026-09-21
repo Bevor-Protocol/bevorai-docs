@@ -16,7 +16,7 @@ import {
   type ComponentProps,
   type ReactNode,
 } from 'react';
-import { useTreePath } from '@fumadocs/base-ui/contexts/tree';
+import { useTreePath } from '@/contexts/tree';
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '../../../../components/ui/collapsible';
 import { useDocsLayout } from '../..';
 

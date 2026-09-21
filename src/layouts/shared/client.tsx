@@ -1,7 +1,7 @@
 'use client';
 import { usePathname } from 'fumadocs-core/framework';
 import Link from 'fumadocs-core/link';
-import { useI18n } from '@fumadocs/base-ui/contexts/i18n';
+import { useI18n } from '@/contexts/i18n';
 import type { FC, ComponentProps } from 'react';
 import { isLinkItemActive, type BaseLayoutProps, type LinkItemType } from './index';
 import {

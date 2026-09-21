@@ -1,5 +1,5 @@
 'use client';
-import { useRenderContext } from 'fumadocs-openapi/ui';
+import { useOpenAPI } from 'fumadocs-openapi';
 import { useQuery } from './use-query';
 import { createContext, type ReactNode, use, useEffect, useMemo, useState } from 'react';
 import type { AuthCodeState, ImplicitState } from './oauth-dialog';
@@ -36,7 +36,7 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const { dereferenced, resolve } = useRenderContext().schema;
+  const { dereferenced, resolve } = useOpenAPI().doc;
   const schemes = dereferenced.components?.securitySchemes;
   const [store, setStore] = useState<TokenStore>({});
 

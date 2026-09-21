@@ -1,10 +1,10 @@
-import { useRenderContext } from 'fumadocs-openapi/ui';
+import { useOpenAPI } from 'fumadocs-openapi';
 import { useMemo } from 'react';
 
 type KeyName = 'server-url' | `auth-${string}`;
 
 export function useStorageKey() {
-  const { storageKeyPrefix } = useRenderContext();
+  const { storageKeyPrefix } = useOpenAPI();
 
   return useMemo(
     () => ({

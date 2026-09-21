@@ -7,7 +7,7 @@ import { cn } from '../../lib/cn';
 import { useSidebar } from './base';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { isLayoutTabActive, type LayoutTab } from '../../layouts/shared';
-import { useTabsGroups, useTreePath } from '@fumadocs/base-ui/contexts/tree';
+import { useTabsGroups, useTreePath } from '@/contexts/tree';
 
 export type SidebarTabWithProps = LayoutTab;
 

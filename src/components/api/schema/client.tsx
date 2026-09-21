@@ -1,4 +1,3 @@
-"use client";
 import { useTranslations } from "@fuma-translate/react";
 import { useAnchorId } from "@fumadocs/api-docs/auto-anchor/client";
 import { Popover, PopoverContent, PopoverTrigger } from "@fumadocs/api-docs/components/popover";
@@ -10,7 +9,6 @@ import {
   SelectValue,
 } from "@fumadocs/api-docs/components/select";
 import { cva } from "class-variance-authority";
-import { useCopyButton } from "fumadocs-ui/utils/use-copy-button";
 import { CheckIcon, FilterIcon, LinkIcon } from "lucide-react";
 import {
   type ComponentProps,
@@ -27,6 +25,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { useCopyButton } from "@/hooks/use-copy-button";
 import { cn } from "../../../lib/cn";
 import { mergeRefs } from "../../../lib/merge-refs";
 import { buttonVariants } from "../../ui/button";
@@ -145,7 +144,7 @@ export function SchemaUI({ name, required = false, as = "property", generated }:
               </PopoverTrigger>
               <PopoverContent
                 ref={popoverRef}
-                className="w-150 max-w-(--available-width) min-h-(--min-height,200px) fd-scroll-container max-h-[460px] px-3 pt-0"
+                className="w-150 max-w-(--available-width) min-h-(--min-height,200px) fd-scroll-container max-h-115 px-3 pt-0"
                 onScrollEnd={(e) => {
                   // ensure popover scroll top is stable
                   path.at(-1)!.scrollTop = (e.target as HTMLElement).scrollTop;
@@ -177,13 +176,18 @@ export function SchemaUI({ name, required = false, as = "property", generated }:
   );
 }
 
-function SchemaDescription({ schema, ...props }: ComponentProps<"div"> & { schema: SchemaData }) {
+function SchemaDescription({
+  schema,
+  hideInline,
+  ...props
+}: ComponentProps<"div"> & { schema: SchemaData; hideInline?: boolean }) {
+  const tags = hideInline ? schema.infoTags?.filter((tag) => tag.block) : schema.infoTags;
   return (
     <div {...props} className={cn("prose-no-margin py-2 empty:hidden", props.className)}>
       {schema.description}
-      {schema.infoTags && schema.infoTags.length > 0 && (
+      {tags && tags.length > 0 && (
         <div className="flex flex-row gap-2 flex-wrap mt-2 empty:hidden">
-          {schema.infoTags.map((tag, i) => (
+          {tags.map((tag, i) => (
             <Fragment key={i}>{tag.node}</Fragment>
           ))}
         </div>
@@ -210,6 +214,7 @@ function ObjectProperty({
     generated: { refs },
     rootId,
   } = useStates();
+
   const schema = refs[$type];
   const parentItem = path[parentPathIndex];
   const ref = useCallback(
@@ -238,7 +243,7 @@ function ObjectProperty({
     <div
       {...props}
       ref={mergeRefs(props.ref, ref)}
-      className={cn("text-sm border-t py-4 scroll-m-20 first:border-t-0", props.className)}
+      className={cn("text-sm border-t py-4 scroll-m-20", props.className)}
     >
       <div className="flex flex-wrap items-center gap-2 not-prose">
         <span className="font-medium font-mono">
@@ -266,23 +271,30 @@ function ObjectProperty({
           </TypeInfoTrigger>
         )}
 
-        <div className="flex-1" />
-        {schema.deprecated && (
-          <span className="text-xs font-mono text-yellow-600 dark:text-yellow-400">
-            {t("Deprecated")}
-          </span>
-        )}
-        <button
-          className={cn(
-            buttonVariants({ size: "icon-xs", variant: "ghost" }),
-            "text-fd-muted-foreground [&_svg]:size-3.5",
+        {schema.infoTags
+          ?.filter((tag) => !tag.block)
+          .map((tag, i) => (
+            <Fragment key={i}>{tag.node}</Fragment>
+          ))}
+
+        <div className="ml-auto flex items-center gap-2">
+          {schema.deprecated && (
+            <span className="text-xs font-mono text-yellow-600 dark:text-yellow-400">
+              {t("Deprecated")}
+            </span>
           )}
-          onClick={onClick}
-        >
-          {isChecked ? <CheckIcon /> : <LinkIcon />}
-        </button>
+          <button
+            className={cn(
+              buttonVariants({ size: "icon-xs", variant: "ghost" }),
+              "text-fd-muted-foreground [&_svg]:size-3.5",
+            )}
+            onClick={onClick}
+          >
+            {isChecked ? <CheckIcon /> : <LinkIcon />}
+          </button>
+        </div>
       </div>
-      <SchemaDescription schema={schema} className="pb-0" />
+      <SchemaDescription schema={schema} className="pb-0" hideInline />
     </div>
   );
 }
@@ -307,10 +319,25 @@ function PathItemBody({
 
   if ((schema.type === "or" || schema.type === "and") && schema.items.length > 0) {
     const value = path[pathIndex].tabValues?.[tabDepth] ?? schema.items[0].$type;
-    const items = schema.items.map((item) => ({
-      label: <code className="text-xs font-medium">{item.name}</code>,
-      value: item.$type,
-    }));
+    const discriminatorEntries = Object.entries(schema.discriminator?.mapping ?? {});
+
+    const items = schema.items.map((item) => {
+      const discriminatorKey = discriminatorEntries.find(([, ref]) => ref === item.itemId)?.[0];
+      return {
+        label: (
+          <code className="text-xs font-medium">
+            {item.name}
+            {discriminatorKey && schema.discriminator?.propertyName && (
+              <span className="ml-1.5 font-normal text-fd-muted-foreground">
+                ({schema.discriminator.propertyName}: {discriminatorKey})
+              </span>
+            )}
+          </code>
+        ),
+        value: item.$type,
+      };
+    });
+
     return (
       <Select
         items={items}
@@ -324,7 +351,6 @@ function PathItemBody({
       >
         <div className="flex flex-row my-2 gap-2 items-center">
           <SchemaDescription schema={schema} className="flex-1 py-0" />
-
           <SelectTrigger className="not-prose w-fit min-w-0 mb-auto *:min-w-0">
             <SelectValue />
           </SelectTrigger>
@@ -342,9 +368,18 @@ function PathItemBody({
   }
   if (schema.type === "object" && schema.props.length > 0) {
     return (
-      <ObjectSearch pathIndex={pathIndex} schema={schema} {...objectSearchOverrides}>
+      <>
         <SchemaDescription schema={schema} />
-      </ObjectSearch>
+        {schema.props.map((item) => (
+          <ObjectProperty
+            key={item.name}
+            name={item.name}
+            $type={item.$type}
+            required={item.required}
+            parentPathIndex={pathIndex}
+          />
+        ))}
+      </>
     );
   }
   if (schema.type === "array") {
@@ -487,7 +522,7 @@ export function InlineTag({
 
 export function BlockTag({ label, children }: { label: ReactNode; children: ReactNode }) {
   return (
-    <div className="flex flex-col w-full gap-2 bg-fd-secondary border rounded-lg p-1.5 shadow-md not-prose">
+    <div className="flex flex-col w-full gap-2 border rounded-lg p-1.5 shadow-md not-prose">
       <p className="font-medium text-xs">{label}</p>
       {children}
     </div>

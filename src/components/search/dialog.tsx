@@ -1,4 +1,3 @@
-"use client";
 
 import { Dialog } from "@base-ui/react/dialog";
 import { useRouter } from "fumadocs-core/framework";

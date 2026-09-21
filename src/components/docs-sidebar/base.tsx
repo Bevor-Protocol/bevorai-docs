@@ -1,4 +1,3 @@
-"use client";
 import { ScrollArea } from "@base-ui/react/scroll-area";
 import { useTranslations } from "@fuma-translate/react";
 import { usePathname } from "fumadocs-core/framework";

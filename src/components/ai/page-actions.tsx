@@ -1,8 +1,8 @@
 import { useTranslations } from "@fuma-translate/react";
-import { useCopyButton } from "@fumadocs/base-ui/utils/use-copy-button";
 import { usePathname } from "fumadocs-core/framework";
 import { Check, ChevronDown, Copy, ExternalLinkIcon, TextIcon } from "lucide-react";
 import { type ComponentProps, useMemo, useState } from "react";
+import { useCopyButton } from "@/hooks/use-copy-button";
 import { cn } from "../../lib/cn";
 import { buttonVariants } from "../ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";

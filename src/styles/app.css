@@ -1,18 +1,359 @@
 @import 'tailwindcss';
-@import '@fumadocs/base-ui/css/black.css';
-@import '@fumadocs/base-ui/css/preset.css';
-@import 'fumadocs-openapi/css/preset.css';
+
+@import '@fumadocs/api-docs/css/preset.css';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Lets a descendant define layout variables (header height, sidebar/TOC width) on the layout
+ * root, so responsive variants can toggle them: `md:layout:[--fd-sidebar-width:268px]`.
+ */
+@custom-variant layout {
+  #nd-docs-layout:has(&) {
+    @slot;
+  }
+}
+
+@theme {
+  --color-fd-background: hsl(0 0% 98%);
+  --color-fd-foreground: hsl(0 0% 4%);
+  --color-fd-muted: hsl(0 0% 96%);
+  --color-fd-muted-foreground: hsl(0 0% 45%);
+  --color-fd-popover: hsl(0 0% 100%);
+  --color-fd-popover-foreground: hsl(0 0% 15%);
+  --color-fd-card: hsl(0 0% 100%);
+  --color-fd-card-foreground: hsl(0 0% 4%);
+  --color-fd-border: hsl(0 0% 60% / 0.2);
+  --color-fd-primary: hsl(214.19 100% 43%);
+  --color-fd-primary-foreground: hsl(0 0% 98%);
+  --color-fd-secondary: hsl(0 0% 96%);
+  --color-fd-secondary-foreground: hsl(0 0% 9%);
+  --color-fd-accent: hsl(0 0% 94%);
+  --color-fd-accent-foreground: hsl(0 0% 9%);
+  --color-fd-ring: hsl(0 0% 64%);
+  --color-fd-overlay: hsl(0 0% 60% / 0.2);
+
+  --animate-fd-fade-in: fd-fade-in 300ms ease;
+  --animate-fd-fade-out: fd-fade-out 300ms ease;
+  --animate-fd-dialog-in: fd-dialog-in 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-fd-dialog-out: fd-dialog-out 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-fd-popover-in: fd-popover-in 100ms ease;
+  --animate-fd-popover-out: fd-popover-out 100ms ease;
+  --animate-fd-sidebar-in: fd-sidebar-in 250ms ease;
+  --animate-fd-sidebar-out: fd-sidebar-out 250ms ease;
+
+  @keyframes fd-fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fd-fade-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes fd-dialog-in {
+    from {
+      transform: scale(1.06);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes fd-dialog-out {
+    from {
+      transform: scale(1);
+    }
+    to {
+      transform: scale(1.04);
+      opacity: 0;
+    }
+  }
+
+  @keyframes fd-popover-in {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+  }
+
+  @keyframes fd-popover-out {
+    to {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+  }
+
+  @keyframes fd-sidebar-in {
+    from {
+      transform: translateX(var(--fd-sidebar-drawer-offset));
+    }
+  }
+
+  @keyframes fd-sidebar-out {
+    to {
+      transform: translateX(var(--fd-sidebar-drawer-offset));
+    }
+  }
+}
 
 :root {
-  --color-fd-primary: hsl(214.19, 100%, 83.14%);
+  --fd-sidebar-drawer-offset: 100%;
+}
+
+[dir='rtl'] {
+  --fd-sidebar-drawer-offset: -100%;
 }
 
 .dark {
   --color-fd-background: hsl(0 0% 0%);
-  --color-fd-card: hsl(0 0% 0%);
-  --color-fd-popover: hsl(0 0% 4%);
+  --color-fd-foreground: hsl(0 0% 98%);
   --color-fd-muted: hsl(0 0% 9%);
-  --color-fd-secondary: hsl(0 0% 9%);
-  --color-fd-accent: hsl(0 0% 14%);
+  --color-fd-muted-foreground: hsl(0 0% 60%);
+  --color-fd-popover: hsl(0 0% 4%);
+  --color-fd-popover-foreground: hsl(0 0% 98%);
+  --color-fd-card: hsl(0 0% 0%);
+  --color-fd-card-foreground: hsl(0 0% 98%);
   --color-fd-border: hsl(0 0% 100% / 0.12);
+  --color-fd-primary: hsl(214.19 100% 83.14%);
+  --color-fd-primary-foreground: hsl(0 0% 9%);
+  --color-fd-secondary: hsl(0 0% 9%);
+  --color-fd-secondary-foreground: hsl(0 0% 98%);
+  --color-fd-accent: hsl(0 0% 14%);
+  --color-fd-accent-foreground: hsl(0 0% 100%);
+  --color-fd-ring: hsl(0 0% 35%);
+  --color-fd-overlay: hsl(0 0% 0% / 0.5);
+}
+
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-fd-border, currentColor);
+  }
+
+  body {
+    background-color: var(--color-fd-background);
+    color: var(--color-fd-foreground);
+  }
+}
+
+@utility fd-scroll-container {
+  &::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background: var(--color-fd-border);
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-corner {
+    display: none;
+  }
+}
+
+@utility fd-steps {
+  counter-reset: step;
+  position: relative;
+  @apply ps-6 ms-2 border-s sm:ms-4 sm:ps-7;
+}
+
+@utility fd-step {
+  &:before {
+    background-color: var(--color-fd-secondary);
+    color: var(--color-fd-secondary-foreground);
+    content: counter(step);
+    counter-increment: step;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    display: flex;
+    position: absolute;
+    @apply size-8 -inset-s-4 rounded-full;
+  }
+}
+
+.fd-page-tree-item-name {
+  @apply inline-flex items-center gap-1 w-full;
+}
+
+/*
+ * Shiki runs with `defaultColor: false`, so tokens only carry `--shiki-light`/`--shiki-dark`
+ * and the theme is picked here rather than baked into the markup.
+ */
+@layer components {
+  .shiki,
+  .shiki span {
+    color: var(--shiki-light);
+  }
+
+  .dark .shiki,
+  .dark .shiki span {
+    color: var(--shiki-dark);
+  }
+
+  .shiki {
+    @apply overflow-x-auto p-4 text-[13px] leading-relaxed;
+  }
+
+  .shiki code {
+    @apply grid min-w-full;
+  }
+
+  .shiki .line {
+    @apply px-0;
+  }
+
+  .shiki .highlighted {
+    @apply bg-fd-primary/10 -mx-4 px-4;
+  }
+
+  .shiki .highlighted-word {
+    @apply bg-fd-primary/10 rounded-sm px-0.5;
+  }
+
+  .shiki .diff.add {
+    @apply bg-green-500/10;
+  }
+
+  .shiki .diff.remove {
+    @apply bg-red-500/10;
+  }
+}
+
+@utility fd-codeblock {
+  @apply my-4 overflow-x-auto rounded-xl border bg-fd-card text-[13px];
+
+  &:not(.shiki) {
+    @apply p-4;
+  }
+}
+
+/*
+ * Typography: `prose` opts content in, `not-prose` opts any subtree back out.
+ *
+ * These live in the components layer, not as a `@utility`, so that a utility on the element
+ * itself always wins. As a utility they tie on specificity with `m-0`/`mt-10` and silently
+ * beat them on source order.
+ */
+@layer components {
+  .prose {
+    @apply text-[0.95rem] leading-7;
+
+    & :where(h1, h2, h3, h4, h5, h6):not(:where(.not-prose, .not-prose *)) {
+      @apply font-semibold tracking-tight scroll-m-24;
+      margin-block: 1.6em 0.6em;
+      line-height: 1.3;
+    }
+
+    & :where(h1):not(:where(.not-prose, .not-prose *)) {
+      @apply text-3xl;
+    }
+
+    & :where(h2):not(:where(.not-prose, .not-prose *)) {
+      @apply text-2xl;
+    }
+
+    & :where(h3):not(:where(.not-prose, .not-prose *)) {
+      @apply text-xl;
+    }
+
+    & :where(h4, h5, h6):not(:where(.not-prose, .not-prose *)) {
+      @apply text-base;
+    }
+
+    & :where(p, ul, ol, blockquote, table, figure):not(:where(.not-prose, .not-prose *)) {
+      margin-block: 1em;
+    }
+
+    & :where(ul, ol):not(:where(.not-prose, .not-prose *)) {
+      @apply ps-6;
+    }
+
+    & :where(ul):not(:where(.not-prose, .not-prose *)) {
+      @apply list-disc;
+    }
+
+    & :where(ol):not(:where(.not-prose, .not-prose *)) {
+      @apply list-decimal;
+    }
+
+    & :where(li):not(:where(.not-prose, .not-prose *)) {
+      margin-block: 0.4em;
+    }
+
+    & :where(a):not(:where(.not-prose, .not-prose *)) {
+      @apply text-fd-primary font-medium underline underline-offset-4;
+    }
+
+    & :where(strong):not(:where(.not-prose, .not-prose *)) {
+      @apply font-semibold;
+    }
+
+    & :where(blockquote):not(:where(.not-prose, .not-prose *)) {
+      @apply border-s-2 ps-4 text-fd-muted-foreground;
+    }
+
+    & :where(hr):not(:where(.not-prose, .not-prose *)) {
+      @apply my-8;
+    }
+
+    & :where(code):not(:where(pre *, .not-prose, .not-prose *)) {
+      @apply rounded-md border bg-fd-secondary px-1.5 py-0.5 text-[0.85em] font-normal;
+    }
+
+    & :where(pre):not(:where(.not-prose, .not-prose *)) {
+      @apply overflow-x-auto rounded-xl border bg-fd-card;
+      margin-block: 1.25em;
+    }
+
+    & :where(table):not(:where(.not-prose, .not-prose *)) {
+      @apply w-full border-collapse text-sm;
+    }
+
+    & :where(th, td):not(:where(.not-prose, .not-prose *)) {
+      @apply border px-3 py-2 text-start;
+    }
+
+    & :where(th):not(:where(.not-prose, .not-prose *)) {
+      @apply bg-fd-secondary font-medium;
+    }
+
+    & :where(img, video):not(:where(.not-prose, .not-prose *)) {
+      @apply rounded-xl;
+    }
+  }
+}
+
+@utility prose-sm {
+  @apply text-sm leading-6;
+}
+
+@utility prose-no-margin {
+  & > :first-child {
+    margin-top: 0;
+  }
+
+  & > :last-child {
+    margin-bottom: 0;
+  }
 }

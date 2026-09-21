@@ -1,4 +1,4 @@
-import { useTreeContext, useTreePath } from '@fumadocs/base-ui/contexts/tree';
+import { useTreeContext, useTreePath } from '@/contexts/tree';
 import { type FC, Fragment, type ReactNode, createContext, use, useMemo } from 'react';
 import type * as PageTree from 'fumadocs-core/page-tree';
 import type * as Base from './base';

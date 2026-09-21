@@ -37,7 +37,7 @@ const Content = ({ path }: { path: string }) => {
 const PageContent: React.FC<{ page: Serialized<DocsLoaderData> }> = ({ page }) => {
   if (page.type === "openapi") {
     return (
-      <DocsPage full>
+      <DocsPage full footer={{ enabled: false }}>
         <DocsBody>
           <OpenAPIPage {...page.props} />
         </DocsBody>

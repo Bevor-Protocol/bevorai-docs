@@ -1,6 +1,21 @@
-import defaultMdxComponents from "@fumadocs/base-ui/mdx";
 import type { MDXComponents } from "mdx/types";
 import type { ComponentProps } from "react";
+import { APISchema } from "@/components/api/inline-schema";
+import { cn } from "@/lib/cn";
+
+const defaultMdxComponents = {
+  a: ({ className, ...props }: ComponentProps<"a">) => (
+    <a className={cn("font-medium underline underline-offset-4", className)} {...props} />
+  ),
+  pre: ({ className, ...props }: ComponentProps<"pre">) => (
+    <pre className={cn("fd-codeblock", className)} {...props} />
+  ),
+  table: ({ className, ...props }: ComponentProps<"table">) => (
+    <div className="my-6 overflow-x-auto">
+      <table className={cn("w-full border-collapse text-sm", className)} {...props} />
+    </div>
+  ),
+} satisfies MDXComponents;
 
 type BoxProps = ComponentProps<"div">;
 type FieldProps = BoxProps & {
@@ -23,7 +38,7 @@ const Callout = ({
       <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-fd-muted-foreground">
         {kind}
       </p>
-      <div className="text-sm [&>:first-child]:mt-0 [&>:last-child]:mb-0">{children}</div>
+      <div className="text-sm *:first:mt-0 *:last:mb-0">{children}</div>
     </div>
   );
 };
@@ -33,19 +48,19 @@ const Card = ({
   href,
   children,
 }: BoxProps & { title?: string; href?: string; icon?: string }) => {
-  const content = (
-    <>
-      {title && <div className="font-semibold">{title}</div>}
-      <div className="mt-1 text-sm text-fd-muted-foreground">{children}</div>
-    </>
-  );
-
   return href ? (
-    <a className="block rounded-xl border p-4 transition-colors hover:bg-fd-accent" href={href}>
-      {content}
+    <a
+      className="block rounded-xl border p-4 transition-colors hover:bg-fd-accent no-underline"
+      href={href}
+    >
+      {title && <div className="font-semibold underline">{title}</div>}
+      <div className="mt-1 text-sm text-fd-muted-foreground">{children}</div>
     </a>
   ) : (
-    <div className="rounded-xl border p-4">{content}</div>
+    <div className="rounded-xl border p-4">
+      {title && <div className="font-semibold">{title}</div>}
+      <div className="mt-1 text-sm text-fd-muted-foreground">{children}</div>
+    </div>
   );
 };
 
@@ -83,6 +98,7 @@ const Tab = ({ title, children }: BoxProps & { title?: string }) => {
 export const getMDXComponents = (components?: MDXComponents) => {
   return {
     ...defaultMdxComponents,
+    APISchema,
     Warning: (props: BoxProps) => <Callout kind="warning" {...props} />,
     Note: (props: BoxProps) => <Callout kind="note" {...props} />,
     Info: (props: BoxProps) => <Callout kind="info" {...props} />,

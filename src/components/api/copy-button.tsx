@@ -1,9 +1,7 @@
-"use client";
-
 import { useTranslations } from "@fuma-translate/react";
-import { useCopyButton } from "fumadocs-ui/utils/use-copy-button";
 import { Check, Clipboard } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
+import { useCopyButton } from "@/hooks/use-copy-button";
 import { cn } from "@/lib/cn";
 
 export const CopyButton = ({ code, className }: { code: string; className?: string }) => {

@@ -1,19 +1,9 @@
-"use client";
 import { useTranslations } from "@fuma-translate/react";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@fumadocs/api-docs/components/collapsible";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@fumadocs/api-docs/components/dialog";
 import { labelVariants } from "@fumadocs/api-docs/components/input";
 import {
   FieldInput,
@@ -27,23 +17,11 @@ import {
   useResolvedSchema,
 } from "@fumadocs/api-docs/components/playground/schema";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@fumadocs/api-docs/components/select";
-import { Spinner } from "@fumadocs/api-docs/components/spinner";
-import { dereferenceShallow } from "@fumadocs/api-docs/schema/dereference";
-import { joinURL, resolveServerUrl } from "@fumadocs/api-docs/utils/url";
-import {
   type DataEngine,
   type FieldKey,
-  StfProvider,
   useDataEngine,
   useFieldValue,
   useListener,
-  useStf,
 } from "@fumari/stf";
 import { arrayStartsWith, objectGet, objectSet, stringifyFieldKey } from "@fumari/stf/lib/utils";
 import { useOnChange } from "fumadocs-core/utils/use-on-change";
@@ -53,31 +31,19 @@ import type {
   ParameterObject,
   PathItemObject,
 } from "fumadocs-openapi";
-import { pathnameFromRequest } from "fumadocs-openapi/requests/generators";
-import { useOperationContext, useRenderContext, useServerContext } from "fumadocs-openapi/ui";
-import { ChevronDown, LoaderCircle, PlusIcon } from "lucide-react";
-import {
-  type ComponentProps,
-  type FC,
-  Fragment,
-  type ReactNode,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useOpenAPI } from "fumadocs-openapi";
+import { ChevronDown } from "lucide-react";
+import { type ComponentProps, type FC, Fragment, type ReactNode, useMemo, useState } from "react";
 import { cn } from "../../../lib/cn";
 import { buttonVariants } from "../../ui/button";
 import { useAuth } from "./auth";
-import { encodeRequestData } from "./encode";
 import type { BrowserFetcherOptions } from "./fetcher";
-import { MethodLabel } from "./method-label";
+import { Badge, getMethodColor } from "./method-label";
 import { OAuthDialog, OAuthDialogContent, OAuthDialogTrigger } from "./oauth-dialog";
 import { DefaultResultDisplay, type ResultDisplayProps } from "./result-display";
-import { getPreferredType, type ParsedSchema } from "./schema";
+import { type ParsedSchema } from "./schema";
 import ServerSelect from "./server-select";
 import { useStorageKey } from "./storage-key";
-import { useQuery } from "./use-query";
 
 export interface FormValues extends Record<string, unknown> {
   path: Record<string, unknown>;
@@ -140,6 +106,11 @@ export interface PlaygroundClientOptions {
   renderBodyField?: (fieldName: "body", info: RequestBodyInfo) => ReactNode;
 }
 
+const useRenderContext = () => ({
+  schema: useOpenAPI().doc,
+  playground: undefined as PlaygroundClientOptions | undefined,
+});
+
 interface RequestBodyInfo {
   schema: ParsedSchema;
   mediaType: string;
@@ -154,363 +125,19 @@ export default function PlaygroundClient({
   readOnly,
   ...rest
 }: PlaygroundClientProps) {
-  const t = useTranslations({ note: "playground" });
   const ctx = useRenderContext();
   const { dereferenced } = ctx.schema;
-  const { parameters, body } = useMemo(() => {
-    const parameters: ParameterObject[] = [];
-    if (operation.parameters)
-      for (const p of operation.parameters) parameters.push(dereferenceShallow(p));
-    if (pathItem.parameters)
-      for (const p of pathItem.parameters) parameters.push(dereferenceShallow(p));
-    let body: RequestBodyInfo | undefined;
-
-    if (operation.requestBody) {
-      const content = dereferenceShallow(operation.requestBody).content;
-      const mediaType = content ? getPreferredType(content) : undefined;
-
-      if (content && mediaType) {
-        body = {
-          mediaType,
-          schema: dereferenceShallow(content[mediaType]).schema ?? true,
-        };
-      }
-    }
-
-    return {
-      body,
-      parameters,
-    };
-  }, [operation, pathItem]);
-  const securityEntries = useMemo(() => {
-    const result: SecurityEntry[][] = [];
-    const security = operation.security ?? dereferenced.security ?? [];
-    if (security.length === 0) return result;
-
-    for (const map of security) {
-      const list: SecurityEntry[] = [];
-
-      for (const [key, scopes] of Object.entries(map)) {
-        list.push({
-          id: key,
-          scopes,
-        });
-      }
-
-      if (list.length > 0) result.push(list);
-    }
-
-    return result;
-  }, [dereferenced, operation.security]);
-
-  const { example: exampleId, examples, setExampleData } = useOperationContext();
-  const { server } = useServerContext();
-  const {
-    mediaAdapters,
-    playground: {
-      components: {
-        ResultDisplay = DefaultResultDisplay,
-        CollapsiblePanel = DefaultCollapsiblePanel,
-      } = {},
-      fetchOptions,
-      renderBodyField,
-    } = {},
-  } = useRenderContext();
-
-  const defaultValues: FormValues = useMemo(() => {
-    const requestData = examples.find((example) => example.id === exampleId)?.data;
-
-    return {
-      path: requestData?.path ?? {},
-      query: requestData?.query ?? {},
-      header: requestData?.header ?? {},
-      body: requestData?.body ?? {},
-      cookie: requestData?.cookie ?? {},
-    };
-  }, [examples, exampleId]);
-
-  const stf = useStf({
-    // it is fine to modify `defaultValues` in place
-    // because we already try to persist the form values via `setExampleData`.
-    defaultValues,
-  });
-
-  const { inputs, requirementId, setRequirementId, mapInputs, initAuthInputs } = useAuthInputs(
-    stf.dataEngine,
-    securityEntries,
-  );
-
-  const testQuery = useQuery(async (input: FormValues) => {
-    const fetcher = await import("./fetcher").then((mod) =>
-      mod.createBrowserFetcher(mediaAdapters, {
-        proxyUrl: ctx.proxyUrl,
-        ...fetchOptions,
-      }),
-    );
-
-    const encoded = encodeRequestData(
-      { ...mapInputs(input), method, bodyMediaType: body?.mediaType },
-      mediaAdapters,
-      parameters,
-    );
-    return fetcher.fetch(
-      joinURL(
-        new URL(
-          server ? resolveServerUrl(server.url, server.variables) : "/",
-          window.location.origin,
-        ).href,
-        pathnameFromRequest(route, encoded),
-      ),
-      encoded,
-    );
-  });
-
-  const timerRef = useRef<number | null>(null);
-  const stfSync = useRef(false);
-  function triggerExampleUpdate() {
-    const data = {
-      ...mapInputs(stf.dataEngine.getData() as FormValues),
-      method,
-      bodyMediaType: body?.mediaType,
-    };
-    setExampleData(data, encodeRequestData(data, mediaAdapters, parameters));
-  }
-
-  useListener({
-    stf,
-    onUpdate() {
-      if (!stfSync.current) return;
-      if (timerRef.current) {
-        window.clearTimeout(timerRef.current);
-      }
-
-      timerRef.current = window.setTimeout(triggerExampleUpdate, 400);
-    },
-  });
-
-  useEffect(() => {
-    // same object reference = unchanged
-    if (stf.dataEngine.getData() === defaultValues) return;
-
-    stf.dataEngine.reset(defaultValues);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- ignore other parts
-  }, [defaultValues]);
-
-  useEffect(() => {
-    const reset = initAuthInputs();
-    triggerExampleUpdate();
-    stfSync.current = true;
-    return () => {
-      stfSync.current = false;
-      reset();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- ignore other parts
-  }, [defaultValues, inputs]);
-
-  const [open, setOpen] = useState(false);
-
-  const send = () => {
-    testQuery.start(stf.dataEngine.getData() as FormValues);
-    setOpen(false);
-  };
 
   return (
-    <StfProvider value={stf}>
-      <SchemaProvider docRoot={dereferenced as never} writeOnly={writeOnly} readOnly={readOnly}>
-        <div
-          {...rest}
-          className={cn(
-            "not-prose flex flex-col rounded-xl border shadow-md overflow-hidden bg-fd-card text-fd-card-foreground",
-            rest.className,
-          )}
-        >
-          <ServerSelect className="border-b" />
-          <div className="flex flex-row items-center gap-2 text-sm p-3 not-last:pb-0">
-            <MethodLabel>{method}</MethodLabel>
-            <Route route={route} className={cn("flex-1", operation.deprecated && "line-through")} />
-            <Dialog open={open} onOpenChange={setOpen}>
-              <DialogTrigger
-                className={cn(buttonVariants({ variant: "default", size: "sm" }), "w-18 py-1.5")}
-                disabled={testQuery.isLoading}
-              >
-                {testQuery.isLoading ? (
-                  <LoaderCircle className="size-4 animate-spin" />
-                ) : (
-                  t("Try it out")
-                )}
-              </DialogTrigger>
-              <DialogContent className="max-w-2xl">
-                <DialogHeader>
-                  <DialogTitle>{t("Try it out")}</DialogTitle>
-                  <DialogDescription className="flex flex-row items-center gap-2">
-                    <MethodLabel>{method}</MethodLabel>
-                    <Route route={route} className="flex-1" />
-                  </DialogDescription>
-                </DialogHeader>
-                {/* the panels below the card already document every field, so they only
-                    appear here, where they're editable */}
-                <div className="-mx-4 max-h-[60vh] overflow-y-auto border-y">
-                  {securityEntries.length > 0 && (
-                    <SecurityRequirements
-                      securities={securityEntries}
-                      securityId={requirementId}
-                      setSecurityId={setRequirementId}
-                    >
-                      {inputs.map((input) => (
-                        <Fragment key={stringifyFieldKey(input.fieldName)}>
-                          {input.children}
-                        </Fragment>
-                      ))}
-                    </SecurityRequirements>
-                  )}
-                  <ParametersForm parameters={parameters} />
-                  {body && (
-                    <CollapsiblePanel data-type="body" title={t("Body")}>
-                      {renderBodyField ? (
-                        renderBodyField("body", body)
-                      ) : (
-                        <BodyInput field={body.schema} />
-                      )}
-                    </CollapsiblePanel>
-                  )}
-                </div>
-                <DialogFooter>
-                  <button
-                    type="button"
-                    className={cn(buttonVariants({ variant: "default", size: "sm" }))}
-                    onClick={send}
-                  >
-                    {t("Send")}
-                  </button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          </div>
-          {testQuery.data ? <ResultDisplay data={testQuery.data} reset={testQuery.reset} /> : null}
+    <SchemaProvider docRoot={dereferenced as never} writeOnly={writeOnly} readOnly={readOnly}>
+      <div {...rest} className={cn("not-prose flex overflow-hidden", rest.className)}>
+        <ServerSelect className="border-b" />
+        <div className="flex flex-row items-center gap-2 text-sm py-3 not-last:pb-0">
+          <Badge color={getMethodColor(method)}>{method.toUpperCase()}</Badge>
+          <Route route={route} className={cn("flex-1", operation.deprecated && "line-through")} />
         </div>
-      </SchemaProvider>
-    </StfProvider>
-  );
-}
-
-function SecurityRequirements({
-  securities,
-  setSecurityId,
-  securityId,
-  children,
-}: {
-  securities: SecurityEntry[][];
-  securityId: number;
-  setSecurityId: (value: number) => void;
-  children: ReactNode;
-}) {
-  const t = useTranslations({ note: "playground" });
-  const { isLoading, error } = useAuth();
-  const defaultOpen = isLoading || error != null;
-  const [open, setOpen] = useState(defaultOpen);
-  const {
-    schema: { dereferenced, resolve },
-    playground: { components: { CollapsiblePanel = DefaultCollapsiblePanel } = {} } = {},
-  } = useRenderContext();
-  const schemes = dereferenced.components?.securitySchemes;
-
-  useOnChange(defaultOpen, () => {
-    if (defaultOpen) setOpen(true);
-  });
-
-  const items = securities.map((requirement, i) => {
-    if (requirement.length === 1) {
-      const scheme = resolve(schemes?.[requirement[0].id]);
-
-      return {
-        value: i,
-        label: (
-          <div>
-            <p
-              className={cn(
-                "font-mono font-medium",
-                scheme?.deprecated && "text-fd-muted-foreground line-through",
-              )}
-            >
-              {requirement[0].id}
-            </p>
-            <p className="text-fd-muted-foreground whitespace-pre-wrap">{scheme?.description}</p>
-          </div>
-        ),
-      };
-    }
-
-    return {
-      value: i,
-      label: (
-        <div>
-          <p className="inline-flex items-center gap-1 font-mono font-medium">
-            {requirement.map((item, i) => (
-              <Fragment key={i}>
-                {i > 0 && <PlusIcon className="text-fd-muted-foreground size-3.5" />}
-                <span
-                  className={cn(
-                    resolve(schemes?.[item.id])?.deprecated &&
-                      "text-fd-muted-foreground line-through",
-                  )}
-                >
-                  {item.id}
-                </span>
-              </Fragment>
-            ))}
-          </p>
-          <ul className="text-fd-muted-foreground whitespace-pre-wrap list-disc list-inside">
-            {requirement.map((item, i) => (
-              <li key={i} className="empty:hidden">
-                {resolve(schemes?.[item.id])?.description}
-              </li>
-            ))}
-          </ul>
-        </div>
-      ),
-    };
-  });
-
-  return (
-    <CollapsiblePanel
-      title={
-        <>
-          {t("Authorization")}
-          {isLoading && (
-            <span className="border-s ps-2 inline-flex items-center gap-1.5 text-fd-muted-foreground text-xs font-mono">
-              <Spinner /> {t("Fetching token...")}
-            </span>
-          )}
-        </>
-      }
-      data-type="authorization"
-      open={open}
-      onOpenChange={setOpen}
-    >
-      {error != null && (
-        <div className="p-2 border rounded-lg bg-fd-secondary">
-          <p className="text-fd-muted-foreground font-medium mb-1">{t("Failed to fetch token")}</p>
-          <p>{String(error)}</p>
-        </div>
-      )}
-      <Select
-        items={items}
-        value={securityId}
-        onValueChange={(v) => v !== null && setSecurityId(v)}
-      >
-        <SelectTrigger>
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {items.map(({ value, label }) => (
-            <SelectItem key={value} value={value}>
-              {label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      {children}
-    </CollapsiblePanel>
+      </div>
+    </SchemaProvider>
   );
 }
 

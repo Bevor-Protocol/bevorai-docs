@@ -1,6 +1,6 @@
 'use client';
 import type { ComponentProps } from 'react';
-import { useI18n } from '@fumadocs/base-ui/contexts/i18n';
+import { useI18n } from '@/contexts/i18n';
 import { useTranslations } from '@fuma-translate/react';
 import { Popover, PopoverContent, PopoverTrigger } from '../../../components/ui/popover';
 import { cn } from '../../../lib/cn';

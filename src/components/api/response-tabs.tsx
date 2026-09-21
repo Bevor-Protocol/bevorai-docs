@@ -1,5 +1,3 @@
-"use client";
-
 import { useTranslations } from "@fuma-translate/react";
 import {
   Select,
@@ -8,35 +6,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@fumadocs/api-docs/components/select";
-import type { RenderContext } from "fumadocs-openapi";
-import type { CreateOpenAPIPageOptions } from "fumadocs-openapi/ui";
-import type { CodeBlockProps } from "fumadocs-ui/components/codeblock";
+import { useComponents } from "fumadocs-openapi";
+import type { ResponseTab } from "fumadocs-openapi/operation";
 import { useMemo, useState } from "react";
 import { CopyButton } from "@/components/api/copy-button";
-import { ClientCodeBlock } from "@/components/api/playground/codeblock";
 import { useSharedSelection } from "@/components/api/use-shared-selection";
 import { cn } from "@/lib/cn";
 
 const GROUP_ID = "fumadocs_openapi_responses";
-
-const CODE_BLOCK_PROPS = {
-  allowCopy: false,
-  className: "my-0 rounded-none border-0 bg-transparent shadow-none",
-} satisfies CodeBlockProps;
-
-type RenderResponseTabs = NonNullable<
-  NonNullable<CreateOpenAPIPageOptions["content"]>["renderResponseTabs"]
->;
-export type ResponseTabsRenderOptions = Parameters<RenderResponseTabs>[0];
-
-const statusColor = (code: string) => {
-  const status = Number.parseInt(code, 10);
-
-  if (Number.isNaN(status)) return "bg-fd-muted-foreground";
-  if (status < 300) return "bg-green-500";
-  if (status < 400) return "bg-yellow-500";
-  return "bg-red-500";
-};
 
 const langOf = (mediaType: string | null) => {
   if (!mediaType) return "json";
@@ -46,26 +23,12 @@ const langOf = (mediaType: string | null) => {
   return "text";
 };
 
-const Markdown = ({ md, ctx }: { md: string; ctx: RenderContext }) => {
-  const rendered = useMemo(() => ctx._default_processMarkdown(md), [ctx, md]);
-
-  if (ctx.renderMarkdown) return ctx.renderMarkdown(md);
-  if (ctx.components?.Markdown) return <ctx.components.Markdown md={md} />;
-  return rendered;
-};
-
-export const ResponseTabs = ({
-  options,
-  ctx,
-}: {
-  options: ResponseTabsRenderOptions;
-  ctx: RenderContext;
-}) => {
+export const ResponseTabs = ({ tabs }: { tabs: ResponseTab[] }) => {
   const t = useTranslations({ note: "operation page" });
+  const { CodeBlock, Markdown } = useComponents();
   const [activeCode, setActiveCode] = useSharedSelection(GROUP_ID);
   const [exampleIndex, setExampleIndex] = useState(0);
 
-  const { tabs } = options;
   const tab = tabs.find((item) => item.code === activeCode) ?? tabs[0];
   const examples = tab?.examples ?? [];
   const index = Math.max(Math.min(exampleIndex, examples.length - 1), 0);
@@ -93,7 +56,6 @@ export const ResponseTabs = ({
                 : "text-fd-muted-foreground hover:text-fd-accent-foreground",
             )}
           >
-            <span className={cn("size-1.5 rounded-full", statusColor(item.code))} />
             {item.code}
           </button>
         ))}
@@ -109,7 +71,6 @@ export const ResponseTabs = ({
               </SelectTrigger>
               <SelectContent>
                 {examples.map((item, i) => (
-                  // biome-ignore lint/suspicious/noArrayIndexKey: examples have no stable id
                   <SelectItem key={i} value={i.toString()}>
                     {item.label}
                   </SelectItem>
@@ -122,14 +83,16 @@ export const ResponseTabs = ({
       </div>
       {example?.description && (
         <div className="border-b px-3 py-2 text-sm">
-          <Markdown md={example.description} ctx={ctx} />
+          <Markdown md={example.description} />
         </div>
       )}
       {code ? (
-        <ClientCodeBlock
+        <CodeBlock
           lang={langOf(tab.mediaType)}
           code={code}
-          codeblock={CODE_BLOCK_PROPS}
+          codeblock={{
+            className: "max-h-200 overflow-scroll scrollbar-none",
+          }}
         />
       ) : (
         <p className="px-3 py-2.5 text-xs text-fd-muted-foreground">{t("Empty")}</p>
