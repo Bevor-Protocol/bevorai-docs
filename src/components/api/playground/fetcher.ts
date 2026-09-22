@@ -1,18 +1,17 @@
-import type { RequestData } from './types';
-import type { MediaAdapter } from 'fumadocs-openapi';
-import { resolveMediaAdapter } from './resolve-adapter';
-import type { Awaitable } from 'fumadocs-openapi';
+import type { Awaitable, MediaAdapter } from "fumadocs-openapi";
+import { resolveMediaAdapter } from "./resolve-adapter";
+import type { RequestData } from "./types";
 
 export type FetchResult = FetchResponseResult | FetchErrorResult;
 
 export interface FetchErrorResult {
-  type: 'client_error';
+  type: "client_error";
   url: string;
   message: string;
 }
 
 export interface FetchResponseResult {
-  type: 'response';
+  type: "response";
   url: string;
   status: number;
   headers: Headers;
@@ -62,9 +61,9 @@ export function createBrowserFetcher(
       let requestUrl = new URL(url, document.baseURI);
       let requestInit: RequestInit = {
         method: data.method,
-        cache: 'no-cache',
+        cache: "no-cache",
         signal:
-          typeof requestTimeout === 'number'
+          typeof requestTimeout === "number"
             ? AbortSignal.timeout(requestTimeout * 1000)
             : undefined,
       };
@@ -78,20 +77,20 @@ export function createBrowserFetcher(
 
       if (proxyUrl) {
         requestUrl = new URL(proxyUrl, document.baseURI);
-        requestUrl.searchParams.append('url', url);
+        requestUrl.searchParams.append("url", url);
       }
 
       if (data.bodyMediaType && data.body) {
         const adapter = resolveMediaAdapter(data.bodyMediaType, adapters);
         if (!adapter)
           return {
-            type: 'client_error',
+            type: "client_error",
             url,
             message: `[Fumadocs] No adapter for ${data.bodyMediaType}, you need to specify one from 'createOpenAPI()'.`,
           };
 
-        if (data.bodyMediaType !== 'multipart/form-data') {
-          headers.append('Content-Type', data.bodyMediaType);
+        if (data.bodyMediaType !== "multipart/form-data") {
+          headers.append("Content-Type", data.bodyMediaType);
         }
 
         requestInit.body = adapter.encode(data as { body: unknown });
@@ -101,9 +100,9 @@ export function createBrowserFetcher(
       if (proxyUrl && proxyForwardCookie) {
         const encoded = Object.entries(data.cookie)
           .map(([k, v]) => `${k}=${encodeURIComponent(v.value)}`)
-          .join('; ');
-        requestUrl.searchParams.set('cookie', encoded);
-        requestInit.credentials = 'omit';
+          .join("; ");
+        requestUrl.searchParams.set("cookie", encoded);
+        requestInit.credentials = "omit";
       } else {
         for (const key in data.cookie) {
           const param = data.cookie[key];
@@ -111,9 +110,9 @@ export function createBrowserFetcher(
 
           if (proxyUrl && requestUrl.origin !== window.location.origin)
             segs.push(`domain=${requestUrl.host}`);
-          segs.push('path=/', 'max-age=30');
+          segs.push("path=/", "max-age=30");
 
-          document.cookie = segs.join('; ');
+          document.cookie = segs.join("; ");
         }
       }
 
@@ -122,7 +121,7 @@ export function createBrowserFetcher(
       return fetch(requestUrl, requestInit)
         .then(async (res): Promise<FetchResult> => {
           return {
-            type: 'response',
+            type: "response",
             url: res.url,
             status: res.status,
             headers: res.headers,
@@ -133,7 +132,7 @@ export function createBrowserFetcher(
           const message = e instanceof Error ? `[${e.name}] ${e.message}` : e.toString();
 
           return {
-            type: 'client_error',
+            type: "client_error",
             url,
             message: `Client side error: ${message}`,
           };

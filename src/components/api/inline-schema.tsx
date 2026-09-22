@@ -1,7 +1,7 @@
 import type { ParsedSchema } from "@fumadocs/api-docs/schema";
 import { Suspense, use } from "react";
 import { ClientCodeBlock } from "@/components/api/playground/codeblock";
-import { Schema } from "@/components/api/schema/index";
+import { SchemaUI } from "@/components/api/schema/index";
 import { getOpenAPISchema } from "@/server/schema";
 
 const cache = new Map<string, Promise<ParsedSchema>>();
@@ -21,9 +21,9 @@ const Content = ({ name, as }: { name: string; as: "property" | "body" }) => {
   const root = use(load(name));
 
   return (
-    <Schema
+    <SchemaUI
       root={root}
-      client={{ name, as }}
+      client={{ name, as, rootId: "inline" }}
       renderMarkdown={(md) => md}
       renderCodeblock={(props) => <ClientCodeBlock {...props} />}
     />

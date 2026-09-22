@@ -1,6 +1,6 @@
 import { createOpenAPIRenderer, type PageLayoutProps } from "fumadocs-openapi";
 import { type ComponentProps, createElement, Fragment } from "react";
-import { Schema } from "@/components/api/schema";
+import { SchemaUI } from "@/components/api/schema";
 import { Footer } from "@/layouts/docs/page/slots/footer";
 import { Operation } from "./api/operation";
 import { ClientCodeBlock } from "./api/playground/codeblock";
@@ -39,6 +39,7 @@ const Layout = ({ operations, webhooks }: PageLayoutProps) => (
 );
 
 export const OpenAPIPage = createOpenAPIRenderer({
+  storageKeyPrefix: "bevor",
   shikiOptions: {
     themes: {
       light: "light-plus",
@@ -46,9 +47,10 @@ export const OpenAPIPage = createOpenAPIRenderer({
     },
     defaultColor: false,
   },
+  showResponseSchema: true,
   components: {
     Operation,
-    SchemaUI: Schema,
+    SchemaUI,
     CodeBlock: ClientCodeBlock,
     Markdown,
     Heading,

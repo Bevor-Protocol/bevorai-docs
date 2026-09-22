@@ -1,7 +1,6 @@
-import type { MediaAdapter } from 'fumadocs-openapi';
-import { resolveMediaAdapter } from './resolve-adapter';
-import type { ParameterObject } from 'fumadocs-openapi';
-import type { RawRequestData, RequestData } from './types';
+import type { MediaAdapter, ParameterObject } from "fumadocs-openapi";
+import { resolveMediaAdapter } from "./resolve-adapter";
+import type { RawRequestData, RequestData } from "./types";
 
 export interface EncodedParameter {
   readonly value: string;
@@ -29,7 +28,7 @@ export function encodeRequestData(
     query: {},
   };
 
-  for (const type of ['cookie', 'query', 'header', 'path'] as const) {
+  for (const type of ["cookie", "query", "header", "path"] as const) {
     for (const key in from[type]) {
       const value = from[type][key];
       if (value == null) continue;
@@ -41,25 +40,25 @@ export function encodeRequestData(
 
       const encoder = getMediaEncoder(field, adapters);
       if (encoder) {
-        if (type === 'query') result[type][key] = { values: [encoder(value)] };
+        if (type === "query") result[type][key] = { values: [encoder(value)] };
         else result[type][key] = { value: encoder(value) };
         continue;
       }
 
       switch (type) {
-        case 'path':
+        case "path":
           serializePathParameter(field, value, result.path);
           break;
-        case 'query':
+        case "query":
           serializeQueryParameter(field, value, result.query);
           break;
-        case 'header': {
+        case "header": {
           result.header[key] = {
             value: serializeSimple(value, field.explode ?? false),
           };
           break;
         }
-        case 'cookie':
+        case "cookie":
           serializeCookieParameter(field, value, result.cookie);
           break;
       }
@@ -82,14 +81,14 @@ function getMediaEncoder(field: ParameterObject, adapters: Record<string, MediaA
 
 function serializeSimple(value: NonNullable<unknown>, explode: boolean): string {
   if (Array.isArray(value)) {
-    return value.join(',');
+    return value.join(",");
   }
-  if (typeof value === 'object') {
+  if (typeof value === "object") {
     return explode
       ? Object.entries(value)
           .map(([k, v]) => `${k}=${v}`)
-          .join(',')
-      : Object.entries(value).flat().join(',');
+          .join(",")
+      : Object.entries(value).flat().join(",");
   }
   return String(value);
 }
@@ -103,22 +102,22 @@ function serializePathParameter(
   const { explode = false, name } = field;
 
   switch (field.style) {
-    case 'label':
+    case "label":
       if (Array.isArray(value)) {
         output[field.name!] = {
-          value: '.' + value.join(explode ? '.' : ','),
+          value: "." + value.join(explode ? "." : ","),
         };
         break;
       }
-      if (typeof value === 'object') {
+      if (typeof value === "object") {
         output[field.name!] = {
           value:
-            '.' +
+            "." +
             (explode
               ? Object.entries(value)
                   .map(([k, v]) => `${k}=${v}`)
-                  .join('.')
-              : Object.entries(value).flat().join(',')),
+                  .join(".")
+              : Object.entries(value).flat().join(",")),
         };
         break;
       }
@@ -126,24 +125,24 @@ function serializePathParameter(
         value: `.${value}`,
       };
       break;
-    case 'matrix': {
+    case "matrix": {
       const specifier = `;${name}=`;
 
       if (Array.isArray(value)) {
         output[field.name!] = {
           value: explode
-            ? `${specifier}${value.join(',')}`
+            ? `${specifier}${value.join(",")}`
             : `${specifier}${value.join(specifier)}`,
         };
         break;
       }
-      if (typeof value === 'object') {
+      if (typeof value === "object") {
         output[field.name!] = {
           value: explode
             ? Object.entries(value)
                 .map(([k, v]) => `;${k}=${v}`)
-                .join('')
-            : specifier + Object.entries(value).flat().join(','),
+                .join("")
+            : specifier + Object.entries(value).flat().join(","),
         };
         break;
       }
@@ -169,21 +168,21 @@ function serializeQueryParameter(
 ): void {
   const { style, explode = true } = field;
 
-  if (style === 'spaceDelimited' && !explode && Array.isArray(value)) {
+  if (style === "spaceDelimited" && !explode && Array.isArray(value)) {
     output[field.name!] = {
-      values: [value.join(' ')],
+      values: [value.join(" ")],
     };
     return;
   }
 
-  if (style === 'pipeDelimited' && !explode && Array.isArray(value)) {
+  if (style === "pipeDelimited" && !explode && Array.isArray(value)) {
     output[field.name!] = {
-      values: [value.join('|')],
+      values: [value.join("|")],
     };
     return;
   }
 
-  if (style === 'deepObject' && !Array.isArray(value) && typeof value === 'object') {
+  if (style === "deepObject" && !Array.isArray(value) && typeof value === "object") {
     for (const [k, v] of Object.entries(value)) {
       output[`${field.name}[${k}]`] = {
         // note: the behaviour of nested array is undefined, we do this to avoid edge cases
@@ -195,12 +194,12 @@ function serializeQueryParameter(
 
   if (Array.isArray(value)) {
     output[field.name!] = {
-      values: explode ? value : [value.join(',')],
+      values: explode ? value : [value.join(",")],
     };
     return;
   }
 
-  if (typeof value === 'object' && explode) {
+  if (typeof value === "object" && explode) {
     for (const [k, v] of Object.entries(value)) {
       output[k] = {
         values: [String(v)],
@@ -209,9 +208,9 @@ function serializeQueryParameter(
     return;
   }
 
-  if (typeof value === 'object') {
+  if (typeof value === "object") {
     output[field.name!] = {
-      values: [Object.entries(value).flat().join(',')],
+      values: [Object.entries(value).flat().join(",")],
     };
     return;
   }
@@ -232,17 +231,17 @@ function serializeCookieParameter(
   // form
   if (Array.isArray(value)) {
     output[field.name!] = {
-      value: explode ? value.map((v) => `${field.name}=${v}`).join('&') : value.join(','),
+      value: explode ? value.map((v) => `${field.name}=${v}`).join("&") : value.join(","),
     };
-  } else if (typeof value === 'object' && explode) {
+  } else if (typeof value === "object" && explode) {
     for (const [k, v] of Object.entries(value)) {
       output[k] = {
         value: String(v),
       };
     }
-  } else if (typeof value === 'object') {
+  } else if (typeof value === "object") {
     output[field.name!] = {
-      value: Object.entries(value).flat().join(','),
+      value: Object.entries(value).flat().join(","),
     };
   } else {
     output[field.name!] = {

@@ -1,7 +1,7 @@
-import { useOpenAPI } from 'fumadocs-openapi';
-import { useMemo } from 'react';
+import { useOpenAPI } from "fumadocs-openapi";
+import { useMemo } from "react";
 
-type KeyName = 'server-url' | `auth-${string}`;
+type KeyName = "server-url" | `auth-${string}`;
 
 export function useStorageKey() {
   const { storageKeyPrefix } = useOpenAPI();
@@ -15,6 +15,6 @@ export function useStorageKey() {
   );
 }
 
-function getStorageKey(prefix = 'fumadocs-openapi-', name: KeyName) {
+function getStorageKey(prefix = "fumadocs-openapi-", name: KeyName) {
   return prefix + name;
 }

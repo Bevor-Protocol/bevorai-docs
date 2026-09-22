@@ -1,45 +1,45 @@
-'use client';
-import { Fragment, type ReactNode, useEffect, useMemo, useState, type ComponentProps } from 'react';
-import { ChevronDown, CircleX, SignpostIcon } from 'lucide-react';
-import type { FetchResponseResult, FetchResult } from './fetcher';
-import { useStatusInfo } from './status-info';
-import { buttonVariants } from '../../ui/button';
-import { cn } from '../../../lib/cn';
-import { ClientCodeBlock } from './codeblock';
-import { useTranslations } from '@fuma-translate/react';
-import { safeParse } from 'fast-content-type-parse';
-import { cva } from 'class-variance-authority';
-import type { BuiltinLanguage, SpecialLanguage } from 'shiki';
+"use client";
+import { useTranslations } from "@fuma-translate/react";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from '@fumadocs/api-docs/components/collapsible';
+} from "@fumadocs/api-docs/components/collapsible";
+import { cva } from "class-variance-authority";
+import { safeParse } from "fast-content-type-parse";
+import { ChevronDown, CircleX, SignpostIcon } from "lucide-react";
+import { type ComponentProps, Fragment, type ReactNode, useEffect, useMemo, useState } from "react";
+import type { BuiltinLanguage, SpecialLanguage } from "shiki";
+import { cn } from "../../../lib/cn";
+import { buttonVariants } from "../../ui/button";
+import { ClientCodeBlock } from "./codeblock";
+import type { FetchResponseResult, FetchResult } from "./fetcher";
+import { useStatusInfo } from "./status-info";
 
-export interface ResultDisplayProps extends ComponentProps<'div'> {
+export interface ResultDisplayProps extends ComponentProps<"div"> {
   data: FetchResult;
   reset: () => void;
 }
 
 const panelVariants = cva(
-  'flex flex-col gap-3 mt-2 px-3 py-2 border-y bg-fd-secondary text-fd-secondary-foreground',
+  "flex flex-col gap-3 mt-2 px-3 py-2 border-y bg-fd-secondary text-fd-secondary-foreground",
 );
 
 export function DefaultResultDisplay({ data, reset, ...rest }: ResultDisplayProps) {
-  const t = useTranslations({ note: 'playground result display' });
+  const t = useTranslations({ note: "playground result display" });
 
-  if (data.type === 'client_error') {
+  if (data.type === "client_error") {
     return (
       <div {...rest} className={cn(panelVariants(), rest.className)}>
         <div className="flex gap-1.5 items-center">
           <CircleX className="size-4 text-red-500" />
-          <p className="text-sm font-medium me-auto">{t('Client Error')}</p>
+          <p className="text-sm font-medium me-auto">{t("Client Error")}</p>
           <button
             type="button"
-            className={cn(buttonVariants({ size: 'sm', variant: 'outline' }))}
+            className={cn(buttonVariants({ size: "sm", variant: "outline" }))}
             onClick={() => reset()}
           >
-            {t('Close')}
+            {t("Close")}
           </button>
         </div>
         <p className="flex items-start gap-2 text-xs font-mono text-fd-muted-foreground break-all">
@@ -57,24 +57,24 @@ export function DefaultResultDisplay({ data, reset, ...rest }: ResultDisplayProp
 function getTextFormat(mime: string): BuiltinLanguage | SpecialLanguage | null {
   switch (mime) {
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/MIME_types/Common_types
-    case 'application/json':
-      return 'json';
-    case 'text/html':
-      return 'html';
-    case 'text/css':
-      return 'css';
-    case 'text/csv':
-      return 'csv';
-    case 'application/javascript':
-    case 'application/x-javascript':
-      return 'js';
-    case 'application/xml':
-      return 'xml';
+    case "application/json":
+      return "json";
+    case "text/html":
+      return "html";
+    case "text/css":
+      return "css";
+    case "text/csv":
+      return "csv";
+    case "application/javascript":
+    case "application/x-javascript":
+      return "js";
+    case "application/xml":
+      return "xml";
   }
 
-  if (mime.endsWith('+json')) return 'json';
-  if (mime.endsWith('+xml')) return 'xml';
-  if (mime.startsWith('text/')) return 'text';
+  if (mime.endsWith("+json")) return "json";
+  if (mime.endsWith("+xml")) return "xml";
+  if (mime.startsWith("text/")) return "text";
   return null;
 }
 
@@ -82,19 +82,19 @@ function ResponseResult({
   data,
   reset,
   ...rest
-}: ComponentProps<'div'> & {
+}: ComponentProps<"div"> & {
   data: FetchResponseResult;
   reset: () => void;
 }) {
-  const t = useTranslations({ note: 'playground result display' });
+  const t = useTranslations({ note: "playground result display" });
   const statusInfo = useStatusInfo(data.status);
   const { parameters, type } = useMemo(
-    () => safeParse(data.headers.get('Content-Type') ?? 'text/plain'),
+    () => safeParse(data.headers.get("Content-Type") ?? "text/plain"),
     [data.headers],
   );
   let body: ReactNode;
 
-  if (type.startsWith('image/')) {
+  if (type.startsWith("image/")) {
     body = <ImageResult mime={type} buffer={data.body} />;
   } else if (data.body.byteLength > 0) {
     const lang = getTextFormat(type);
@@ -106,7 +106,7 @@ function ResponseResult({
         <div className="p-2 border rounded-lg bg-fd-card text-fd-card-foreground">
           {type && <p className="text-xs font-mono text-fd-muted-foreground mb-1">{type}</p>}
           <p className="font-medium">
-            {t('Binary response body, {length} bytes', {
+            {t("Binary response body, {length} bytes", {
               variables: {
                 length: String(data.body.byteLength),
               },
@@ -120,16 +120,16 @@ function ResponseResult({
   return (
     <div {...rest} className={cn(panelVariants(), rest.className)}>
       <div className="flex items-center gap-1.5">
-        <statusInfo.icon className={cn('size-4 shrink-0', statusInfo.color)} />
+        <statusInfo.icon className={cn("size-4 shrink-0", statusInfo.color)} />
         <p className="text-sm font-medium text-nowrap">
           {data.status} {statusInfo.description}
         </p>
         <button
           type="button"
-          className={cn(buttonVariants({ size: 'sm', variant: 'outline' }), 'ms-auto')}
+          className={cn(buttonVariants({ size: "sm", variant: "outline" }), "ms-auto")}
           onClick={() => reset()}
         >
-          {t('Close')}
+          {t("Close")}
         </button>
       </div>
       <p className="flex items-start gap-2 text-xs font-mono text-fd-muted-foreground break-all">
@@ -143,14 +143,14 @@ function ResponseResult({
 }
 
 function ResponseHeaders({ headers }: { headers: Headers }) {
-  const t = useTranslations({ note: 'playground result display' });
+  const t = useTranslations({ note: "playground result display" });
   const entries = Array.from(headers);
   if (entries.length === 0) return;
 
   return (
     <Collapsible>
       <CollapsibleTrigger className="group inline-flex w-fit items-center gap-1 text-xs font-medium text-fd-muted-foreground hover:text-fd-accent-foreground">
-        {t('Headers')}
+        {t("Headers")}
         <span className="font-normal">({entries.length})</span>
         <ChevronDown className="size-3.5 group-data-[panel-open]:rotate-180" />
       </CollapsibleTrigger>
@@ -187,8 +187,8 @@ function TextResult({
       } catch {}
     }
 
-    out ??= new TextDecoder('utf-8').decode(data.body);
-    if (lang === 'json') {
+    out ??= new TextDecoder("utf-8").decode(data.body);
+    if (lang === "json") {
       try {
         out = JSON.stringify(JSON.parse(out), null, 2);
       } catch {}
@@ -199,7 +199,7 @@ function TextResult({
 
   return (
     <ClientCodeBlock
-      lang={code.length > 5000 ? 'text' : lang}
+      lang={code.length > 5000 ? "text" : lang}
       code={code}
       codeblock={{
         title: <span className="text-xs font-mono">{contentType}</span>,

@@ -1,21 +1,21 @@
-'use client';
-import { useOpenAPI } from 'fumadocs-openapi';
-import { useQuery } from './use-query';
-import { createContext, type ReactNode, use, useEffect, useMemo, useState } from 'react';
-import type { AuthCodeState, ImplicitState } from './oauth-dialog';
+"use client";
+import { useOpenAPI } from "fumadocs-openapi";
+import { createContext, type ReactNode, use, useEffect, useMemo, useState } from "react";
+import type { AuthCodeState, ImplicitState } from "./oauth-dialog";
+import { useQuery } from "./use-query";
 
 /** scheme name -> token info */
 type TokenStore = Record<string, TokenInfo | undefined>;
 type TokenInfo =
   | {
-      type: 'authorization_code';
+      type: "authorization_code";
       redirect_uri: string;
       client_id: string;
       client_secret: string;
       token: string;
     }
   | {
-      type: 'implicit';
+      type: "implicit";
       client_id: string;
       token: string;
     };
@@ -31,7 +31,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export function useAuth() {
   const ctx = use(AuthContext);
-  if (!ctx) throw new Error('must use this component under <AuthProvider />');
+  if (!ctx) throw new Error("must use this component under <AuthProvider />");
   return ctx;
 }
 
@@ -42,17 +42,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const authCodeQuery = useQuery(async (code: string, state: AuthCodeState) => {
     const scheme = resolve(schemes?.[state.scheme]);
-    if (!scheme || scheme.type !== 'oauth2') return;
+    if (!scheme || scheme.type !== "oauth2") return;
     const value = scheme.flows?.authorizationCode;
     if (!value) return;
 
     const res = await fetch(value.tokenUrl!, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        "Content-Type": "application/x-www-form-urlencoded",
       },
       body: new URLSearchParams({
-        grant_type: 'authorization_code',
+        grant_type: "authorization_code",
         code,
         // note: `state` could be invalid, but server will check it
         redirect_uri: state.redirect_uri,
@@ -62,13 +62,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     if (!res.ok) throw new Error(await res.text());
-    const { access_token, token_type = 'Bearer' } = (await res.json()) as {
+    const { access_token, token_type = "Bearer" } = (await res.json()) as {
       access_token: string;
       token_type?: string;
     };
 
     const info: TokenInfo = {
-      type: 'authorization_code',
+      type: "authorization_code",
       ...state,
       token: `${token_type} ${access_token}`,
     };
@@ -81,29 +81,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     function onQuery() {
       const query = new URLSearchParams(window.location.search);
-      const state = query.get('state');
-      const code = query.get('code');
+      const state = query.get("state");
+      const code = query.get("code");
       if (!state || !code) return;
 
       const parsedState = JSON.parse(state) as AuthCodeState;
 
       authCodeQuery.start(code, parsedState);
-      window.history.replaceState(null, '', window.location.pathname);
+      window.history.replaceState(null, "", window.location.pathname);
     }
 
     function onHash() {
       const hash = new URLSearchParams(window.location.hash.slice(1));
-      const state = hash.get('state');
-      const token = hash.get('access_token');
-      const type = hash.get('token_type') ?? 'Bearer';
+      const state = hash.get("state");
+      const token = hash.get("access_token");
+      const type = hash.get("token_type") ?? "Bearer";
       if (!state || !token) return;
 
       const parsedState = JSON.parse(state) as ImplicitState;
       const scheme = resolve(schemes?.[parsedState.scheme]);
-      if (!scheme || scheme.type !== 'oauth2' || !scheme.flows?.implicit) return;
+      if (!scheme || scheme.type !== "oauth2" || !scheme.flows?.implicit) return;
 
       const info: TokenInfo = {
-        type: 'implicit',
+        type: "implicit",
         client_id: parsedState.client_id,
         token: `${type} ${token}`,
       };
@@ -111,7 +111,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         ...s,
         [parsedState.scheme]: info,
       }));
-      window.history.replaceState(null, '', window.location.pathname);
+      window.history.replaceState(null, "", window.location.pathname);
     }
 
     if (window.location.search.length > 0) onQuery();

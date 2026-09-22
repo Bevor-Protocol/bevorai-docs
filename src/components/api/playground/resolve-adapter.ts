@@ -1,4 +1,4 @@
-import type { MediaAdapter } from 'fumadocs-openapi';
+import type { MediaAdapter } from "fumadocs-openapi";
 
 const VariantMediaTypeRegex =
   /^(?<dir>[a-zA-Z0-9._-]+)\/(?<content>[a-zA-Z0-9._-]+)\+(?<variant>[a-zA-Z0-9._-]+)$/;
@@ -16,7 +16,7 @@ export function resolveMediaAdapter(
   adapters: Record<string, MediaAdapter>,
 ): MediaAdapter | undefined {
   // Normalize media type (remove parameters like charset)
-  const normalized = mediaType.split(';', 2)[0].trim().toLowerCase();
+  const normalized = mediaType.split(";", 2)[0].trim().toLowerCase();
 
   if (normalized in adapters) {
     return adapters[normalized];
@@ -31,11 +31,11 @@ export function resolveMediaAdapter(
     }
   }
 
-  if (mediaType === 'text/plain') {
+  if (mediaType === "text/plain") {
     console.warn(
       'there is no defined behaviour for encoding form values into "text/plain", using JSON encoder for now.',
     );
-    return adapters['application/json'];
+    return adapters["application/json"];
   }
 }
 

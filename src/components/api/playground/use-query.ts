@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from "react";
 
 export function useQuery<I extends unknown[], T>(
   fn: (...input: I) => Promise<T>,

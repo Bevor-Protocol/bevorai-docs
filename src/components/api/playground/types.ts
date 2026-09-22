@@ -1,5 +1,5 @@
-import type { EncodedParameter, EncodedParameterMultiple } from './encode';
-import type { HttpMethods } from 'fumadocs-openapi';
+import type { HttpMethods } from "fumadocs-openapi";
+import type { EncodedParameter, EncodedParameterMultiple } from "./encode";
 
 export interface RawRequestData {
   method: HttpMethods;

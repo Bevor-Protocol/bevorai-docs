@@ -1,10 +1,24 @@
 import { fromTranslations, useTranslations } from "@fuma-translate/react";
+import { useAnchorId } from "@fumadocs/api-docs/auto-anchor/client";
 import type { ParsedSchema } from "@fumadocs/api-docs/schema";
 import { dereferenceShallow } from "@fumadocs/api-docs/schema/dereference";
 import { mergeAllOf } from "@fumadocs/api-docs/schema/merge";
 import { FormatFlags, schemaToString } from "@fumadocs/api-docs/schema/to-string";
-import { Fragment, type ReactNode, useMemo } from "react";
-import { BlockTag, InlineTag, SchemaUI, type SchemaUIProps } from "./client";
+import type { GenerateSchemaUIOptions } from "@fumadocs/json-schema/react";
+import { cn } from "cn";
+import { Fragment, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  BlockTag,
+  Context,
+  decodePath,
+  InlineTag,
+  ObjectProperty,
+  PathItemBody,
+  type PathItemType,
+  SchemaUIPopover,
+  typeVariants,
+} from "./client";
 
 interface InfoTag {
   node: ReactNode;
@@ -67,35 +81,27 @@ export type SchemaData = FieldBase &
       }
   );
 
-export interface SchemaUIOptions {
-  root: ParsedSchema;
-  client: Omit<SchemaUIProps, "generated">;
-  renderMarkdown: (md: string) => ReactNode;
-  renderCodeblock: (opts: { lang: string; code: string }) => ReactNode;
-
-  /**
-   * include read only props
-   */
-  readOnly?: boolean;
-  /**
-   * include write only props
-   */
-  writeOnly?: boolean;
-
-  /**
-   * Show example values as tags
-   *
-   * @default false
-   */
-  showExample?: boolean;
-}
-
 export interface SchemaUIGeneratedData {
   $root: string;
   refs: Record<string, SchemaData>;
 }
 
-export function Schema({
+export interface SchemaUIProps {
+  /** anchor ID of the root schema, links to a property are resolved against it */
+  rootId: string;
+  name: string;
+  required?: boolean;
+  as?: "property" | "body";
+  generated: SchemaUIGeneratedData;
+}
+
+export interface SchemaUIOptions extends Omit<GenerateSchemaUIOptions, "translations"> {
+  client: Omit<SchemaUIProps, "generated">;
+}
+
+const ExcludedFromAutoAnchor = new Set<string>();
+
+export function SchemaUI({
   client,
   root,
   readOnly,
@@ -117,7 +123,101 @@ export function Schema({
     });
   }, [root, readOnly, writeOnly, showExample, renderMarkdown, renderCodeblock, translations]);
 
-  return <SchemaUI {...client} generated={generated} />;
+  const rootId = useAnchorId([client.name]);
+  const [path, setPath] = useState<PathItemType[]>(() => [
+    { $ref: generated.$root, name: client.name },
+  ]);
+  const ref = useRef<HTMLDivElement>(null);
+  const popoverRef = useCallback(
+    (element: HTMLDivElement | null) => {
+      if (!element) return;
+      element.scrollTop = path.at(-1)!.scrollTop ?? 0;
+      const current = parseFloat(element.style.getPropertyValue("--min-height") || "200px");
+      element.style.setProperty("--min-height", Math.max(element.clientHeight + 2, current) + "px");
+    },
+    [path],
+  );
+
+  useEffect(() => {
+    if (ExcludedFromAutoAnchor.has(rootId)) return;
+    const url = new URL(window.location.href);
+    const param = url.searchParams.get("path");
+    if (url.hash !== `#${rootId}` || !param) return;
+
+    const decoded = decodePath(param, url.searchParams.get("s-highlight"));
+    if (!decoded || decoded.length === 0 || decoded.some((item) => !generated.refs[item.$ref]))
+      return;
+
+    setPath(decoded);
+    // avoid re-triggering it again
+    ExcludedFromAutoAnchor.add(rootId);
+    if (!decoded.at(-1)!.highlighted) {
+      ref.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [rootId, generated.refs]);
+
+  return (
+    <Context
+      value={useMemo(
+        () => ({
+          rootId,
+          path,
+          generated,
+          setPath,
+          renderTypeInfoTrigger: ({ $ref, children, pathName }) => (
+            <Popover
+              open={
+                path.length > 1 &&
+                path[1].$ref === $ref &&
+                path[1].name === pathName &&
+                !path[0].closed
+              }
+              onOpenChange={(v) => {
+                if (v) {
+                  setPath([
+                    { ...path[0], closed: false },
+                    { name: pathName, $ref },
+                  ]);
+                } else {
+                  setPath(path.map((item, i) => (i === 0 ? { ...item, closed: true } : item)));
+                }
+              }}
+            >
+              <PopoverTrigger className={cn(typeVariants({ variant: "trigger" }))}>
+                {children}
+              </PopoverTrigger>
+              <PopoverContent
+                ref={popoverRef}
+                className="w-150 max-w-(--available-width) min-h-(--min-height,200px) fd-scroll-container max-h-115 px-3 pt-0"
+                onScrollEnd={(e) => {
+                  // ensure popover scroll top is stable
+                  path.at(-1)!.scrollTop = (e.target as HTMLElement).scrollTop;
+                }}
+              >
+                <SchemaUIPopover />
+              </PopoverContent>
+            </Popover>
+          ),
+        }),
+        [generated, path, rootId, popoverRef],
+      )}
+    >
+      {generated.refs[generated.$root].type === "primitive" ? (
+        <ObjectProperty
+          ref={ref}
+          id={rootId}
+          name={client.name}
+          $type={generated.$root}
+          parentPathIndex={0}
+          required={client.required}
+        />
+      ) : (
+        <div id={rootId} ref={ref}>
+          <PathItemBody pathIndex={0} />
+        </div>
+      )}
+    </Context>
+  );
 }
 
 export function generateSchemaUI({

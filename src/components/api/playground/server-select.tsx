@@ -1,15 +1,5 @@
-'use client';
-import { useServer } from 'fumadocs-openapi';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@fumadocs/api-docs/components/select';
-import { Input, labelVariants } from '@fumadocs/api-docs/components/input';
-import { useEffect, useState, useRef, type ComponentProps } from 'react';
-import { cn } from '../../../lib/cn';
+"use client";
+import { useTranslations } from "@fuma-translate/react";
 import {
   Dialog,
   DialogContent,
@@ -17,18 +7,28 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@fumadocs/api-docs/components/dialog';
-import type { ServerVariableObject } from 'fumadocs-openapi';
-import { StfProvider, useFieldValue, useListener, useStf } from '@fumari/stf';
-import { EditIcon } from 'lucide-react';
-import { useTranslations } from '@fuma-translate/react';
-import { resolveServerUrl } from '@fumadocs/api-docs/utils/url';
+} from "@fumadocs/api-docs/components/dialog";
+import { Input, labelVariants } from "@fumadocs/api-docs/components/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@fumadocs/api-docs/components/select";
+import { resolveServerUrl } from "@fumadocs/api-docs/utils/url";
+import { StfProvider, useFieldValue, useListener, useStf } from "@fumari/stf";
+import type { ServerVariableObject } from "fumadocs-openapi";
+import { useServer } from "fumadocs-openapi";
+import { EditIcon } from "lucide-react";
+import { type ComponentProps, useEffect, useRef, useState } from "react";
+import { cn } from "../../../lib/cn";
 
 export default function ServerSelect(props: ComponentProps<typeof DialogTrigger>) {
   const { servers, server, setServer, setServerVariables } = useServer();
   const [open, setOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
-  const t = useTranslations({ note: 'playground server select' });
+  const t = useTranslations({ note: "playground server select" });
 
   useEffect(() => {
     setIsMounted(true);
@@ -42,27 +42,27 @@ export default function ServerSelect(props: ComponentProps<typeof DialogTrigger>
       <DialogTrigger
         {...props}
         className={cn(
-          'flex items-center gap-2 text-sm text-start px-3 py-2 bg-fd-muted text-fd-muted-foreground transition-colors hover:bg-fd-accent hover:text-fd-accent-foreground',
+          "flex items-center gap-2 text-sm text-start px-3 py-2 bg-fd-muted text-fd-muted-foreground transition-colors hover:bg-fd-accent hover:text-fd-accent-foreground",
           props.className,
         )}
       >
         <span className="px-2 py-0.5 -ms-2 font-medium rounded-lg border bg-fd-secondary text-fd-secondary-foreground shadow-sm">
-          {server?.name ?? t('Server URL')}
+          {server?.name ?? t("Server URL")}
         </span>
         <code className="truncate min-w-0 flex-1">
           {isMounted
             ? new URL(
-                server ? resolveServerUrl(server.url, server.variables) : '/',
+                server ? resolveServerUrl(server.url, server.variables) : "/",
                 window.location.origin,
               ).href
-            : t('loading...')}
+            : t("loading...")}
         </code>
         <EditIcon className="size-4" />
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{t('Server URL')}</DialogTitle>
-          <DialogDescription>{t('The base URL of your API endpoint.')}</DialogDescription>
+          <DialogTitle>{t("Server URL")}</DialogTitle>
+          <DialogDescription>{t("The base URL of your API endpoint.")}</DialogDescription>
         </DialogHeader>
         <Select
           items={servers.map((server) => ({
@@ -144,10 +144,10 @@ function ServerSelectContent({
 }
 
 function Field({ fieldName, variable }: { variable: ServerVariableObject; fieldName: string }) {
-  const t = useTranslations({ note: 'playground server select' });
+  const t = useTranslations({ note: "playground server select" });
   const [value, setValue] = useFieldValue([fieldName], {
     compute(currentValue) {
-      return typeof currentValue === 'string' ? currentValue : undefined;
+      return typeof currentValue === "string" ? currentValue : undefined;
     },
   });
 
@@ -173,7 +173,7 @@ function Field({ fieldName, variable }: { variable: ServerVariableObject; fieldN
       id={fieldName}
       value={value}
       onChange={(e) => setValue(e.target.value)}
-      placeholder={t('Enter Value')}
+      placeholder={t("Enter Value")}
     />
   );
 }

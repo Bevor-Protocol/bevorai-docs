@@ -1,21 +1,21 @@
-import type { ExampleObject, MediaTypeObject, TagObject } from 'fumadocs-openapi';
-import { idToTitle } from '@fumadocs/api-docs/utils/id-to-title';
-import { dereferenceShallow } from '@fumadocs/api-docs/schema/dereference';
-import { getRaw } from '@scalar/json-magic/magic-proxy';
+import { dereferenceShallow } from "@fumadocs/api-docs/schema/dereference";
+import { idToTitle } from "@fumadocs/api-docs/utils/id-to-title";
+import { getRaw } from "@scalar/json-magic/magic-proxy";
+import type { ExampleObject, MediaTypeObject, TagObject } from "fumadocs-openapi";
 
-export const methodKeys = ['get', 'post', 'patch', 'delete', 'head', 'put'] as const;
+export const methodKeys = ["get", "post", "patch", "delete", "head", "put"] as const;
 
-export type { ParsedSchema } from '@fumadocs/api-docs/schema';
+export type { ParsedSchema } from "@fumadocs/api-docs/schema";
 
 export function getPreferredType(body: Record<string, unknown>): string | undefined {
-  if ('application/json' in body) return 'application/json';
+  if ("application/json" in body) return "application/json";
 
   return Object.keys(body)[0];
 }
 
 export function getTagDisplayName(tag: TagObject): string {
-  if ('x-displayName' in tag && typeof tag['x-displayName'] === 'string')
-    return tag['x-displayName'];
+  if ("x-displayName" in tag && typeof tag["x-displayName"] === "string")
+    return tag["x-displayName"];
 
   if (tag.summary) return tag.summary;
   return idToTitle(tag.name!);
