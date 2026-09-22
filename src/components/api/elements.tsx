@@ -69,9 +69,11 @@ export const Security = ({
 export const Parameters = ({
   parameters,
   method,
+  doc,
 }: {
   parameters: ParameterObject[];
   method: HttpMethods;
+  doc: Doc;
 }) => (
   <>
     {(["path", "query", "header", "cookie"] as const).map((location) => {
@@ -88,6 +90,7 @@ export const Parameters = ({
               <Fragment key={parameter.name}>
                 {parameter.schema && (
                   <SchemaBlock
+                    bundled={doc.bundled}
                     name={parameter.name ?? "parameter"}
                     root={parameter.schema}
                     description={parameter.description}
@@ -133,7 +136,13 @@ export const RequestBody = ({
           return (
             <div key={mediaType} className="py-3 text-sm">
               {media.schema && (
-                <SchemaBlock name="body" root={media.schema} required={body.required} writeOnly />
+                <SchemaBlock
+                  name="body"
+                  root={media.schema}
+                  required={body.required}
+                  bundled={doc.bundled}
+                  writeOnly
+                />
               )}
             </div>
           );
@@ -143,11 +152,19 @@ export const RequestBody = ({
   );
 };
 
-export const ResponseBodyContent = ({ content }: { content: Record<string, any> }) => (
+export const ResponseBodyContent = ({
+  content,
+  doc,
+}: {
+  content: Record<string, any>;
+  doc: Doc;
+}) => (
   <>
     {Object.entries(content).map(([mediaType, media]) => (
       <div key={mediaType} className="mt-4">
-        {media.schema && <SchemaBlock name="response" root={media.schema} readOnly />}
+        {media.schema && (
+          <SchemaBlock name="response" root={media.schema} bundled={doc.bundled} readOnly />
+        )}
       </div>
     ))}
   </>
@@ -185,7 +202,7 @@ export const Responses = ({
                 </code>
               )}
             </div>
-            <ResponseBodyContent content={responses[0].content} />
+            <ResponseBodyContent content={responses[0].content} doc={doc} />
           </div>
         ) : (
           responses.map((r) => (
@@ -199,7 +216,7 @@ export const Responses = ({
                   </code>
                 )}
               </summary>
-              <ResponseBodyContent content={r.content} />
+              <ResponseBodyContent content={r.content} doc={doc} />
             </details>
           ))
         )}

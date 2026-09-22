@@ -3,7 +3,6 @@ import type { SchemaData } from "@fumadocs/json-schema/react";
 import { ChevronRight } from "lucide-react";
 import { Fragment, useMemo, useState } from "react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { useDoc } from "@/hooks/use-doc";
 import { RefsContext, useRefs } from "@/hooks/use-refs";
 import { cn } from "@/lib/cn";
 import { Badge } from "../playground/method-label";
@@ -109,6 +108,7 @@ const SchemaChildren = ({ schema, depth }: { schema: SchemaData; depth: number }
 interface SchemaBlockProps {
   name: string;
   root: ParsedSchema;
+  bundled: object;
   description?: string;
   required?: boolean;
   readOnly?: boolean;
@@ -118,18 +118,18 @@ interface SchemaBlockProps {
 export const SchemaBlock = ({
   name,
   root,
+  bundled,
   description,
   required = false,
   readOnly = false,
   writeOnly = false,
 }: SchemaBlockProps) => {
-  const doc = useDoc();
   const schema: ParsedSchema =
     description && typeof root === "object" ? { ...root, description } : root;
 
   const tree = useMemo(
-    () => generateSchemaTree({ root: schema, bundled: doc.bundled, readOnly, writeOnly }),
-    [schema, doc.bundled, readOnly, writeOnly],
+    () => generateSchemaTree({ root: schema, bundled, readOnly, writeOnly }),
+    [schema, bundled, readOnly, writeOnly],
   );
 
   return (

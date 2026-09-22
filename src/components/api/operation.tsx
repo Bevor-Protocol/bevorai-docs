@@ -68,7 +68,7 @@ export const Operation: React.FC<PageOperationProps> = ({
         )}
 
         <Security security={operation.security} doc={doc} />
-        <Parameters parameters={parameters} method={method} />
+        <Parameters parameters={parameters} method={method} doc={doc} />
         <RequestBody requestBody={operation.requestBody} doc={doc} />
         <Responses responses={operation.responses} doc={doc} />
       </article>

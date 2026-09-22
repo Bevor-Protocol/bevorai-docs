@@ -32,6 +32,18 @@ export const synthesizeExample = (raw: ParsedSchema, doc: Doc): unknown => {
   if (schema.enum && schema.enum.length > 0) return schema.enum[0];
   if (schema.default !== undefined) return schema.default;
 
+  if (schema.allOf) {
+    return schema.allOf.reduce((acc: Record<string, unknown>, sub) => {
+      const resolved = synthesizeExample(sub, doc);
+      return typeof resolved === "object" && resolved !== null ? { ...acc, ...resolved } : acc;
+    }, {});
+  }
+
+  const union = schema.oneOf ?? schema.anyOf;
+  if (union && union.length > 0) {
+    return synthesizeExample(union[0], doc);
+  }
+
   switch (schema.type) {
     case "object": {
       const out: Record<string, unknown> = {};
