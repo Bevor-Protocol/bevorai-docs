@@ -1,7 +1,7 @@
 import { type Serialized, useFumadocsLoader } from "fumadocs-core/source/client";
 import { Suspense, use } from "react";
 import { OpenAPIPage } from "@/components/api-page";
-import { useMDXComponents } from "@/components/mdx";
+import { getMDXComponents } from "@/components/mdx";
 import { SearchProvider } from "@/components/search/provider";
 import { DocsLayout } from "@/layouts/docs";
 import { DocsBody, DocsDescription, DocsPage, DocsTitle } from "@/layouts/docs/page";
@@ -28,7 +28,7 @@ const Content = ({ path }: { path: string }) => {
       <DocsTitle>{page.title}</DocsTitle>
       <DocsDescription>{page.description}</DocsDescription>
       <DocsBody>
-        <MDX components={useMDXComponents()} />
+        <MDX components={getMDXComponents()} />
       </DocsBody>
     </DocsPage>
   );

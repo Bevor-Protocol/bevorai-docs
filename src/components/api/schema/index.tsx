@@ -1,5 +1,3 @@
-import type { ReactNode } from "react";
-
 export interface ParsedSchemaObject {
   $ref?: string;
   type?: string | string[];
@@ -32,19 +30,23 @@ export interface ParsedSchemaObject {
   additionalProperties?: ParsedSchema | boolean;
   items?: ParsedSchema;
   required?: string[];
+  const?: unknown;
+  "x-ndjson-item-schema"?: ParsedSchema;
 }
 export type ParsedSchema = boolean | ParsedSchemaObject;
 
-export interface InfoTag {
-  node: ReactNode;
-}
-
 export interface FieldBase {
   description?: string;
-  infoTags: InfoTag[];
   typeName: string;
   aliasName: string;
   deprecated?: boolean;
+  pattern?: string;
+  multipleOf?: number;
+  valueRange?: string;
+  lengthRange?: string;
+  itemsRange?: string;
+  enum?: string[];
+  default?: string;
 }
 
 export type SchemaData =
@@ -93,7 +95,9 @@ const schemaToString = (schema: ParsedSchema, useAlias: boolean, bundled: object
     if (useAlias) return schema.$ref.split("/").pop() ?? "object";
     return schemaToString(resolveJsonPointer(schema.$ref, bundled), useAlias, bundled);
   }
-  if (schema.enum) return schema.enum.map((v) => JSON.stringify(v)).join(" | ");
+  if (schema.const !== undefined) {
+    return typeof schema.const === "string" ? `"${schema.const}"` : JSON.stringify(schema.const);
+  }
   if (schema.oneOf)
     return schema.oneOf.map((s) => schemaToString(s, useAlias, bundled)).join(" | ");
   if (schema.anyOf)
@@ -103,6 +107,7 @@ const schemaToString = (schema: ParsedSchema, useAlias: boolean, bundled: object
   if (Array.isArray(schema.type)) return schema.type.join(" | ");
   if (schema.type === "array")
     return `${schema.items ? schemaToString(schema.items, useAlias, bundled) : "unknown"}[]`;
+  if (schema.type && schema.format) return `${schema.type}<${schema.format}>`;
   return schema.type ?? "object";
 };
 
@@ -123,53 +128,6 @@ const formatRange = (
   if (lo !== undefined) return `>${loOpen ? "" : "="} ${lo} ${unit}`;
   return `<${hiOpen ? "" : "="} ${hi} ${unit}`;
 };
-
-const generateInfoTags = (schema: ParsedSchemaObject): InfoTag[] => {
-  const tags: InfoTag[] = [];
-  if (schema.pattern) tags.push({ node: <InlineTag label="Match">{schema.pattern}</InlineTag> });
-  if (schema.format) tags.push({ node: <InlineTag label="Format">{schema.format}</InlineTag> });
-  if (schema.multipleOf)
-    tags.push({ node: <InlineTag label="Multiple of">{schema.multipleOf}</InlineTag> });
-
-  const valueRange = formatRange(
-    "",
-    schema.minimum,
-    schema.exclusiveMinimum,
-    schema.maximum,
-    schema.exclusiveMaximum,
-  );
-  if (valueRange) tags.push({ node: <InlineTag label="Range">{valueRange}</InlineTag> });
-
-  const lengthRange = formatRange(
-    "chars",
-    schema.minLength,
-    undefined,
-    schema.maxLength,
-    undefined,
-  );
-  if (lengthRange) tags.push({ node: <InlineTag label="Length">{lengthRange}</InlineTag> });
-
-  const itemsRange = formatRange("items", schema.minItems, undefined, schema.maxItems, undefined);
-  if (itemsRange) tags.push({ node: <InlineTag label="Items">{itemsRange}</InlineTag> });
-
-  if (schema.enum && schema.enum.length > 0) {
-    const members = schema.enum.map((v) => (typeof v === "string" ? v : JSON.stringify(v)));
-    tags.push({ node: <InlineTag label="Value in">{members.join(", ")}</InlineTag> });
-  }
-
-  if (schema.default !== undefined) {
-    tags.push({ node: <InlineTag label="Default">{JSON.stringify(schema.default)}</InlineTag> });
-  }
-
-  return tags;
-};
-
-const InlineTag = ({ label, children }: { label: string; children: ReactNode }) => (
-  <span className="inline-flex items-center gap-1 rounded-md border bg-fd-secondary px-1.5 py-0.5 font-mono text-[11px] text-fd-muted-foreground">
-    <span className="font-medium text-fd-foreground">{label}</span>
-    {children}
-  </span>
-);
 
 interface GenerateSchemaTreeOptions {
   root: ParsedSchema;
@@ -215,14 +173,30 @@ export const generateSchemaTree = ({
     const schema = dereferenceShallow(raw, bundled);
     if (typeof schema === "boolean") {
       const name = schema ? "any" : "never";
-      return { typeName: name, aliasName: name, infoTags: [] };
+      return { typeName: name, aliasName: name };
     }
+
     return {
       description: schema.description,
-      infoTags: generateInfoTags(schema),
       typeName: schemaToString(raw, false, bundled),
       aliasName: schemaToString(raw, true, bundled),
       deprecated: schema.deprecated,
+      pattern: schema.pattern,
+      multipleOf: schema.multipleOf,
+      valueRange: formatRange(
+        "",
+        schema.minimum,
+        schema.exclusiveMinimum,
+        schema.maximum,
+        schema.exclusiveMaximum,
+      ),
+      lengthRange: formatRange("chars", schema.minLength, undefined, schema.maxLength, undefined),
+      itemsRange: formatRange("items", schema.minItems, undefined, schema.maxItems, undefined),
+      enum:
+        schema.enum && schema.enum.length > 0
+          ? schema.enum.map((v) => (typeof v === "string" ? v : JSON.stringify(v)))
+          : undefined,
+      default: schema.default !== undefined ? JSON.stringify(schema.default) : undefined,
     };
   };
 

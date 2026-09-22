@@ -1,12 +1,21 @@
 import type { ParsedSchema } from "@fumadocs/api-docs/schema";
 import type { SchemaData } from "@fumadocs/json-schema/react";
 import { ChevronRight } from "lucide-react";
-import { Fragment, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { RefsContext, useRefs } from "@/hooks/use-refs";
 import { cn } from "@/lib/cn";
-import { Badge } from "../playground/method-label";
 import { generateSchemaTree } from ".";
+import {
+  DefaultTag,
+  EnumTag,
+  ItemsRangeTag,
+  LengthTag,
+  MatchTag,
+  MultipleOfTag,
+  RangeTag,
+} from "./tags";
 
 interface SchemaNodeProps {
   $type: string;
@@ -22,26 +31,33 @@ export const SchemaNode = ({ $type, name, required, depth }: SchemaNodeProps) =>
 
   return (
     <div className="border-b py-3 last:border-b-0" style={{ marginInlineStart: depth * 16 }}>
-      <div className="flex flex-wrap items-baseline gap-2">
+      <div className="flex flex-wrap items-baseline gap-4">
         <code className="font-medium text-fd-foreground">{name}</code>
         <code className="text-xs text-fd-muted-foreground">{schema.aliasName}</code>
-        {required && <span className="text-xs text-fd-primary">required</span>}
+        {required && (
+          <Badge color="blue" size="xs">
+            required
+          </Badge>
+        )}
+        {schema.default && <DefaultTag value={schema.default} />}
         {schema.deprecated && (
           <Badge size="sm" color="yellow">
             Deprecated
           </Badge>
         )}
       </div>
+
       {schema.description && (
-        <div className="mt-1 text-sm text-fd-muted-foreground">{schema.description}</div>
+        <div className="mt-3 text-sm text-fd-muted-foreground">{schema.description}</div>
       )}
-      {schema.infoTags.length > 0 && (
-        <div className="mt-2 flex flex-wrap items-center gap-2">
-          {schema.infoTags.map((tag, i) => (
-            <Fragment key={i}>{tag.node}</Fragment>
-          ))}
-        </div>
-      )}
+
+      {schema.pattern && <MatchTag value={schema.pattern} />}
+      {schema.multipleOf !== undefined && <MultipleOfTag value={schema.multipleOf} />}
+      {schema.valueRange && <RangeTag value={schema.valueRange} />}
+      {schema.lengthRange && <LengthTag value={schema.lengthRange} />}
+      {schema.itemsRange && <ItemsRangeTag value={schema.itemsRange} />}
+      {schema.enum && <EnumTag values={schema.enum} />}
+
       <SchemaChildren schema={schema} depth={depth} />
     </div>
   );

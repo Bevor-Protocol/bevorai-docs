@@ -1,7 +1,7 @@
 import type { ParsedSchema } from "@fumadocs/api-docs/schema";
 import { Suspense, use } from "react";
 import { getOpenAPISchema } from "@/server/schema";
-import { SchemaBlock } from "./schema/client";
+import { SchemaBlock } from "../api/schema/client";
 
 const cache = new Map<string, Promise<ParsedSchema>>();
 

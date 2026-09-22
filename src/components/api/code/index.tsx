@@ -1,7 +1,7 @@
 import { defaultShikiFactory } from "fumadocs-core/highlight/shiki/full";
 import { useShikiDynamic } from "fumadocs-core/highlight/shiki/react";
-import { CopyButton } from "@/components/api/copy-button";
 import { cn } from "@/lib/cn";
+import { CopyButton } from "../copy-button";
 
 export const ClientCodeBlock: React.FC<{
   lang: string;
@@ -31,7 +31,7 @@ export const ClientCodeBlock: React.FC<{
   );
 
   return (
-    <figure className={cn("group relative my-0 bg-fd-card text-sm", className)}>
+    <figure className={cn("group relative my-0 bg-fd-code-background text-sm", className)}>
       {showCopy && (
         <CopyButton
           code={code}

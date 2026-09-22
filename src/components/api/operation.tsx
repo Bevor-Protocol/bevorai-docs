@@ -1,18 +1,13 @@
 import { type ParameterObject } from "fumadocs-openapi";
 import { type PageOperationProps } from "fumadocs-openapi/operation";
-import { Badge, getMethodColor } from "@/components/api/playground/method-label";
+import { Badge, getMethodColor } from "@/components/ui/badge";
 import { useDoc } from "@/hooks/use-doc";
 import { Markdown } from "../ui/markdown";
-import {
-  buildResponseTabs,
-  CodeSamples,
-  Parameters,
-  RequestBody,
-  ResponseExamples,
-  Responses,
-  Security,
-} from "./elements";
-import { buildGeneratedSamples, buildRequestData } from "./registry";
+import { CodeSamples, ResponseExamples } from "./elements/examples";
+import { Parameters } from "./elements/parameters";
+import { RequestBody } from "./elements/request-body";
+import { Responses } from "./elements/response-body";
+import { Security } from "./elements/security";
 
 export const Operation: React.FC<PageOperationProps> = ({
   operation,
@@ -28,15 +23,6 @@ export const Operation: React.FC<PageOperationProps> = ({
     operation.summary ||
     pathItem.summary ||
     (operation.operationId ? idToTitle(operation.operationId) : path);
-  const baseUrl = doc.dereferenced.servers?.[0]?.url ?? "";
-  const codeSamples = operation["x-codeSamples"] ?? [];
-  const fallbackSamples =
-    codeSamples.length > 0
-      ? []
-      : buildGeneratedSamples(
-          buildRequestData(method, path, parameters, operation.requestBody, doc, baseUrl),
-        );
-  const responseTabs = buildResponseTabs(operation.responses, doc);
 
   return (
     <>
@@ -57,12 +43,12 @@ export const Operation: React.FC<PageOperationProps> = ({
           <Badge size="sm" color={getMethodColor(method)}>
             {method.toUpperCase()}
           </Badge>
-          <code className="min-w-0 overflow-x-auto text-sm text-fd-muted-foreground">
+          <code className="min-w-0 overflow-x-auto text-sm">
             <HighlightedPath path={path} parameters={parameters} />
           </code>
         </div>
         {showDescription && operation.description && (
-          <div className="mb-8">
+          <div className="mb-8 text-base text-fd-muted-foreground">
             <Markdown>{operation.description}</Markdown>
           </div>
         )}
@@ -74,8 +60,15 @@ export const Operation: React.FC<PageOperationProps> = ({
       </article>
       <aside className="min-w-0 @max-4xl:mt-8">
         <div className="space-y-4 @4xl:sticky @4xl:top-(--fd-docs-row-2) @4xl:py-6">
-          <CodeSamples title={title} samples={codeSamples} fallbacks={fallbackSamples} />
-          {responseTabs.length > 0 && <ResponseExamples tabs={responseTabs} />}
+          <CodeSamples
+            title={title}
+            method={method}
+            path={path}
+            operation={operation}
+            parameters={parameters}
+            doc={doc}
+          />
+          <ResponseExamples operation={operation} doc={doc} />
         </div>
       </aside>
     </>
