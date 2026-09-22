@@ -1,468 +1,262 @@
-import { fromTranslations, useTranslations } from "@fuma-translate/react";
-import { useAnchorId } from "@fumadocs/api-docs/auto-anchor/client";
-import type { ParsedSchema } from "@fumadocs/api-docs/schema";
-import { dereferenceShallow } from "@fumadocs/api-docs/schema/dereference";
-import { mergeAllOf } from "@fumadocs/api-docs/schema/merge";
-import { FormatFlags, schemaToString } from "@fumadocs/api-docs/schema/to-string";
-import type { GenerateSchemaUIOptions } from "@fumadocs/json-schema/react";
-import { cn } from "cn";
-import { Fragment, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import {
-  BlockTag,
-  Context,
-  decodePath,
-  InlineTag,
-  ObjectProperty,
-  PathItemBody,
-  type PathItemType,
-  SchemaUIPopover,
-  typeVariants,
-} from "./client";
+import type { ReactNode } from "react";
 
-interface InfoTag {
-  node: ReactNode;
-  block?: boolean;
+export interface ParsedSchemaObject {
+  $ref?: string;
+  type?: string | string[];
+  description?: string;
+  deprecated?: boolean;
+  readOnly?: boolean;
+  writeOnly?: boolean;
+  pattern?: string;
+  format?: string;
+  multipleOf?: number;
+  minimum?: number;
+  exclusiveMinimum?: number | boolean;
+  maximum?: number;
+  exclusiveMaximum?: number | boolean;
+  minLength?: number;
+  maxLength?: number;
+  minProperties?: number;
+  maxProperties?: number;
+  minItems?: number;
+  maxItems?: number;
+  enum?: unknown[];
+  default?: unknown;
+  examples?: unknown[];
+  oneOf?: ParsedSchema[];
+  anyOf?: ParsedSchema[];
+  allOf?: ParsedSchema[];
+  discriminator?: { propertyName: string; mapping?: Record<string, string> };
+  properties?: Record<string, ParsedSchema>;
+  patternProperties?: Record<string, ParsedSchema>;
+  additionalProperties?: ParsedSchema | boolean;
+  items?: ParsedSchema;
+  required?: string[];
 }
+export type ParsedSchema = boolean | ParsedSchemaObject;
 
-interface DiscriminatorObject {
-  propertyName: string;
-  mapping?: Record<string, string>;
+export interface InfoTag {
+  node: ReactNode;
 }
 
 export interface FieldBase {
-  description?: ReactNode;
-  infoTags?: InfoTag[];
-
+  description?: string;
+  infoTags: InfoTag[];
   typeName: string;
   aliasName: string;
-
   deprecated?: boolean;
 }
 
-export interface SchemaDataObjectProperty {
-  name: string;
-  $type: string;
-  required: boolean;
-}
+export type SchemaData =
+  | ({ type: "primitive" } & FieldBase)
+  | ({ type: "array"; item: { $type: string } } & FieldBase)
+  | ({ type: "object"; props: { $type: string; name: string; required: boolean }[] } & FieldBase)
+  | ({ type: "or"; items: { name: string; $type: string }[]; discriminator?: unknown } & FieldBase)
+  | ({ type: "and"; items: { name: string; $type: string }[] } & FieldBase);
 
-export type SchemaData = FieldBase &
-  (
-    | {
-        type: "primitive";
-      }
-    | {
-        type: "object";
-        props: SchemaDataObjectProperty[];
-      }
-    | {
-        type: "array";
-        item: {
-          $type: string;
-        };
-      }
-    | {
-        type: "or";
-        items: {
-          name: string;
-          $type: string;
-          itemId?: string;
-        }[];
-        discriminator?: DiscriminatorObject;
-      }
-    | {
-        type: "and";
-        items: {
-          name: string;
-          $type: string;
-          itemId?: string;
-        }[];
-        discriminator?: DiscriminatorObject;
-      }
+const resolveJsonPointer = (ref: string, bundled: object): ParsedSchema => {
+  const path = ref.replace(/^#\//, "").split("/");
+  let node: unknown = bundled;
+  for (const segment of path) {
+    const key = segment.replace(/~1/g, "/").replace(/~0/g, "~");
+    node = (node as Record<string, unknown> | undefined)?.[key];
+  }
+  return node as ParsedSchema;
+};
+
+const dereferenceShallow = (schema: ParsedSchema, bundled: object): ParsedSchema => {
+  if (typeof schema === "boolean") return schema;
+  if (typeof schema.$ref === "string")
+    return dereferenceShallow(resolveJsonPointer(schema.$ref, bundled), bundled);
+  return schema;
+};
+
+const mergeAllOf = (schema: ParsedSchemaObject): ParsedSchemaObject => {
+  const merged: ParsedSchemaObject = {
+    ...schema,
+    allOf: undefined,
+    properties: { ...schema.properties },
+    required: [...(schema.required ?? [])],
+  };
+  for (const sub of schema.allOf ?? []) {
+    if (typeof sub === "boolean") continue;
+    merged.properties = { ...merged.properties, ...sub.properties };
+    merged.required = [...(merged.required ?? []), ...(sub.required ?? [])];
+    if (sub.type && !merged.type) merged.type = sub.type;
+  }
+  return merged;
+};
+
+const schemaToString = (schema: ParsedSchema, useAlias: boolean, bundled: object): string => {
+  if (typeof schema === "boolean") return schema ? "any" : "never";
+  if (typeof schema.$ref === "string") {
+    if (useAlias) return schema.$ref.split("/").pop() ?? "object";
+    return schemaToString(resolveJsonPointer(schema.$ref, bundled), useAlias, bundled);
+  }
+  if (schema.enum) return schema.enum.map((v) => JSON.stringify(v)).join(" | ");
+  if (schema.oneOf)
+    return schema.oneOf.map((s) => schemaToString(s, useAlias, bundled)).join(" | ");
+  if (schema.anyOf)
+    return schema.anyOf.map((s) => schemaToString(s, useAlias, bundled)).join(" | ");
+  if (schema.allOf)
+    return schema.allOf.map((s) => schemaToString(s, useAlias, bundled)).join(" & ");
+  if (Array.isArray(schema.type)) return schema.type.join(" | ");
+  if (schema.type === "array")
+    return `${schema.items ? schemaToString(schema.items, useAlias, bundled) : "unknown"}[]`;
+  return schema.type ?? "object";
+};
+
+const formatRange = (
+  unit: string,
+  min: number | undefined,
+  exclusiveMin: number | boolean | undefined,
+  max: number | undefined,
+  exclusiveMax: number | boolean | undefined,
+): string | undefined => {
+  if (min === undefined && max === undefined) return undefined;
+  const lo = typeof exclusiveMin === "number" ? exclusiveMin : min;
+  const hi = typeof exclusiveMax === "number" ? exclusiveMax : max;
+  const loOpen = typeof exclusiveMin === "number" || exclusiveMin === true;
+  const hiOpen = typeof exclusiveMax === "number" || exclusiveMax === true;
+  if (lo !== undefined && hi !== undefined)
+    return `${loOpen ? "(" : "["}${lo}, ${hi}${hiOpen ? ")" : "]"} ${unit}`;
+  if (lo !== undefined) return `>${loOpen ? "" : "="} ${lo} ${unit}`;
+  return `<${hiOpen ? "" : "="} ${hi} ${unit}`;
+};
+
+const generateInfoTags = (schema: ParsedSchemaObject): InfoTag[] => {
+  const tags: InfoTag[] = [];
+  if (schema.pattern) tags.push({ node: <InlineTag label="Match">{schema.pattern}</InlineTag> });
+  if (schema.format) tags.push({ node: <InlineTag label="Format">{schema.format}</InlineTag> });
+  if (schema.multipleOf)
+    tags.push({ node: <InlineTag label="Multiple of">{schema.multipleOf}</InlineTag> });
+
+  const valueRange = formatRange(
+    "",
+    schema.minimum,
+    schema.exclusiveMinimum,
+    schema.maximum,
+    schema.exclusiveMaximum,
   );
+  if (valueRange) tags.push({ node: <InlineTag label="Range">{valueRange}</InlineTag> });
 
-export interface SchemaUIGeneratedData {
-  $root: string;
+  const lengthRange = formatRange(
+    "chars",
+    schema.minLength,
+    undefined,
+    schema.maxLength,
+    undefined,
+  );
+  if (lengthRange) tags.push({ node: <InlineTag label="Length">{lengthRange}</InlineTag> });
+
+  const itemsRange = formatRange("items", schema.minItems, undefined, schema.maxItems, undefined);
+  if (itemsRange) tags.push({ node: <InlineTag label="Items">{itemsRange}</InlineTag> });
+
+  if (schema.enum && schema.enum.length > 0) {
+    const members = schema.enum.map((v) => (typeof v === "string" ? v : JSON.stringify(v)));
+    tags.push({ node: <InlineTag label="Value in">{members.join(", ")}</InlineTag> });
+  }
+
+  if (schema.default !== undefined) {
+    tags.push({ node: <InlineTag label="Default">{JSON.stringify(schema.default)}</InlineTag> });
+  }
+
+  return tags;
+};
+
+const InlineTag = ({ label, children }: { label: string; children: ReactNode }) => (
+  <span className="inline-flex items-center gap-1 rounded-md border bg-fd-secondary px-1.5 py-0.5 font-mono text-[11px] text-fd-muted-foreground">
+    <span className="font-medium text-fd-foreground">{label}</span>
+    {children}
+  </span>
+);
+
+interface GenerateSchemaTreeOptions {
+  root: ParsedSchema;
+  bundled: object;
+  readOnly: boolean;
+  writeOnly: boolean;
+}
+
+export interface SchemaTree {
   refs: Record<string, SchemaData>;
+  $root: string;
 }
 
-export interface SchemaUIProps {
-  /** anchor ID of the root schema, links to a property are resolved against it */
-  rootId: string;
-  name: string;
-  required?: boolean;
-  as?: "property" | "body";
-  generated: SchemaUIGeneratedData;
-}
-
-export interface SchemaUIOptions extends Omit<GenerateSchemaUIOptions, "translations"> {
-  client: Omit<SchemaUIProps, "generated">;
-}
-
-const ExcludedFromAutoAnchor = new Set<string>();
-
-export function SchemaUI({
-  client,
+export const generateSchemaTree = ({
   root,
+  bundled,
   readOnly,
   writeOnly,
-  showExample,
-  renderMarkdown,
-  renderCodeblock,
-}: SchemaUIOptions) {
-  const translations = useTranslations().translations;
-  const generated = useMemo(() => {
-    return generateSchemaUI({
-      root,
-      readOnly,
-      writeOnly,
-      showExample,
-      renderMarkdown,
-      renderCodeblock,
-      translations,
-    });
-  }, [root, readOnly, writeOnly, showExample, renderMarkdown, renderCodeblock, translations]);
-
-  const rootId = useAnchorId([client.name]);
-  const [path, setPath] = useState<PathItemType[]>(() => [
-    { $ref: generated.$root, name: client.name },
-  ]);
-  const ref = useRef<HTMLDivElement>(null);
-  const popoverRef = useCallback(
-    (element: HTMLDivElement | null) => {
-      if (!element) return;
-      element.scrollTop = path.at(-1)!.scrollTop ?? 0;
-      const current = parseFloat(element.style.getPropertyValue("--min-height") || "200px");
-      element.style.setProperty("--min-height", Math.max(element.clientHeight + 2, current) + "px");
-    },
-    [path],
-  );
-
-  useEffect(() => {
-    if (ExcludedFromAutoAnchor.has(rootId)) return;
-    const url = new URL(window.location.href);
-    const param = url.searchParams.get("path");
-    if (url.hash !== `#${rootId}` || !param) return;
-
-    const decoded = decodePath(param, url.searchParams.get("s-highlight"));
-    if (!decoded || decoded.length === 0 || decoded.some((item) => !generated.refs[item.$ref]))
-      return;
-
-    setPath(decoded);
-    // avoid re-triggering it again
-    ExcludedFromAutoAnchor.add(rootId);
-    if (!decoded.at(-1)!.highlighted) {
-      ref.current?.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [rootId, generated.refs]);
-
-  return (
-    <Context
-      value={useMemo(
-        () => ({
-          rootId,
-          path,
-          generated,
-          setPath,
-          renderTypeInfoTrigger: ({ $ref, children, pathName }) => (
-            <Popover
-              open={
-                path.length > 1 &&
-                path[1].$ref === $ref &&
-                path[1].name === pathName &&
-                !path[0].closed
-              }
-              onOpenChange={(v) => {
-                if (v) {
-                  setPath([
-                    { ...path[0], closed: false },
-                    { name: pathName, $ref },
-                  ]);
-                } else {
-                  setPath(path.map((item, i) => (i === 0 ? { ...item, closed: true } : item)));
-                }
-              }}
-            >
-              <PopoverTrigger className={cn(typeVariants({ variant: "trigger" }))}>
-                {children}
-              </PopoverTrigger>
-              <PopoverContent
-                ref={popoverRef}
-                className="w-150 max-w-(--available-width) min-h-(--min-height,200px) fd-scroll-container max-h-115 px-3 pt-0"
-                onScrollEnd={(e) => {
-                  // ensure popover scroll top is stable
-                  path.at(-1)!.scrollTop = (e.target as HTMLElement).scrollTop;
-                }}
-              >
-                <SchemaUIPopover />
-              </PopoverContent>
-            </Popover>
-          ),
-        }),
-        [generated, path, rootId, popoverRef],
-      )}
-    >
-      {generated.refs[generated.$root].type === "primitive" ? (
-        <ObjectProperty
-          ref={ref}
-          id={rootId}
-          name={client.name}
-          $type={generated.$root}
-          parentPathIndex={0}
-          required={client.required}
-        />
-      ) : (
-        <div id={rootId} ref={ref}>
-          <PathItemBody pathIndex={0} />
-        </div>
-      )}
-    </Context>
-  );
-}
-
-export function generateSchemaUI({
-  root,
-  renderMarkdown,
-  renderCodeblock,
-  readOnly = false,
-  writeOnly = false,
-  showExample = false,
-  translations = {},
-}: Omit<SchemaUIOptions, "client"> & {
-  translations?: Partial<Record<string, string>>;
-}): SchemaUIGeneratedData {
-  const t = fromTranslations(translations, { note: "schema UI" });
+}: GenerateSchemaTreeOptions): SchemaTree => {
   const refs: Record<string, SchemaData> = {};
+  let counter = 0;
+  const autoIds = new WeakMap<ParsedSchemaObject, string>();
 
-  function generateInfoTags(schema: Exclude<ParsedSchema, boolean>) {
-    const inlines: InfoTag[] = [];
-    const blocks: InfoTag[] = [];
-
-    if (schema.pattern) {
-      inlines.push({
-        node: <InlineTag label={t("Match")}>{schema.pattern}</InlineTag>,
-      });
-    }
-
-    if (schema.format) {
-      inlines.push({
-        node: <InlineTag label={t("Format")}>{schema.format}</InlineTag>,
-      });
-    }
-
-    if (schema.multipleOf) {
-      inlines.push({
-        node: <InlineTag label={t("Multiple Of")}>{schema.multipleOf}</InlineTag>,
-      });
-    }
-
-    let range = formatRange(
-      "value",
-      schema.minimum,
-      schema.exclusiveMinimum,
-      schema.maximum,
-      schema.exclusiveMaximum,
-    );
-    if (range) {
-      inlines.push({
-        node: <InlineTag label={t("Range")}>{range}</InlineTag>,
-      });
-    }
-
-    range = formatRange("length", schema.minLength, undefined, schema.maxLength, undefined);
-    if (range) {
-      inlines.push({
-        node: <InlineTag label={t("Length")}>{range}</InlineTag>,
-      });
-    }
-
-    range = formatRange(
-      "properties",
-      schema.minProperties,
-      undefined,
-      schema.maxProperties,
-      undefined,
-    );
-    if (range) {
-      inlines.push({
-        node: <InlineTag label={t("Properties")}>{range}</InlineTag>,
-      });
-    }
-
-    range = formatRange("items", schema.minItems, undefined, schema.maxItems, undefined);
-    if (range) {
-      inlines.push({
-        node: <InlineTag label={t("Items")}>{range}</InlineTag>,
-      });
-    }
-
-    if (schema.enum && schema.enum.length > 0) {
-      // string members are rendered bare; `JSON.stringify` would wrap them in quotes
-      const members = schema.enum.map((value: unknown) =>
-        typeof value === "string" ? value : JSON.stringify(value, null, 2),
-      );
-
-      blocks.push({
-        block: true,
-        node: (
-          <div className="w-full flex flex-row items-start gap-3 pt-3">
-            <p className="not-prose whitespace-nowrap">Value in:</p>
-            <div className="flex items-center gap-2 flex-wrap">
-              {members.map((m: string, i: number) => (
-                <Fragment key={i}>
-                  <span className="font-mono text-xs">
-                    {m + (i < members.length - 1 ? "," : "")}
-                  </span>
-                </Fragment>
-              ))}
-            </div>
-          </div>
-        ),
-      });
-    }
-
-    if (schema.default !== undefined) {
-      const defaultCode = JSON.stringify(schema.default, null, 2);
-      if (defaultCode.includes("\n")) {
-        blocks.push({
-          block: true,
-          node: (
-            <div className="flex flex-col w-full gap-2 border-t pt-3 not-prose">
-              <p className="font-medium text-xs text-fd-muted-foreground">{t("Default")}</p>
-              {renderCodeblock({ lang: "json", code: defaultCode })}
-            </div>
-          ),
-        });
-      } else {
-        inlines.push({
-          node: (
-            <span className="inline-flex items-center gap-1 rounded-md border bg-fd-secondary px-1.5 py-0.5 font-mono text-[11px] text-fd-muted-foreground">
-              <span className="font-medium text-fd-foreground">{t("Default")}</span>
-              {defaultCode}
-            </span>
-          ),
-        });
-      }
-    }
-
-    if (showExample && schema.examples) {
-      for (const example of schema.examples) {
-        const code = JSON.stringify(example, null, 2);
-
-        if (code.includes("\n")) {
-          blocks.push({
-            node: (
-              <BlockTag label={t("Example")}>{renderCodeblock({ lang: "json", code })}</BlockTag>
-            ),
-          });
-
-          continue;
-        }
-
-        inlines.push({
-          node: <InlineTag label={t("Example")}>{code}</InlineTag>,
-        });
-      }
-    }
-
-    return [...inlines, ...blocks];
-  }
-
-  let _counter = 0;
-  const autoIds = new WeakMap<Exclude<ParsedSchema, boolean>, string>();
-  function getSchemaId(schema: ParsedSchema): string {
+  const getSchemaId = (schema: ParsedSchema): string => {
     if (typeof schema === "boolean") return String(schema);
-    const rawRef = typeof schema.$ref === "string" ? schema.$ref : undefined;
-    if (rawRef) return rawRef;
-
+    if (typeof schema.$ref === "string") return schema.$ref;
     const prev = autoIds.get(schema);
     if (prev) return prev;
+    const id = `__${counter++}`;
+    autoIds.set(schema, id);
+    return id;
+  };
 
-    const generated = `__${_counter++}`;
-    autoIds.set(schema, generated);
-    return generated;
-  }
-
-  function isVisible(raw: ParsedSchema): boolean {
-    const schema = dereferenceShallow(raw);
+  const isVisible = (raw: ParsedSchema): boolean => {
+    const schema = dereferenceShallow(raw, bundled);
     if (typeof schema === "boolean") return true;
     if (schema.writeOnly) return writeOnly;
     if (schema.readOnly) return readOnly;
     return true;
-  }
+  };
 
-  function base(raw: ParsedSchema): FieldBase {
-    const schema = dereferenceShallow(raw);
+  const base = (raw: ParsedSchema): FieldBase => {
+    const schema = dereferenceShallow(raw, bundled);
     if (typeof schema === "boolean") {
       const name = schema ? "any" : "never";
-      return {
-        typeName: name,
-        aliasName: name,
-      };
+      return { typeName: name, aliasName: name, infoTags: [] };
     }
-
     return {
-      description: schema.description ? renderMarkdown(schema.description) : undefined,
+      description: schema.description,
       infoTags: generateInfoTags(schema),
-      typeName: schemaToString(raw),
-      aliasName: schemaToString(raw, FormatFlags.UseAlias),
+      typeName: schemaToString(raw, false, bundled),
+      aliasName: schemaToString(raw, true, bundled),
       deprecated: schema.deprecated,
     };
-  }
+  };
 
-  function scanRefs(id: string, raw: ParsedSchema) {
+  const scanRefs = (id: string, raw: ParsedSchema): void => {
     if (id in refs) return;
-    const schema = dereferenceShallow(raw);
+    const schema = dereferenceShallow(raw, bundled);
+
     if (typeof schema === "boolean") {
-      refs[id] = {
-        type: "primitive",
-        ...base(raw),
-      };
+      refs[id] = { type: "primitive", ...base(raw) };
       return;
     }
 
     if (Array.isArray(schema.type)) {
-      const out: SchemaData = {
-        type: "or",
-        items: [],
-        ...base(raw),
-      };
+      const out: SchemaData = { type: "or", items: [], ...base(raw) };
       refs[id] = out;
-
       for (const type of schema.type) {
         const key = `${id}_type:${type}`;
-        scanRefs(key, {
-          ...schema,
-          type,
-        });
-        out.items.push({
-          name: type,
-          $type: key,
-        });
+        scanRefs(key, { ...schema, type });
+        out.items.push({ name: type, $type: key });
       }
       return;
     }
 
     if (schema.oneOf && schema.anyOf) {
-      const out: SchemaData = {
-        type: "and",
-        items: [],
-        ...base(raw),
-      };
+      const out: SchemaData = { type: "and", items: [], ...base(raw) };
       refs[id] = out;
       for (const omit of ["anyOf", "oneOf"] as const) {
-        const $type = `${id}_omit:${omit}`;
-        scanRefs($type, { ...schema, [omit]: undefined });
-
-        out.items.push({
-          name: refs[$type].aliasName,
-          $type,
-        });
+        const key = `${id}_omit:${omit}`;
+        scanRefs(key, { ...schema, [omit]: undefined });
+        out.items.push({ name: refs[key].aliasName, $type: key });
       }
       return;
     }
 
-    // display both `oneOf` & `anyOf` as OR for simplified overview
     const union = schema.oneOf ?? schema.anyOf;
     if (union) {
       const out: SchemaData = {
@@ -472,28 +266,22 @@ export function generateSchemaUI({
         ...base(raw),
       };
       refs[id] = out;
-
       for (const rawItem of union) {
         if (!rawItem || typeof rawItem !== "object" || !isVisible(rawItem)) continue;
         const itemId = getSchemaId(rawItem);
-        const item = dereferenceShallow(rawItem);
+        const item = dereferenceShallow(rawItem, bundled);
         if (typeof item !== "object") continue;
         const key = `${id}_extends:${itemId}`;
-
         scanRefs(key, {
           ...schema,
           oneOf: undefined,
           anyOf: undefined,
           ...item,
-          properties: {
-            ...schema.properties,
-            ...item.properties,
-          },
+          properties: { ...schema.properties, ...item.properties },
         });
         out.items.push({
           $type: key,
-          itemId,
-          name: refs[itemId]?.aliasName ?? schemaToString(rawItem, FormatFlags.UseAlias),
+          name: refs[itemId]?.aliasName ?? schemaToString(rawItem, true, bundled),
         });
       }
       return;
@@ -505,37 +293,25 @@ export function generateSchemaUI({
     }
 
     if (schema.type === "object") {
-      const out: SchemaData = {
-        type: "object",
-        props: [],
-        ...base(raw),
-      };
+      const out: SchemaData = { type: "object", props: [], ...base(raw) };
       refs[id] = out;
-
       const { properties = {}, patternProperties, additionalProperties } = schema;
       const props = Object.entries(properties);
       if (patternProperties) props.push(...Object.entries(patternProperties));
-
       for (const [key, prop] of props) {
         if (!prop || !isVisible(prop)) continue;
         const $type = getSchemaId(prop);
         scanRefs($type, prop);
-        out.props.push({
-          $type,
-          name: key,
-          required: schema.required?.includes(key) ?? false,
-        });
+        out.props.push({ $type, name: key, required: schema.required?.includes(key) ?? false });
       }
-
-      if (additionalProperties && isVisible(additionalProperties)) {
+      if (
+        additionalProperties &&
+        typeof additionalProperties === "object" &&
+        isVisible(additionalProperties)
+      ) {
         const $type = getSchemaId(additionalProperties);
         scanRefs($type, additionalProperties);
-
-        out.props.push({
-          $type,
-          name: "[key: string]",
-          required: false,
-        });
+        out.props.push({ $type, name: "[key: string]", required: false });
       }
       return;
     }
@@ -543,51 +319,15 @@ export function generateSchemaUI({
     if (schema.type === "array") {
       const items = schema.items ?? true;
       const $type = getSchemaId(items);
-
-      refs[id] = {
-        type: "array",
-        item: {
-          $type,
-        },
-        ...base(raw),
-      };
+      refs[id] = { type: "array", item: { $type }, ...base(raw) };
       scanRefs($type, items);
       return;
     }
 
-    refs[id] = {
-      type: "primitive",
-      ...base(raw),
-    };
-  }
+    refs[id] = { type: "primitive", ...base(raw) };
+  };
 
   const $root = getSchemaId(root);
   scanRefs($root, root);
-  return {
-    refs,
-    $root,
-  };
-}
-
-function formatRange(
-  value: string,
-  min: number | undefined,
-  exclusiveMin: number | undefined,
-  max: number | undefined,
-  exclusiveMax: number | undefined,
-) {
-  const out: string[] = [];
-  if (min !== undefined) {
-    out.push(`${min} <=`);
-  } else if (exclusiveMin !== undefined) {
-    out.push(`${exclusiveMin} <`);
-  }
-
-  out.push(value);
-  if (max !== undefined) {
-    out.push(`<= ${max}`);
-  } else if (exclusiveMax !== undefined) {
-    out.push(`< ${exclusiveMax}`);
-  }
-  if (out.length > 1) return out.join(" ");
-}
+  return { refs, $root };
+};

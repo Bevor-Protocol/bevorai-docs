@@ -1,59 +1,70 @@
-import { createOpenAPIRenderer, type PageLayoutProps } from "fumadocs-openapi";
-import { type ComponentProps, createElement, Fragment } from "react";
-import { SchemaUI } from "@/components/api/schema";
+import type { HttpMethods } from "fumadocs-openapi";
+import type { OpenAPIPageProps_Spec } from "fumadocs-openapi/ui";
+import { DocContext, useDereferencedDocument } from "@/hooks/use-doc";
 import { Footer } from "@/layouts/docs/page/slots/footer";
 import { Operation } from "./api/operation";
-import { ClientCodeBlock } from "./api/playground/codeblock";
 
-const Markdown = ({ md }: { md: string }) => (
-  <div className="whitespace-pre-wrap text-sm leading-7">{md}</div>
-);
+export const OpenAPIPage = ({
+  payload,
+  operations,
+  webhooks,
+  showTitle = true,
+  showDescription = true,
+}: OpenAPIPageProps_Spec) => {
+  const doc = useDereferencedDocument(payload.bundled);
 
-const Heading = ({
-  depth,
-  ref: _ref,
-  ...props
-}: ComponentProps<"h1"> & { id: string; depth: number }) => {
-  const tag = `h${Math.min(Math.max(depth, 1), 6)}`;
-  return createElement(tag, props);
+  const items: { type: "operation" | "webhook"; path: string; method: HttpMethods }[] = [
+    ...(operations ?? []).map((op) => ({
+      type: "operation" as const,
+      path: op.path,
+      method: op.method,
+    })),
+    ...(webhooks ?? []).map((wh) => ({
+      type: "webhook" as const,
+      path: `/${wh.name}`,
+      method: wh.method,
+    })),
+  ];
+
+  const item = items[0];
+  if (!item) throw new Error("[openapi] page has no operation or webhook");
+
+  const pathItem = doc.resolve(doc.dereferenced.paths?.[item.path]);
+  if (!pathItem) throw new Error(`[openapi] path not found: ${item.path}`);
+  const operation = pathItem[item.method];
+  if (!operation) throw new Error(`[openapi] method ${item.method} not found on ${item.path}`);
+
+  return (
+    <DocContext value={doc}>
+      <div className="@container">
+        <div className="grid gap-x-8 @4xl:grid-cols-[minmax(0,1fr)_minmax(320px,500px)]">
+          {/*{operations?.map((op) => (
+            <Operation
+              key={`${op.path}:${op.method}`}
+              type={item.type}
+              operation={op}
+              pathItem={pathItem}
+              path={op.path}
+              method={op.method}
+              showTitle={showTitle}
+              showDescription={showDescription}
+            />
+          ))}
+          {webhooks?.map(({ item, children }) => (
+            <Fragment key={`${item.name}:${item.method}`}>{children}</Fragment>
+          ))}*/}
+          <Operation
+            type={item.type}
+            operation={operation}
+            pathItem={pathItem}
+            path={item.path}
+            method={item.method}
+            showTitle={showTitle}
+            showDescription={showDescription}
+          />
+          <Footer className="mt-12 border-t pt-6 @4xl:col-start-1" />
+        </div>
+      </div>
+    </DocContext>
+  );
 };
-
-/*
- * Each operation contributes an article and an examples aside, which land in the two columns
- * below. The columns are a container query so they follow the space the sidebars leave over
- * rather than the viewport. The page footer is rendered here, in the content column, instead of
- * by `DocsPage`, where it would stretch under the examples column too.
- */
-const Layout = ({ operations, webhooks }: PageLayoutProps) => (
-  <div className="@container">
-    <div className="grid gap-x-8 @4xl:grid-cols-[minmax(0,1fr)_minmax(320px,500px)]">
-      {operations?.map(({ item, children }) => (
-        <Fragment key={`${item.path}:${item.method}`}>{children}</Fragment>
-      ))}
-      {webhooks?.map(({ item, children }) => (
-        <Fragment key={`${item.name}:${item.method}`}>{children}</Fragment>
-      ))}
-      <Footer className="mt-12 border-t pt-6 @4xl:col-start-1" />
-    </div>
-  </div>
-);
-
-export const OpenAPIPage = createOpenAPIRenderer({
-  storageKeyPrefix: "bevor",
-  shikiOptions: {
-    themes: {
-      light: "light-plus",
-      dark: "dark-plus",
-    },
-    defaultColor: false,
-  },
-  showResponseSchema: true,
-  components: {
-    Operation,
-    SchemaUI,
-    CodeBlock: ClientCodeBlock,
-    Markdown,
-    Heading,
-    Layout,
-  },
-});
